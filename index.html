@@ -233,7 +233,6 @@ tr:hover td { background: var(--s2); }
     <div class="header-right">
       <div class="live-badge"><span class="live-dot"></span>2025–26 Live</div>
       <input type="text" class="header-search" id="searchBox" placeholder="Search team or coach…">
-      <button class="help-btn" id="helpBtn" title="How RED is calculated">?</button>
     </div>
   </div>
 </header>
@@ -291,11 +290,8 @@ tr:hover td { background: var(--s2); }
     </div>
     <div id="noDataMessage" class="no-data" style="display:none;">No teams match your search.</div>
 
-    <div class="formula-note">
-      <strong>RED Formula:</strong>
-      <span class="fc">RED = 0.70 × WinsAbove.500 + 0.30 × PythagoreanDelta</span>
-      &nbsp;·&nbsp; Descriptive only — not predictive.
-      &nbsp;·&nbsp; Data via ESPN API (auto-refreshes every 20 min).
+    <div style="text-align:center; padding: 1.5rem 0 1rem;">
+      <button class="help-btn" id="helpBtn" title="How RED is calculated">?</button>
     </div>
   </div>
 </div>
@@ -329,7 +325,13 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
         <li>Uses live ESPN standings data; falls back to All-Star break snapshot</li>
         <li>Compare against all historical seasons at <a href="https://redcoachingstat.github.io/1/All/" style="color:var(--gold)">All Seasons</a></li>
       </ul>
+    
+    <div style="margin-top:1.2rem; padding-top:1rem; border-top:1px solid var(--border); font-size:0.82rem; color:var(--muted); line-height:1.6;">
+      <strong style="color:var(--chrome);">RED Formula:</strong>
+      <span class="fc">RED = 0.70 × WinsAbove.500 + 0.30 × PythagoreanDelta</span><br>
+      Descriptive only — not predictive. · Data via ESPN API (auto-refreshes every 20 min).
     </div>
+</div>
   </div>
 </div>
 
