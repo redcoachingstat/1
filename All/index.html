@@ -249,7 +249,6 @@ tr:hover td { background: var(--s2); }
 <div class="adv-filters">
   <div class="filter-group">
     <label>Decade</label>
-    <button class="decade-btn on" data-decade="all">All</button>
     <button class="decade-btn" data-decade="198">80s</button>
     <button class="decade-btn" data-decade="199">90s</button>
     <button class="decade-btn" data-decade="200">00s</button>
@@ -18080,7 +18079,7 @@ let allRows = [];
 let activeYears = new Set(['all']);
 let searchQ = '';
 let sortState = {col:'red', dir:'desc'};
-let activeDecade = 'all';
+let activeDecades = new Set();
 let yearFilter = '';
 let teamFilter = '';
 let redMin = null;
@@ -18123,8 +18122,8 @@ function render(){
     rows=rows.filter(r=>activeYears.has(r.season));
   }
   // Decade filter
-  if(activeDecade!=='all'){
-    rows=rows.filter(r=>r.season.startsWith(activeDecade));
+  if(activeDecades.size>0){
+    rows=rows.filter(r=>[...activeDecades].some(d=>r.season.startsWith(d)));
   }
   // Year dropdown filter
   if(yearFilter){
@@ -18241,17 +18240,16 @@ document.querySelectorAll('#masterTable th[data-s]').forEach(th=>{
 document.querySelectorAll('.decade-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const dec=btn.dataset.decade;
-    // Toggle decade
-    document.querySelectorAll('.decade-btn').forEach(b=>b.classList.remove('on'));
-    btn.classList.add('on');
-    activeDecade=dec;
-    // If a specific decade, also activate matching pills
-    if(dec!=='all'){
-      activeYears=new Set(['all']);
-      document.querySelectorAll('.s-pill').forEach(b=>b.classList.add('on'));
+    if(activeDecades.has(dec)){
+      activeDecades.delete(dec);
+      btn.classList.remove('on');
+    }else{
+      activeDecades.add(dec);
+      btn.classList.add('on');
     }
     render();
   });
+});
 });
 
 // ── Compare dropdowns ────────────────────────────────────────────────────────
@@ -18270,7 +18268,7 @@ document.getElementById('teamFilter').addEventListener('change',e=>{teamFilter=e
 document.getElementById('redMin').addEventListener('keydown',e=>{if(e.key==='Enter'){document.getElementById('goBtn').click();}});
 document.getElementById('redMax').addEventListener('keydown',e=>{if(e.key==='Enter'){document.getElementById('goBtn').click();}});
 document.getElementById('clearFilters').addEventListener('click',()=>{
-  activeDecade='all';
+  activeDecades.clear();document.querySelectorAll('.decade-btn').forEach(b=>b.classList.remove('on'));
   activeYears=new Set(['all']);
   yearFilter='';teamFilter='';redMin=null;redMax=null;searchQ='';
   document.getElementById('yearFilter').value='';
