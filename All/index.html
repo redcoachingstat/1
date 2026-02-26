@@ -246,8 +246,14 @@ tr:hover td { background: var(--s2); }
     </div>
   </div>
 </header>
-
- <button class="decade-btn" data-decade="201">10s</button>
+<div class="adv-filters">
+  <div class="filter-group">
+    <label>Decade</label>
+    <button class="decade-btn on" data-decade="all">All</button>
+    <button class="decade-btn" data-decade="198">80s</button>
+    <button class="decade-btn" data-decade="199">90s</button>
+    <button class="decade-btn" data-decade="200">00s</button>
+    <button class="decade-btn" data-decade="201">10s</button>
     <button class="decade-btn" data-decade="202">20s</button>
   </div>
   <div class="filter-group">
@@ -265,9 +271,6 @@ tr:hover td { background: var(--s2); }
     <button class="clear-btn" id="clearFilters">Clear All</button>
   </div>
 </div>
-
-
-
 <main>
   <div class="table-card">
     <table id="masterTable">
