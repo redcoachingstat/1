@@ -18250,9 +18250,9 @@ document.getElementById('searchBox').addEventListener('input',e=>{
 });
 
 // ── Column sort ──────────────────────────────────────────────────────────────
-document.querySelectorAll('#masterTable th[data-sort]').forEach(th=>{
+document.querySelectorAll('#masterTable th[data-s]').forEach(th=>{
   th.addEventListener('click',()=>{
-    const col=th.dataset.sort;
+    const col=th.dataset.s;
     if(sortState.col===col) sortState.dir=sortState.dir==='desc'?'asc':'desc';
     else { sortState.col=col; sortState.dir='desc'; }
     document.querySelectorAll('#masterTable th').forEach(h=>h.classList.remove('sorted'));
