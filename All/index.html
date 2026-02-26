@@ -18222,7 +18222,7 @@ function stylePills(){
 }
 
 // ── Season pill toggles ─────────────────────────────────────────────────────
-document.querySelector('.filters-inner').addEventListener('click',e=>{
+const _fi=document.querySelector('.filters-inner'); _fi&&_fi.addEventListener('click',e=>{
   const btn=e.target.closest('.s-pill');
   if(!btn) return;
   const yr=btn.dataset.yr;
