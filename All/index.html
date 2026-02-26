@@ -18334,9 +18334,9 @@ async function build(){
   allRows=[...allRows,...live];
   // Update meta counts
   const seasons=new Set(allRows.map(r=>r.season));
-  document.getElementById('seasonCount').textContent=seasons.size;
-  document.getElementById('yearCount').textContent=seasons.size-1;
-  document.getElementById('srcNote').textContent='All-Star break snapshot';
+  const _sc=document.getElementById('seasonCount');if(_sc)_sc.textContent=seasons.size;
+  const _yc=document.getElementById('yearCount');if(_yc)_yc.textContent=seasons.size-1;
+  const _sn=document.getElementById('srcNote');if(_sn)_sn.textContent='All-Star break snapshot';
   // Populate dropdowns
   populateFilters();
   stylePills();
