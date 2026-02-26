@@ -53,7 +53,7 @@ header {
   gap: 1.5rem; flex-wrap: wrap; padding: 0.9rem 0;
 }
 .logo-wrap { display: flex; align-items: baseline; gap: 0.6rem; }
-.logo { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--gold); letter-spacing: 5px; line-height: 1; }
+.logo { font-family: 'Inter', sans-serif; font-size: 2rem; font-weight: 700; color: var(--gold); letter-spacing: 0.15em; line-height: 1; }
 .logo-sub { font-size: 0.65rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
 .header-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
 .live-badge {
@@ -132,7 +132,7 @@ td { padding: 11px 16px; font-size: 0.87rem; border-bottom: 1px solid var(--bord
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: var(--s2); }
 .rank-cell { font-weight: 700; color: var(--muted); font-size: 0.82rem; width: 46px; }
-.medal { margin-right: 3px; }
+.medal { display:none; }
 .season-tag {
   display: inline-flex; align-items: center; gap: 5px;
   font-size: 0.74rem; font-weight: 600; font-family: 'Inter', sans-serif;
@@ -206,22 +206,9 @@ tr:hover td { background: var(--s2); }
 }
 .decade-btn:hover { border-color: var(--silver); color: var(--chrome); }
 .decade-btn.on { background: var(--s2); color: var(--text); border-color: var(--silver); }
-.adv-select {
-  padding: 3px 8px; font-size: 0.72rem; font-weight: 500;
-  border: 1px solid var(--border); border-radius: 6px;
-  background: var(--surface); color: var(--text); cursor: pointer;
-  font-family: 'Inter', sans-serif; max-width: 180px;
-}
-.adv-select:focus { outline: none; border-color: var(--silver); }
-.vs-label { font-size: 0.68rem; color: var(--silver); font-weight: 600; }
-.champ-toggle {
-  padding: 3px 10px; font-size: 0.72rem; font-weight: 600;
-  border: 1px solid var(--border); border-radius: 6px;
-  background: transparent; color: var(--muted); cursor: pointer;
-  transition: all 0.15s; font-family: 'Inter', sans-serif;
-}
-.champ-toggle:hover { border-color: var(--gold); color: var(--gold); }
-.champ-toggle.on { background: var(--gold-bg); color: var(--gold); border-color: var(--gold); }
+
+
+
 .clear-btn {
   padding: 3px 8px; font-size: 0.68rem; font-weight: 600;
   border: 1px solid var(--border); border-radius: 6px;
@@ -229,7 +216,16 @@ tr:hover td { background: var(--s2); }
   transition: all 0.15s; font-family: 'Inter', sans-serif;
 }
 .clear-btn:hover { border-color: var(--neg); color: var(--neg); }
-.trophy { color: #B8860B; font-size: 0.85em; margin-right: 2px; }
+
+
+
+.range-input { width: 70px; padding: 5px 8px; border: 1px solid var(--chrome); border-radius: 6px; background: var(--surface); color: var(--chrome); font-size: 0.8rem; font-family: 'Inter', sans-serif; text-align: center; }
+.range-input:focus { outline: none; border-color: var(--gold); }
+.range-sep { color: var(--chrome); font-size: 0.8rem; margin: 0 4px; opacity: 0.6; }
+.go-btn { padding: 5px 18px; border: none; border-radius: 6px; background: var(--gold); color: #fff; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-left: 10px; font-family: 'Inter', sans-serif; letter-spacing: 1px; transition: background 0.2s; }
+.go-btn:hover { background: #a47d1a; }
+.adv-select { padding: 5px 8px; border: 1px solid var(--chrome); border-radius: 6px; background: var(--surface); color: var(--chrome); font-size: 0.8rem; font-family: 'Inter', sans-serif; min-width: 120px; }
+.adv-select:focus { outline: none; border-color: var(--gold); }
 
 </style>
 </head>
@@ -238,10 +234,10 @@ tr:hover td { background: var(--s2); }
 <header>
   <div class="header-inner">
     <div>
-      <div class="logo-wrap">
+      <a href="/1/" style="text-decoration:none;color:inherit"><div class="logo-wrap">
         <div class="logo">RED</div>
         <div class="logo-sub">Rating of Elite Dominance</div>
-      </div>
+      </div></a>
     </div>
     <div class="header-right">
       <a href="https://redcoachingstat.github.io/1/" style="font-size:0.76rem;color:var(--muted);text-decoration:none;border:1px solid var(--border2);padding:4px 12px;border-radius:6px;transition:all 0.15s;white-space:nowrap;" onmouseover="this.style.borderColor='var(--silver)';this.style.color='var(--chrome)'" onmouseout="this.style.borderColor='var(--border2)';this.style.color='var(--muted)'">← 2025–26 Live</a>
@@ -251,44 +247,21 @@ tr:hover td { background: var(--s2); }
   </div>
 </header>
 
-<div class="meta-bar">
-  <div class="meta-inner">
-    <div class="meta-stat">
-      <strong id="rowCount">—</strong> entries &nbsp;·&nbsp;
-      <strong id="seasonCount">46</strong> seasons &nbsp;·&nbsp;
-      <strong id="yearCount">45</strong> years of data
-    </div>
-    <div id="srcNote">Loading live data…</div>
-  </div>
-</div>
-
-
-<div class="adv-filters">
-  <div class="filter-group">
-    <label>Decade</label>
-    <button class="decade-btn on" data-decade="all">All</button>
-    <button class="decade-btn" data-decade="198">80s</button>
-    <button class="decade-btn" data-decade="199">90s</button>
-    <button class="decade-btn" data-decade="200">00s</button>
-    <button class="decade-btn" data-decade="201">10s</button>
+ <button class="decade-btn" data-decade="201">10s</button>
     <button class="decade-btn" data-decade="202">20s</button>
   </div>
   <div class="filter-group">
-    <label>Compare Years</label>
-    <select class="adv-select" id="cmpYear1"><option value="">— Year —</option></select>
-    <span class="vs-label">vs</span>
-    <select class="adv-select" id="cmpYear2"><option value="">— Year —</option></select>
+    <label>Year</label>
+    <select class="adv-select" id="yearFilter"><option value="">All Years</option></select>
+    <label style="margin-left:12px">Team</label>
+    <select class="adv-select" id="teamFilter"><option value="">All Teams</option></select>
   </div>
   <div class="filter-group">
-    <label>Compare Coaches</label>
-    <select class="adv-select" id="cmpCoach1"><option value="">— Coach —</option></select>
-    <span class="vs-label">vs</span>
-    <select class="adv-select" id="cmpCoach2"><option value="">— Coach —</option></select>
-  </div>
-  <div class="filter-group">
-    <button class="champ-toggle" id="champToggle">🏆 Champions Only</button>
-  </div>
-  <div class="filter-group">
+    <label>RED Score</label>
+    <input type="number" class="range-input" id="redMin" placeholder="Min" step="0.1">
+    <span class="range-sep">to</span>
+    <input type="number" class="range-input" id="redMax" placeholder="Max" step="0.1">
+    <button class="go-btn" id="goBtn">GO</button>
     <button class="clear-btn" id="clearFilters">Clear All</button>
   </div>
 </div>
@@ -18104,18 +18077,15 @@ let allRows = [];
 let activeYears = new Set(['all']);
 let searchQ = '';
 let sortState = {col:'red', dir:'desc'};
-let champsOnly = false;
-let compareYears = ['',''];
-let compareCoaches = ['',''];
 let activeDecade = 'all';
+let yearFilter = '';
+let teamFilter = '';
+let redMin = null;
+let redMax = null;
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 function cls(s){ return s>6?'rb-ex':s>2?'rb-go':s>-2?'rb-ne':s>-6?'rb-po':'rb-ba'; }
-function medal(r){ return r===1?'\u{1F947}':r===2?'\u{1F948}':r===3?'\u{1F949}':''; }
-function hexToRgb(hex){
-  const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
-  return r+','+g+','+b;
-}
+function medal(r){return '';}
 function calcRED(w,l,pf,pa){
   const gp=w+l, avgW=gp/2;
   const wa5=w-avgW;
@@ -18153,28 +18123,29 @@ function render(){
   if(activeDecade!=='all'){
     rows=rows.filter(r=>r.season.startsWith(activeDecade));
   }
-  // Compare years
-  if(compareYears[0]||compareYears[1]){
-    const yrs=compareYears.filter(y=>y);
-    rows=rows.filter(r=>yrs.includes(r.season));
+  // Year dropdown filter
+  if(yearFilter){
+    rows=rows.filter(r=>r.season===yearFilter);
   }
-  // Compare coaches
-  if(compareCoaches[0]||compareCoaches[1]){
-    const ccs=compareCoaches.filter(c=>c).map(c=>c.toLowerCase());
-    rows=rows.filter(r=>ccs.includes(r.coach.toLowerCase()));
+  // Team dropdown filter
+  if(teamFilter){
+    rows=rows.filter(r=>r.name.toLowerCase()===teamFilter.toLowerCase());
   }
-  // Champions only
-  if(champsOnly){
-    rows=rows.filter(r=>r.champ);
+  // RED score range filter
+  if(redMin!==null){
+    rows=rows.filter(r=>r.redScore>=redMin);
+  }
+  if(redMax!==null){
+    rows=rows.filter(r=>r.redScore<=redMax);
   }
   // Search
   if(searchQ){
     const q=searchQ.toLowerCase();
-    rows=rows.filter(r=>r.name.toLowerCase().includes(q)||r.coach.toLowerCase().includes(q));
+    rows=rows.filter(r=>r.name.toLowerCase().includes(q)||r.coach.toLowerCase().includes(q)||r.seasonLabel.toLowerCase().includes(q));
   }
   // Sort
+  const{col:c,dir:d}=sortState;
   rows.sort((a,b)=>{
-    const c=sortState.col;
     let av,bv;
     if(c==='team'){av=a.name;bv=b.name}
     else if(c==='coach'){av=a.coach;bv=b.coach}
@@ -18183,10 +18154,13 @@ function render(){
     else if(c==='rpg'){av=a.redPerGame;bv=b.redPerGame}
     else if(c==='wins'){av=a.wins;bv=b.wins}
     else if(c==='gp'){av=a.gp;bv=b.gp}
-    if(typeof av==='string') return sortState.dir==='asc'?av.localeCompare(bv):bv.localeCompare(av);
-    return sortState.dir==='asc'?av-bv:bv-av;
+    if(typeof av==='string') return d==='asc'?av.localeCompare(bv):bv.localeCompare(av);
+    return d==='asc'?av-bv:bv-av;
   });
-
+  // Update count
+  const rc=document.getElementById('rowCount');
+  if(rc) rc.textContent=rows.length;
+  // Render rows
   const tbody=document.getElementById('tbody');
   tbody.innerHTML='';
   document.getElementById('emptyState').style.display=rows.length?'none':'block';
@@ -18194,12 +18168,12 @@ function render(){
   rows.forEach((r,i)=>{
     const rank=i+1;
     const tr=document.createElement('tr');
-    const trophy=r.champ?'<span class="trophy">\u{1F3C6}</span>':'';
+    const trophy=r.champ?'\u{1F3C6}':'';
     tr.innerHTML=`
-      <td class="rank-cell">${medal(rank)}${rank}</td>
-      <td><span class="season-dot" style="background:${sg(r.season)}"></span>${r.seasonLabel}</td>
-      <td class="team-cell">${trophy}${r.name}</td>
-      <td class="coach-cell">${r.coach}</td>
+      <td class="rank-cell">${rank}</td>
+      <td><span class="season-tag"><span class="s-dot" style="background:${r.color||'#888'}"></span>${r.seasonLabel}</span></td>
+      <td>${trophy} ${r.name}</td>
+      <td>${r.coach}</td>
       <td class="${cls(r.redScore)}">${r.redScore>0?'+':''}${r.redScore.toFixed(2)}</td>
       <td class="mono ${cls(r.redPerGame)}">${r.redPerGame>0?'+':''}${r.redPerGame.toFixed(4)}</td>
       <td class="mono">${r.wins}\u{2500}${r.losses}</td>
@@ -18207,7 +18181,6 @@ function render(){
     `;
     tbody.appendChild(tr);
   });
-  document.getElementById('rowCount').textContent=rows.length;
 }
 
 
@@ -18279,40 +18252,33 @@ document.querySelectorAll('.decade-btn').forEach(btn=>{
 });
 
 // ── Compare dropdowns ────────────────────────────────────────────────────────
-document.getElementById('cmpYear1').addEventListener('change',e=>{compareYears[0]=e.target.value;render();});
-document.getElementById('cmpYear2').addEventListener('change',e=>{compareYears[1]=e.target.value;render();});
-document.getElementById('cmpCoach1').addEventListener('change',e=>{compareCoaches[0]=e.target.value;render();});
-document.getElementById('cmpCoach2').addEventListener('change',e=>{compareCoaches[1]=e.target.value;render();});
-
-// ── Champions toggle ─────────────────────────────────────────────────────────
-document.getElementById('champToggle').addEventListener('click',()=>{
-  champsOnly=!champsOnly;
-  document.getElementById('champToggle').classList.toggle('on',champsOnly);
+// ──── Year/Team/RED filter listeners ──────────────────
+document.getElementById('goBtn').addEventListener('click',()=>{
+  const minVal=document.getElementById('redMin').value;
+  const maxVal=document.getElementById('redMax').value;
+  redMin=minVal!==''?parseFloat(minVal):null;
+  redMax=maxVal!==''?parseFloat(maxVal):null;
+  yearFilter=document.getElementById('yearFilter').value;
+  teamFilter=document.getElementById('teamFilter').value;
   render();
 });
-
-// ── Clear All filters ────────────────────────────────────────────────────────
+document.getElementById('yearFilter').addEventListener('change',e=>{yearFilter=e.target.value;render();});
+document.getElementById('teamFilter').addEventListener('change',e=>{teamFilter=e.target.value;render();});
+document.getElementById('redMin').addEventListener('keydown',e=>{if(e.key==='Enter'){document.getElementById('goBtn').click();}});
+document.getElementById('redMax').addEventListener('keydown',e=>{if(e.key==='Enter'){document.getElementById('goBtn').click();}});
 document.getElementById('clearFilters').addEventListener('click',()=>{
-  // Reset all state
-  champsOnly=false;
-  compareYears=['',''];
-  compareCoaches=['',''];
   activeDecade='all';
-  searchQ='';
   activeYears=new Set(['all']);
-  // Reset UI
-  document.getElementById('champToggle').classList.remove('on');
-  document.getElementById('cmpYear1').value='';
-  document.getElementById('cmpYear2').value='';
-  document.getElementById('cmpCoach1').value='';
-  document.getElementById('cmpCoach2').value='';
+  yearFilter='';teamFilter='';redMin=null;redMax=null;searchQ='';
+  document.getElementById('yearFilter').value='';
+  document.getElementById('teamFilter').value='';
+  document.getElementById('redMin').value='';
+  document.getElementById('redMax').value='';
   document.getElementById('searchBox').value='';
-  document.querySelectorAll('.decade-btn').forEach(b=>b.classList.remove('on'));
-  document.querySelector('.decade-btn[data-decade="all"]').classList.add('on');
-  document.querySelectorAll('.s-pill').forEach(b=>b.classList.add('on'));
-  stylePills();
+  document.querySelectorAll('.decade-btn').forEach(b=>{b.classList.toggle('on',b.dataset.decade==='all');});
   render();
 });
+;
 
 
 // ── Load live 2025-26 data ───────────────────────────────────────────────────
@@ -18339,34 +18305,23 @@ async function loadLive(){
 }
 
 // ── Populate compare dropdowns ───────────────────────────────────────────────
-function populateDropdowns(){
-  const seasons=[...new Set(allRows.map(r=>r.season))].sort().reverse();
-  const coaches=[...new Set(allRows.map(r=>r.coach))].sort();
-  
-  ['cmpYear1','cmpYear2'].forEach(id=>{
-    const sel=document.getElementById(id);
-    const current=sel.value;
-    sel.innerHTML='<option value="">\u{2014} Year \u{2014}</option>';
-    seasons.forEach(s=>{
-      const opt=document.createElement('option');
-      opt.value=s;
-      opt.textContent=s.replace('-','\u{2013}');
-      sel.appendChild(opt);
-    });
-    sel.value=current;
+function populateFilters(){
+  const seasons=[...new Set(allRows.map(r=>r.season))].sort();
+  const teams=[...new Set(allRows.map(r=>r.name))].sort();
+  const ySel=document.getElementById('yearFilter');
+  const tSel=document.getElementById('teamFilter');
+  seasons.forEach(s=>{
+    const o=document.createElement('option');
+    // Convert season code to label
+    const match=allRows.find(r=>r.season===s);
+    o.value=s;
+    o.textContent=match?match.seasonLabel:s;
+    ySel.appendChild(o);
   });
-  
-  ['cmpCoach1','cmpCoach2'].forEach(id=>{
-    const sel=document.getElementById(id);
-    const current=sel.value;
-    sel.innerHTML='<option value="">\u{2014} Coach \u{2014}</option>';
-    coaches.forEach(c=>{
-      const opt=document.createElement('option');
-      opt.value=c;
-      opt.textContent=c;
-      sel.appendChild(opt);
-    });
-    sel.value=current;
+  teams.forEach(t=>{
+    const o=document.createElement('option');
+    o.value=t;o.textContent=t;
+    tSel.appendChild(o);
   });
 }
 
@@ -18383,7 +18338,7 @@ async function build(){
   document.getElementById('yearCount').textContent=seasons.size-1;
   document.getElementById('srcNote').textContent='All-Star break snapshot';
   // Populate dropdowns
-  populateDropdowns();
+  populateFilters();
   stylePills();
   render();
 }
