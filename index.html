@@ -48,7 +48,7 @@ header {
   display: flex; align-items: center; justify-content: space-between;
   gap: 1.5rem; flex-wrap: wrap; padding: 0.9rem 0;
 }
-.logo { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: var(--gold); letter-spacing: 5px; line-height: 1; }
+.logo { font-family: 'Inter', sans-serif; font-weight: 700; letter-spacing: 0.15em; font-size: 2rem; font-weight: 700; color: var(--gold); letter-spacing: 5px; line-height: 1; }
 .logo-sub { font-size: 0.65rem; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
 .header-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
 .live-badge {
@@ -227,8 +227,8 @@ tr:hover td { background: var(--s2); }
 <header>
   <div class="header-inner">
     <div>
-      <div class="logo">RED</div>
-      <div class="logo-sub">Rating of Elite Dominance</div>
+      <a href="/1/" style="text-decoration:none;color:inherit"><div class="logo">RED</div></a>
+      <a href="/1/" style="text-decoration:none;color:inherit"><div class="logo-sub">Rating of Elite Dominance</div></a>
     </div>
     <div class="header-right">
       <div class="live-badge"><span class="live-dot"></span>2025–26 Live</div>
@@ -351,7 +351,7 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
             { id: "9",  name: "Golden State Warriors",  abbr: "GSW", coach: "Steve Kerr", color: "#1D428A" },
             { id: "10", name: "Houston Rockets",        abbr: "HOU", coach: "Ime Udoka", color: "#CE1141" },
             { id: "11", name: "Indiana Pacers",         abbr: "IND", coach: "Rick Carlisle", color: "#002D58" },
-            { id: "12", name: "Los Angeles Clippers",   abbr: "LAC", coach: "Tyronn Lue", color: "#C60C30" },
+            { id: "12", name: "LA Clippers",   abbr: "LAC", coach: "Tyronn Lue", color: "#C60C30" },
             { id: "13", name: "Los Angeles Lakers",     abbr: "LAL", coach: "JJ Redick", color: "#552583" },
             { id: "29", name: "Memphis Grizzlies",      abbr: "MEM", coach: "Tuomas Iisalo", color: "#12173F" },
             { id: "14", name: "Miami Heat",             abbr: "MIA", coach: "Erik Spoelstra", color: "#98002E" },
@@ -600,12 +600,7 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
             return 'bad';
         }
 
-        function getRankMedal(rank) {
-            if (rank === 1) return '🥇';
-            if (rank === 2) return '🥈';
-            if (rank === 3) return '🥉';
-            return '';
-        }
+        function getRankMedal(rank) { return ''; }
 
         function renderLeaderboard(data) {
             leaderboardBody.innerHTML = '';
