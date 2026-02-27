@@ -646,8 +646,8 @@ Teams overperforming their margin regress; elite margins hold up.</div>
             // Show results
             loadingContainer.style.display = 'none';
             resultsContainer.style.display = 'block';
-            dataTimestamp.textContent = `${sourceLabel} · ${formatDate(new Date())}`;
-            teamCount.textContent = allResults.length;
+            if(dataTimestamp) dataTimestamp.textContent = `${sourceLabel}`;
+            if(teamCount) teamCount.textContent = allResults.length;
 
             renderLeaderboard(allResults);
         }
