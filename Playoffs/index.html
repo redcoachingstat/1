@@ -150,6 +150,7 @@ nav {
 }
 .filter-button:hover { color: var(--chrome); border-color: var(--silver); }
 .filter-button.primary { background: var(--chrome); color: #fff; border-color: var(--chrome); }
+.filter-actions { display: flex; gap: 0.4rem; margin-left: auto; }
 
 /* ââ TABLE ââ */
 .table-card {
@@ -213,12 +214,18 @@ tr:hover td { background: var(--s2); }
   .header-right { width: 100%; gap: 0.6rem; }
   nav { padding: 0 0.5rem; }
   .nav-link { padding: 8px 11px; font-size: 0.75rem; }
-  .meta-bar { padding: 0.4rem 1rem; }
-  .container { padding: 1rem 1rem 3rem; }
+  .container { padding: 1rem 0.5rem 3rem; }
   th { padding: 8px 10px; font-size: 0.6rem; }
   td { padding: 9px 10px; font-size: 0.83rem; }
   table { min-width: 580px; }
   .stats-row { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
+  .filters-bar { padding: 0.6rem 0.8rem; gap: 0.5rem; }
+  .filter-group { width: 100%; }
+  .filter-group:first-child { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; }
+  .d-pill { flex-shrink: 0; }
+  .filters-sep { display: none; }
+  .filter-select { width: 100%; }
+  .filter-actions { width: 100%; justify-content: flex-end; margin-left: 0; }
 }
 @media (max-width: 480px) {
   .logo { font-size: 1.4rem; }
@@ -231,8 +238,8 @@ tr:hover td { background: var(--s2); }
 <header>
   <div class="header-inner">
     <div>
-      <a href="/" style="text-decoration:none;color:inherit"><div class="logo">RED</div></a>
-      <a href="/" style="text-decoration:none;color:inherit"><div class="logo-sub">Rating of Elite Dominance</div></a>
+      <a href="/1/" style="text-decoration:none;color:inherit"><div class="logo">RED</div></a>
+      <a href="/1/" style="text-decoration:none;color:inherit"><div class="logo-sub">Rating of Elite Dominance</div></a>
     </div>
     <div class="header-right">
       <input type="text" class="header-search" id="searchBox" placeholder="Search team or coach&hellip;">
@@ -242,21 +249,11 @@ tr:hover td { background: var(--s2); }
 
 <nav>
   <div class="nav-inner">
-    <span class="nav-label">RED System</span>
-    <a href="/" class="nav-link">2025-26 Live</a>
-    <a href="/all/" class="nav-link">All Seasons</a>
-    <a href="/postseason/" class="nav-link active">Playoff RED &rarr;</a>
-    <span class="nav-spacer"></span>
+    <a href="/1/" class="nav-link">Current</a>
+    <a href="/1/All/" class="nav-link">Historical</a>
+    <a href="/1/Playoffs/" class="nav-link active">Postseason</a>
   </div>
 </nav>
-
-<div class="meta-bar">
-  <div class="meta-inner">
-    <div class="meta-stat">
-      <strong id="rowCount">0</strong> playoff teams ranked &middot; 1949â80 to 2024â25 &middot; <strong id="seasonCount">0</strong> seasons
-    </div>
-  </div>
-</div>
 
 <div class="container">
 
@@ -276,17 +273,14 @@ tr:hover td { background: var(--s2); }
       <button class="d-pill" data-decade="10">10s</button>
       <button class="d-pill" data-decade="20">20s</button>
     </div>
-    <div class="filters-sep"></div>
     <div class="filter-group">
       <span class="filter-label">Team</span>
       <select class="filter-select" id="teamFilter"><option value="">All Teams</option></select>
     </div>
-    <div class="filters-sep"></div>
     <div class="filter-group">
       <span class="filter-label">Coach</span>
       <select class="filter-select" id="coachFilter"><option value="">All Coaches</option></select>
     </div>
-    <div class="filters-sep"></div>
     <div class="filter-group">
       <span class="filter-label">Conf</span>
       <select class="filter-select" id="confFilter">
@@ -295,7 +289,6 @@ tr:hover td { background: var(--s2); }
         <option value="West">West</option>
       </select>
     </div>
-    <div class="filters-sep"></div>
     <div class="filter-group">
       <span class="filter-label">Seed</span>
       <select class="filter-select" id="seedFilter">
@@ -310,10 +303,6 @@ tr:hover td { background: var(--s2); }
         <option value="8">8</option>
       </select>
     </div>
-    <div class="filters-sep"></div>
-    <button class="filter-button primary" id="goBtn">GO</button>
-    <button class="filter-button" id="clearBtn">Clear All</button>
-    <div class="filters-sep"></div>
     <div class="filter-group">
       <span class="filter-label">Era</span>
       <select class="filter-select" id="eraFilter">
@@ -323,6 +312,10 @@ tr:hover td { background: var(--s2); }
         <option value="expansion">Expansion Era (1971+)</option>
         <option value="alltime">All-Time (1950+)</option>
       </select>
+    </div>
+    <div class="filter-actions">
+      <button class="filter-button primary" id="goBtn">GO</button>
+      <button class="filter-button" id="clearBtn">Clear All</button>
     </div>
   </div>
 
