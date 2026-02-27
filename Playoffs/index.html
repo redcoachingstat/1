@@ -1333,10 +1333,12 @@ function calculatePlayoffRED(rw, seed, season) {
   // Component A (70%): Playoff Dominance
   // Maps rounds won ratio to wins-above-.500 equivalent
   const roundsRatio = Math.min(rw / maxRounds, 1.25);
-  const dominance = (roundsRatio * 35) - 5;
+  const dominance = (roundsRatio * 28) - 4;
   // Component B (30%): Seed Overperformance
   // How much they exceeded seed expectations, scaled to season equivalent
-  const overperf = (rw - expectedRW) * scaleFactor;
+  // Cap the scale factor to prevent merger/early era inflation
+  const cappedScale = Math.min(scaleFactor, 4.0);
+  const overperf = (rw - expectedRW) * cappedScale;
   return Math.round((0.70 * dominance + 0.30 * overperf) * 100) / 100;
 }
 
@@ -1374,8 +1376,8 @@ function getResultText(rw, season) {
 }
 
 function getRedColor(score) {
-  if (score >= 15.0) return 'red-very-positive';
-  if (score >= 8.0) return 'red-positive';
+  if (score >= 12.0) return 'red-very-positive';
+  if (score >= 5.0) return 'red-positive';
   if (score >= 0) return 'red-neutral';
   if (score >= -3.0) return 'red-negative';
   return 'red-very-negative';
