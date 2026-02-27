@@ -245,6 +245,31 @@ tr:hover td { background: var(--s2); }
 .page-bar select{padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);font-size:0.82rem;color:var(--text);cursor:pointer;}
 .load-more-btn{padding:8px 28px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--chrome);font-weight:600;font-size:0.85rem;cursor:pointer;transition:all .2s;}
 .load-more-btn:hover{background:var(--chrome);color:#fff;}
+
+/* ── NAV BAR ── */
+nav {
+  background: var(--s2); border-bottom: 1px solid var(--border);
+  padding: 0 2rem; overflow-x: auto;
+}
+.nav-inner {
+  max-width: 1400px; margin: 0 auto;
+  display: flex; align-items: center;
+}
+.nav-label {
+  font-size: 0.65rem; color: var(--muted);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  white-space: nowrap; padding: 10px 14px 10px 0;
+  border-right: 1px solid var(--border); margin-right: 4px;
+}
+.nav-link {
+  display: inline-block; padding: 10px 16px;
+  font-size: 0.82rem; font-weight: 500; color: var(--muted);
+  text-decoration: none; border-bottom: 2px solid transparent;
+  white-space: nowrap; transition: all 0.15s;
+}
+.nav-link:hover { color: var(--chrome); border-bottom-color: var(--silver); }
+.nav-link.active { color: var(--gold); border-bottom-color: var(--gold); font-weight: 600; }
+.nav-spacer { flex: 1; }
 </style>
 </head>
 <body>
@@ -264,6 +289,15 @@ tr:hover td { background: var(--s2); }
     </div>
   </div>
 </header>
+<nav>
+  <div class="nav-inner">
+    <span class="nav-label">RED System</span>
+    <a href="https://redcoachingstat.github.io/1/" class="nav-link">2025&ndash;26 Live</a>
+    <a href="https://redcoachingstat.github.io/1/All/" class="nav-link active">All Seasons</a>
+    <a href="https://redcoachingstat.github.io/1/Playoffs/" class="nav-link">NBA Champions &rarr;</a>
+    <span class="nav-spacer"></span>
+  </div>
+</nav>
 <div class="adv-filters">
   <div class="filter-group">
     <label>Decade</label>
