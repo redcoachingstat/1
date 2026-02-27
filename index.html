@@ -598,7 +598,7 @@ Estimates where each team will finish if they maintain current trajectory.</div>
     const projExpWins = pythPct * 82;
     const projPythDelta = projWins - projExpWins;
     const predScore = (0.70 * projWinsAboveAvg) + (0.30 * projPythDelta);
-    return { predScore: parseFloat(predScore.toFixed(2)), predPerGame: parseFloat((predScore / 82).toFixed(4)) };
+    return { predScore: parseFloat(predScore.toFixed(2)), predPerGame: parseFloat((predScore / 82).toFixed(4)), projWins: Math.round(projWins), projLosses: 82 - Math.round(projWins) };
   }
 
     async function initializeSystem() {
@@ -665,7 +665,7 @@ Estimates where each team will finish if they maintain current trajectory.</div>
             const activePerGame = activeModel === 'pred' ? result.predPerGame : result.redPerGame;
             const redScoreClass = getRedScoreClass(activeScore);
                 const medal = getRankMedal(rank);
-                const record = `${result.actualWins}-${result.actualLosses}`;
+                const record = activeModel === 'pred' ? `${result.projWins}-${result.projLosses}` : `${result.actualWins}-${result.actualLosses}`;
                 const redPerGameStr = (activePerGame >= 0 ? '+' : '') + activePerGame.toFixed(3);
             const redScoreStr   = (activeScore   >= 0 ? '+' : '') + activeScore.toFixed(2);
 
@@ -803,6 +803,7 @@ Estimates where each team will finish if they maintain current trajectory.</div>
         ths.forEach(th => {
           if (th.dataset.sort === 'red') th.textContent = label + ' RED Score';
           if (th.dataset.sort === 'red-per-game') th.textContent = label + ' RED/G';
+          if (th.dataset.sort === 'record') th.textContent = activeModel === 'pred' ? 'Proj Record' : 'Record';
         });
         // Update sort info text
         const sortInfo = document.getElementById('sortInfo');
