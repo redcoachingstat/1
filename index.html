@@ -323,9 +323,9 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
       <p><strong>The efficiency signal (30%):</strong> Rewards teams squeezing extra wins beyond what raw scoring predicts — defense-first teams, clutch units.</p>
       <h3>Notes</h3>
       <ul>
-        <li>RED is <strong>descriptive</strong> — what happened, not what will happen</li>
+        <li>RED is <strong>both descriptive and predictive</strong> — toggle Prediction mode to see projected end-of-season rankings</li>
         <li>Uses live ESPN standings data; falls back to All-Star break snapshot</li>
-        <li>Compare against all historical seasons at <a href="https://redcoachingstat.github.io/1/All/" style="color:var(--gold)">All Seasons</a></li>
+        <li>Compare against 76 seasons of historical data (1949–50 to present) at <a href="https://redcoachingstat.github.io/1/All/" style="color:var(--gold)">All Seasons</a></li>
       </ul>
       <h3>Prediction Mode</h3>
       <p>Toggle to <strong>Prediction</strong> mode to see projected end-of-season RED scores that account for regression to true talent:</p>
@@ -816,8 +816,8 @@ Teams overperforming their margin regress; elite margins hold up.</div>
         const label = activeModel === 'pred' ? 'Predicted' : 'RED';
         const ths = document.querySelectorAll('th.sortable');
         ths.forEach(th => {
-          if (th.dataset.sort === 'red') th.textContent = label + ' RED Score';
-          if (th.dataset.sort === 'red-per-game') th.textContent = label + ' RED/G';
+          if (th.dataset.sort === 'red') th.textContent = activeModel === 'pred' ? 'Predicted RED Score' : 'RED Score';
+          if (th.dataset.sort === 'red-per-game') th.textContent = activeModel === 'pred' ? 'Predicted RED/G' : 'RED/G';
           if (th.dataset.sort === 'record') th.textContent = activeModel === 'pred' ? 'Proj Record' : 'Record';
           if (th.dataset.sort === 'games') th.textContent = activeModel === 'pred' ? 'GL' : 'GP';
         });
