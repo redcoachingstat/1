@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>RED &mdash; NBA Champions Since 1980</title>
+<title>RED Postseason — Playoff RED Rankings</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -78,16 +78,23 @@ nav {
 }
 .nav-inner {
   max-width: 1400px; margin: 0 auto;
-  display: flex; align-items: center; justify-content: center; gap: 4px;
+  display: flex; align-items: center;
+}
+.nav-label {
+  font-size: 0.65rem; color: var(--muted);
+  letter-spacing: 1.5px; text-transform: uppercase;
+  white-space: nowrap; padding: 10px 14px 10px 0;
+  border-right: 1px solid var(--border); margin-right: 4px;
 }
 .nav-link {
-  display: inline-block; padding: 10px 20px;
+  display: inline-block; padding: 10px 16px;
   font-size: 0.82rem; font-weight: 500; color: var(--muted);
   text-decoration: none; border-bottom: 2px solid transparent;
   white-space: nowrap; transition: all 0.15s;
 }
 .nav-link:hover { color: var(--chrome); border-bottom-color: var(--silver); }
 .nav-link.active { color: var(--gold); border-bottom-color: var(--gold); font-weight: 600; }
+.nav-spacer { flex: 1; }
 
 /* ── META BAR ── */
 .meta-bar {
@@ -127,10 +134,6 @@ nav {
 .d-pill:hover { color: var(--chrome); border-color: var(--silver); }
 .d-pill.active { background: var(--chrome); color: #fff; border-color: var(--chrome); }
 .filters-sep { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
-.go-btn { background: var(--gold); color: #fff; border: none; padding: 6px 20px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; }
-.go-btn:hover { filter: brightness(1.1); }
-.clear-btn { background: transparent; border: 1px solid var(--border2); color: var(--muted); padding: 6px 14px; border-radius: 6px; font-size: 0.72rem; font-weight: 500; cursor: pointer; }
-.clear-btn:hover { border-color: var(--silver); color: var(--chrome); }
 .filter-select {
   font-family: 'Inter', sans-serif; background: var(--bg);
   border: 1px solid var(--border2); color: var(--text);
@@ -138,15 +141,15 @@ nav {
   cursor: pointer;
 }
 
-/* ── VIEW TOGGLE ── */
-.v-btn {
+/* ── ACTION BUTTONS ── */
+.filter-button {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 4px 14px; border-radius: 20px; font-size: 0.72rem; font-weight: 500;
   border: 1px solid var(--border2); background: transparent; color: var(--muted);
   cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif;
 }
-.v-btn:hover { color: var(--chrome); border-color: var(--silver); }
-.v-btn.active { background: var(--chrome); color: #fff; border-color: var(--chrome); }
+.filter-button:hover { color: var(--chrome); border-color: var(--silver); }
+.filter-button.primary { background: var(--chrome); color: #fff; border-color: var(--chrome); }
 
 /* ── TABLE ── */
 .table-card {
@@ -172,12 +175,18 @@ tr:last-child td { border-bottom: none; }
 tr:hover td { background: var(--s2); }
 
 .rank-cell { font-weight: 700; color: var(--muted); font-size: 0.84rem; width: 46px; }
-.coach-cell { font-size: 0.82rem; color: var(--muted); }
-.series-cell { font-family: monospace; font-size: 0.84rem; color: var(--muted); font-weight: 600; }
-.champ-name { font-weight: 600; font-size: 0.9rem; color: var(--chrome); }
-.opp-name { font-size: 0.85rem; color: var(--muted); }
-.fmvp-cell { font-size: 0.82rem; color: var(--silver); font-weight: 500; }
 .season-cell { font-family: monospace; font-size: 0.84rem; color: var(--chrome); font-weight: 600; }
+.team-cell { font-weight: 600; font-size: 0.9rem; color: var(--chrome); }
+.coach-cell { font-size: 0.82rem; color: var(--muted); }
+.seed-cell { font-family: monospace; font-size: 0.84rem; color: var(--muted); font-weight: 600; }
+.result-cell { font-size: 0.85rem; color: var(--muted); }
+.red-cell { font-weight: 600; font-size: 0.88rem; }
+
+.red-very-positive { color: #0A7D2A; background: rgba(10,125,42,0.12); }
+.red-positive { color: #1B8A4A; background: var(--pos-bg); }
+.red-neutral { color: var(--neu); background: var(--neu-bg); }
+.red-negative { color: #D4601F; background: rgba(212,96,31,0.12); }
+.red-very-negative { color: var(--neg); background: var(--neg-bg); }
 
 /* ── STATS CARDS ── */
 .stats-row {
@@ -192,27 +201,6 @@ tr:hover td { background: var(--s2); }
 .stat-val { font-size: 1.4rem; font-weight: 700; color: var(--chrome); }
 .stat-label { font-size: 0.68rem; color: var(--muted); letter-spacing: 0.8px; text-transform: uppercase; margin-top: 2px; }
 .stat-sub { font-size: 0.72rem; color: var(--silver); margin-top: 2px; }
-
-/* ── LEADERBOARDS ── */
-#leaderView { display: none; }
-#leaderView.show { display: block; }
-.lb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
-.lb-card {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 1.2rem; box-shadow: 0 2px 12px rgba(0,0,0,0.15);
-}
-.lb-title {
-  font-size: 0.7rem; font-weight: 700; letter-spacing: 1.2px;
-  text-transform: uppercase; color: var(--muted); margin-bottom: 0.8rem;
-  padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
-}
-.lb-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 6px 0; border-bottom: 1px solid var(--border);
-}
-.lb-item:last-child { border-bottom: none; }
-.lb-item .name { font-size: 0.84rem; color: var(--chrome); font-weight: 500; }
-.lb-item .count { font-size: 0.78rem; color: var(--gold); font-weight: 600; }
 
 /* ── NO DATA ── */
 .no-data { text-align: center; padding: 3rem; color: var(--muted); font-size: 0.9rem; }
@@ -243,22 +231,32 @@ tr:hover td { background: var(--s2); }
 <header>
   <div class="header-inner">
     <div>
-      <a href="/1/" style="text-decoration:none;color:inherit"><div class="logo">RED</div></a>
-      <a href="/1/" style="text-decoration:none;color:inherit"><div class="logo-sub">Rating of Elite Dominance</div></a>
+      <a href="/" style="text-decoration:none;color:inherit"><div class="logo">RED</div></a>
+      <a href="/" style="text-decoration:none;color:inherit"><div class="logo-sub">Rating of Elite Dominance</div></a>
     </div>
     <div class="header-right">
-      <input type="text" class="header-search" id="searchBox" placeholder="Search team or coach…">
+      <input type="text" class="header-search" id="searchBox" placeholder="Search team or coach&hellip;">
     </div>
   </div>
 </header>
 
 <nav>
   <div class="nav-inner">
-    <a href="https://redcoachingstat.github.io/1/" class="nav-link">2025–26</a>
-    <a href="https://redcoachingstat.github.io/1/All/" class="nav-link">All Seasons</a>
-    <a href="https://redcoachingstat.github.io/1/Playoffs/" class="nav-link active">Postseason</a>
+    <span class="nav-label">RED System</span>
+    <a href="/" class="nav-link">2025-26 Live</a>
+    <a href="/all/" class="nav-link">All Seasons</a>
+    <a href="/postseason/" class="nav-link active">Playoff RED &rarr;</a>
+    <span class="nav-spacer"></span>
   </div>
 </nav>
+
+<div class="meta-bar">
+  <div class="meta-inner">
+    <div class="meta-stat">
+      <strong id="rowCount">0</strong> playoff teams ranked &middot; 1979–80 to 2024–25 &middot; <strong id="seasonCount">0</strong> seasons
+    </div>
+  </div>
+</div>
 
 <div class="container">
 
@@ -266,7 +264,7 @@ tr:hover td { background: var(--s2); }
   <div class="stats-row" id="statsRow"></div>
 
   <!-- Filters -->
-  <div class="filters-bar" style="justify-content:center;">
+  <div class="filters-bar">
     <div class="filter-group">
       <span class="filter-label">Decade</span>
       <button class="d-pill" data-decade="80">80s</button>
@@ -277,22 +275,41 @@ tr:hover td { background: var(--s2); }
     </div>
     <div class="filters-sep"></div>
     <div class="filter-group">
+      <span class="filter-label">Team</span>
+      <select class="filter-select" id="teamFilter"><option value="">All Teams</option></select>
+    </div>
+    <div class="filters-sep"></div>
+    <div class="filter-group">
       <span class="filter-label">Coach</span>
       <select class="filter-select" id="coachFilter"><option value="">All Coaches</option></select>
     </div>
     <div class="filters-sep"></div>
     <div class="filter-group">
-      <span class="filter-label">Team</span>
-      <select class="filter-select" id="teamFilter"><option value="">All Teams</option></select>
+      <span class="filter-label">Conf</span>
+      <select class="filter-select" id="confFilter">
+        <option value="">All</option>
+        <option value="East">East</option>
+        <option value="West">West</option>
+      </select>
     </div>
     <div class="filters-sep"></div>
-    <button class="go-btn" id="goBtn">GO</button>
-    <button class="clear-btn" id="clearAllBtn">Clear All</button>
-  </div>
-
-  <div style="text-align:center;margin-bottom:1rem;">
-    <button class="v-btn active" data-view="table">Champions Table</button>
-    <button class="v-btn" data-view="leaders">Leaderboards</button>
+    <div class="filter-group">
+      <span class="filter-label">Seed</span>
+      <select class="filter-select" id="seedFilter">
+        <option value="">All</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+      </select>
+    </div>
+    <div class="filters-sep"></div>
+    <button class="filter-button primary" id="goBtn">GO</button>
+    <button class="filter-button" id="clearBtn">Clear All</button>
   </div>
 
   <!-- Table View -->
@@ -303,101 +320,547 @@ tr:hover td { background: var(--s2); }
           <tr>
             <th data-col="rank">#</th>
             <th data-col="season">Season</th>
-            <th data-col="champion">Champion</th>
+            <th data-col="team">Team</th>
             <th data-col="coach">Coach</th>
-            <th data-col="opponent">Finals Opponent</th>
-            <th data-col="series">Series</th>
-            <th data-col="fmvp">Finals MVP</th>
+            <th data-col="seed">Seed</th>
+            <th data-col="result">Result</th>
+            <th data-col="red">Playoff RED</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
-    <div id="noData" class="no-data" style="display:none;">No champions match your filters.</div>
-  </div>
-
-  <!-- Leaderboard View -->
-  <div id="leaderView">
-    <div class="lb-grid">
-      <div class="lb-card"><div class="lb-title">Championships by Franchise</div><div id="lbTeams"></div></div>
-      <div class="lb-card"><div class="lb-title">Championships by Coach</div><div id="lbCoaches"></div></div>
-      <div class="lb-card"><div class="lb-title">Finals MVP Awards</div><div id="lbMVPs"></div></div>
-      <div class="lb-card"><div class="lb-title">Dynasties (Back-to-Back+)</div><div id="lbDynasties"></div></div>
-    </div>
+    <div id="noData" class="no-data" style="display:none;">No playoff teams match your filters.</div>
   </div>
 
 </div>
 
 <script>
-const CHAMPS = [
-  {season:'1980-81',champion:'Boston Celtics',coach:'Bill Fitch',opponent:'Houston Rockets',series:'4-2',fmvp:'Cedric Maxwell'},
-  {season:'1981-82',champion:'Los Angeles Lakers',coach:'Pat Riley',opponent:'Philadelphia 76ers',series:'4-2',fmvp:'Magic Johnson'},
-  {season:'1982-83',champion:'Philadelphia 76ers',coach:'Billy Cunningham',opponent:'Los Angeles Lakers',series:'4-0',fmvp:'Moses Malone'},
-  {season:'1983-84',champion:'Boston Celtics',coach:'K.C. Jones',opponent:'Los Angeles Lakers',series:'4-3',fmvp:'Larry Bird'},
-  {season:'1984-85',champion:'Los Angeles Lakers',coach:'Pat Riley',opponent:'Boston Celtics',series:'4-2',fmvp:'Kareem Abdul-Jabbar'},
-  {season:'1985-86',champion:'Boston Celtics',coach:'K.C. Jones',opponent:'Houston Rockets',series:'4-2',fmvp:'Larry Bird'},
-  {season:'1986-87',champion:'Los Angeles Lakers',coach:'Pat Riley',opponent:'Boston Celtics',series:'4-2',fmvp:'Magic Johnson'},
-  {season:'1987-88',champion:'Los Angeles Lakers',coach:'Pat Riley',opponent:'Detroit Pistons',series:'4-3',fmvp:'James Worthy'},
-  {season:'1988-89',champion:'Detroit Pistons',coach:'Chuck Daly',opponent:'Los Angeles Lakers',series:'4-0',fmvp:'Joe Dumars'},
-  {season:'1989-90',champion:'Detroit Pistons',coach:'Chuck Daly',opponent:'Portland Trail Blazers',series:'4-1',fmvp:'Isiah Thomas'},
-  {season:'1990-91',champion:'Chicago Bulls',coach:'Phil Jackson',opponent:'Los Angeles Lakers',series:'4-1',fmvp:'Michael Jordan'},
-  {season:'1991-92',champion:'Chicago Bulls',coach:'Phil Jackson',opponent:'Portland Trail Blazers',series:'4-2',fmvp:'Michael Jordan'},
-  {season:'1992-93',champion:'Chicago Bulls',coach:'Phil Jackson',opponent:'Phoenix Suns',series:'4-2',fmvp:'Michael Jordan'},
-  {season:'1993-94',champion:'Houston Rockets',coach:'Rudy Tomjanovich',opponent:'New York Knicks',series:'4-3',fmvp:'Hakeem Olajuwon'},
-  {season:'1994-95',champion:'Houston Rockets',coach:'Rudy Tomjanovich',opponent:'Orlando Magic',series:'4-0',fmvp:'Hakeem Olajuwon'},
-  {season:'1995-96',champion:'Chicago Bulls',coach:'Phil Jackson',opponent:'Seattle SuperSonics',series:'4-2',fmvp:'Michael Jordan'},
-  {season:'1996-97',champion:'Chicago Bulls',coach:'Phil Jackson',opponent:'Utah Jazz',series:'4-2',fmvp:'Michael Jordan'},
-  {season:'1997-98',champion:'Chicago Bulls',coach:'Phil Jackson',opponent:'Utah Jazz',series:'4-2',fmvp:'Michael Jordan'},
-  {season:'1998-99',champion:'San Antonio Spurs',coach:'Gregg Popovich',opponent:'New York Knicks',series:'4-1',fmvp:'Tim Duncan'},
-  {season:'1999-00',champion:'Los Angeles Lakers',coach:'Phil Jackson',opponent:'Indiana Pacers',series:'4-2',fmvp:'Shaquille O\'Neal'},
-  {season:'2000-01',champion:'Los Angeles Lakers',coach:'Phil Jackson',opponent:'Philadelphia 76ers',series:'4-1',fmvp:'Shaquille O\'Neal'},
-  {season:'2001-02',champion:'Los Angeles Lakers',coach:'Phil Jackson',opponent:'New Jersey Nets',series:'4-0',fmvp:'Shaquille O\'Neal'},
-  {season:'2002-03',champion:'San Antonio Spurs',coach:'Gregg Popovich',opponent:'New Jersey Nets',series:'4-2',fmvp:'Tim Duncan'},
-  {season:'2003-04',champion:'Detroit Pistons',coach:'Larry Brown',opponent:'Los Angeles Lakers',series:'4-1',fmvp:'Chauncey Billups'},
-  {season:'2004-05',champion:'San Antonio Spurs',coach:'Gregg Popovich',opponent:'Detroit Pistons',series:'4-3',fmvp:'Tim Duncan'},
-  {season:'2005-06',champion:'Miami Heat',coach:'Pat Riley',opponent:'Dallas Mavericks',series:'4-2',fmvp:'Dwyane Wade'},
-  {season:'2006-07',champion:'San Antonio Spurs',coach:'Gregg Popovich',opponent:'Cleveland Cavaliers',series:'4-0',fmvp:'Tony Parker'},
-  {season:'2007-08',champion:'Boston Celtics',coach:'Doc Rivers',opponent:'Los Angeles Lakers',series:'4-2',fmvp:'Paul Pierce'},
-  {season:'2008-09',champion:'Los Angeles Lakers',coach:'Phil Jackson',opponent:'Orlando Magic',series:'4-1',fmvp:'Kobe Bryant'},
-  {season:'2009-10',champion:'Los Angeles Lakers',coach:'Phil Jackson',opponent:'Boston Celtics',series:'4-3',fmvp:'Kobe Bryant'},
-  {season:'2010-11',champion:'Dallas Mavericks',coach:'Rick Carlisle',opponent:'Miami Heat',series:'4-2',fmvp:'Dirk Nowitzki'},
-  {season:'2011-12',champion:'Miami Heat',coach:'Erik Spoelstra',opponent:'Oklahoma City Thunder',series:'4-1',fmvp:'LeBron James'},
-  {season:'2012-13',champion:'Miami Heat',coach:'Erik Spoelstra',opponent:'San Antonio Spurs',series:'4-3',fmvp:'LeBron James'},
-  {season:'2013-14',champion:'San Antonio Spurs',coach:'Gregg Popovich',opponent:'Miami Heat',series:'4-1',fmvp:'Kawhi Leonard'},
-  {season:'2014-15',champion:'Golden State Warriors',coach:'Steve Kerr',opponent:'Cleveland Cavaliers',series:'4-2',fmvp:'Andre Iguodala'},
-  {season:'2015-16',champion:'Cleveland Cavaliers',coach:'Tyronn Lue',opponent:'Golden State Warriors',series:'4-3',fmvp:'LeBron James'},
-  {season:'2016-17',champion:'Golden State Warriors',coach:'Steve Kerr',opponent:'Cleveland Cavaliers',series:'4-1',fmvp:'Kevin Durant'},
-  {season:'2017-18',champion:'Golden State Warriors',coach:'Steve Kerr',opponent:'Cleveland Cavaliers',series:'4-0',fmvp:'Kevin Durant'},
-  {season:'2018-19',champion:'Toronto Raptors',coach:'Nick Nurse',opponent:'Golden State Warriors',series:'4-2',fmvp:'Kawhi Leonard'},
-  {season:'2019-20',champion:'Los Angeles Lakers',coach:'Frank Vogel',opponent:'Miami Heat',series:'4-2',fmvp:'LeBron James'},
-  {season:'2020-21',champion:'Milwaukee Bucks',coach:'Mike Budenholzer',opponent:'Phoenix Suns',series:'4-2',fmvp:'Giannis Antetokounmpo'},
-  {season:'2021-22',champion:'Golden State Warriors',coach:'Steve Kerr',opponent:'Boston Celtics',series:'4-2',fmvp:'Stephen Curry'},
-  {season:'2022-23',champion:'Denver Nuggets',coach:'Michael Malone',opponent:'Miami Heat',series:'4-1',fmvp:'Nikola Jokic'},
-  {season:'2023-24',champion:'Boston Celtics',coach:'Joe Mazzulla',opponent:'Dallas Mavericks',series:'4-1',fmvp:'Jaylen Brown'},
-  {season:'2024-25',champion:'Oklahoma City Thunder',coach:'Mark Daigneault',opponent:'Indiana Pacers',series:'4-3',fmvp:'Shai Gilgeous-Alexander'}
+const PLAYOFF_DATA=[
+{s:'1979-80',t:'Boston Celtics',c:'Bill Fitch',seed:1,conf:'East',rw:2},
+{s:'1979-80',t:'Atlanta Hawks',c:'Lenny Wilkens',seed:2,conf:'East',rw:1},
+{s:'1979-80',t:'Philadelphia 76ers',c:'Billy Cunningham',seed:3,conf:'East',rw:3},
+{s:'1979-80',t:'Houston Rockets',c:'Del Harris',seed:4,conf:'East',rw:1},
+{s:'1979-80',t:'San Antonio Spurs',c:'Doug Moe',seed:5,conf:'East',rw:0},
+{s:'1979-80',t:'Washington Bullets',c:'Dick Motta',seed:6,conf:'East',rw:0},
+{s:'1979-80',t:'Los Angeles Lakers',c:'Paul Westhead',seed:1,conf:'West',rw:4},
+{s:'1979-80',t:'Milwaukee Bucks',c:'Don Nelson',seed:2,conf:'West',rw:2},
+{s:'1979-80',t:'Phoenix Suns',c:'John MacLeod',seed:3,conf:'West',rw:1},
+{s:'1979-80',t:'Kansas City Kings',c:'Cotton Fitzsimmons',seed:4,conf:'West',rw:0},
+{s:'1979-80',t:'Seattle SuperSonics',c:'Lenny Wilkens',seed:5,conf:'West',rw:1},
+{s:'1979-80',t:'Portland Trail Blazers',c:'Jack Ramsay',seed:6,conf:'West',rw:0},
+{s:'1980-81',t:'Boston Celtics',c:'Bill Fitch',seed:1,conf:'East',rw:4},
+{s:'1980-81',t:'Philadelphia 76ers',c:'Billy Cunningham',seed:2,conf:'East',rw:2},
+{s:'1980-81',t:'Milwaukee Bucks',c:'Don Nelson',seed:3,conf:'East',rw:1},
+{s:'1980-81',t:'Chicago Bulls',c:'Scotty Robertson',seed:4,conf:'East',rw:1},
+{s:'1980-81',t:'New York Knicks',c:'Red Holzman',seed:5,conf:'East',rw:0},
+{s:'1980-81',t:'Indiana Pacers',c:'Jack McKinney',seed:6,conf:'East',rw:0},
+{s:'1980-81',t:'Houston Rockets',c:'Del Harris',seed:1,conf:'West',rw:3},
+{s:'1980-81',t:'San Antonio Spurs',c:'Doug Moe',seed:2,conf:'West',rw:1},
+{s:'1980-81',t:'Los Angeles Lakers',c:'Paul Westhead',seed:3,conf:'West',rw:2},
+{s:'1980-81',t:'Phoenix Suns',c:'John MacLeod',seed:4,conf:'West',rw:1},
+{s:'1980-81',t:'Kansas City Kings',c:'Cotton Fitzsimmons',seed:5,conf:'West',rw:1},
+{s:'1980-81',t:'Portland Trail Blazers',c:'Jack Ramsay',seed:6,conf:'West',rw:0},
+{s:'1981-82',t:'Boston Celtics',c:'Bill Fitch',seed:1,conf:'East',rw:2},
+{s:'1981-82',t:'Philadelphia 76ers',c:'Billy Cunningham',seed:2,conf:'East',rw:3},
+{s:'1981-82',t:'Milwaukee Bucks',c:'Don Nelson',seed:3,conf:'East',rw:1},
+{s:'1981-82',t:'Washington Bullets',c:'Gene Shue',seed:4,conf:'East',rw:1},
+{s:'1981-82',t:'New Jersey Nets',c:'Larry Brown',seed:5,conf:'East',rw:0},
+{s:'1981-82',t:'Atlanta Hawks',c:'Mike Fratello',seed:6,conf:'East',rw:0},
+{s:'1981-82',t:'Los Angeles Lakers',c:'Pat Riley',seed:1,conf:'West',rw:4},
+{s:'1981-82',t:'San Antonio Spurs',c:'Cotton Fitzsimmons',seed:2,conf:'West',rw:2},
+{s:'1981-82',t:'Phoenix Suns',c:'John MacLeod',seed:3,conf:'West',rw:1},
+{s:'1981-82',t:'Denver Nuggets',c:'Doug Moe',seed:4,conf:'West',rw:1},
+{s:'1981-82',t:'Houston Rockets',c:'Del Harris',seed:5,conf:'West',rw:0},
+{s:'1981-82',t:'Seattle SuperSonics',c:'Lenny Wilkens',seed:6,conf:'West',rw:0},
+{s:'1982-83',t:'Philadelphia 76ers',c:'Billy Cunningham',seed:1,conf:'East',rw:4},
+{s:'1982-83',t:'Boston Celtics',c:'Bill Fitch',seed:2,conf:'East',rw:2},
+{s:'1982-83',t:'Milwaukee Bucks',c:'Don Nelson',seed:3,conf:'East',rw:2},
+{s:'1982-83',t:'New Jersey Nets',c:'Stan Albeck',seed:4,conf:'East',rw:0},
+{s:'1982-83',t:'New York Knicks',c:'Red Holzman',seed:5,conf:'East',rw:0},
+{s:'1982-83',t:'Atlanta Hawks',c:'Mike Fratello',seed:6,conf:'East',rw:0},
+{s:'1982-83',t:'Los Angeles Lakers',c:'Pat Riley',seed:1,conf:'West',rw:3},
+{s:'1982-83',t:'San Antonio Spurs',c:'Cotton Fitzsimmons',seed:2,conf:'West',rw:1},
+{s:'1982-83',t:'Phoenix Suns',c:'John MacLeod',seed:3,conf:'West',rw:1},
+{s:'1982-83',t:'Denver Nuggets',c:'Doug Moe',seed:4,conf:'West',rw:1},
+{s:'1982-83',t:'Portland Trail Blazers',c:'Jack Ramsay',seed:5,conf:'West',rw:0},
+{s:'1982-83',t:'Seattle SuperSonics',c:'Lenny Wilkens',seed:6,conf:'West',rw:0},
+{s:'1983-84',t:'Boston Celtics',c:'K.C. Jones',seed:1,conf:'East',rw:4},
+{s:'1983-84',t:'Philadelphia 76ers',c:'Billy Cunningham',seed:2,conf:'East',rw:3},
+{s:'1983-84',t:'Milwaukee Bucks',c:'Don Nelson',seed:3,conf:'East',rw:1},
+{s:'1983-84',t:'New Jersey Nets',c:'Stan Albeck',seed:4,conf:'East',rw:0},
+{s:'1983-84',t:'Chicago Bulls',c:'Kevin Loughery',seed:5,conf:'East',rw:0},
+{s:'1983-84',t:'Detroit Pistons',c:'Scott Memorial',seed:6,conf:'East',rw:0},
+{s:'1983-84',t:'Los Angeles Lakers',c:'Pat Riley',seed:1,conf:'West',rw:3},
+{s:'1983-84',t:'Denver Nuggets',c:'Doug Moe',seed:2,conf:'West',rw:2},
+{s:'1983-84',t:'Phoenix Suns',c:'John MacLeod',seed:3,conf:'West',rw:1},
+{s:'1983-84',t:'Portland Trail Blazers',c:'Jack Ramsay',seed:4,conf:'West',rw:2},
+{s:'1983-84',t:'Seattle SuperSonics',c:'Lenny Wilkens',seed:5,conf:'West',rw:0},
+{s:'1983-84',t:'Kansas City Kings',c:'Cotton Fitzsimmons',seed:6,conf:'West',rw:0},
+{s:'1984-85',t:'Boston Celtics',c:'K.C. Jones',seed:1,conf:'East',rw:3},
+{s:'1984-85',t:'Philadelphia 76ers',c:'Billy Cunningham',seed:2,conf:'East',rw:2},
+{s:'1984-85',t:'Milwaukee Bucks',c:'Don Nelson',seed:3,conf:'East',rw:1},
+{s:'1984-85',t:'Chicago Bulls',c:'Kevin Loughery',seed:4,conf:'East',rw:1},
+{s:'1984-85',t:'Detroit Pistons',c:'Scott Memorial',seed:5,conf:'East',rw:1},
+{s:'1984-85',t:'New Jersey Nets',c:'Stan Albeck',seed:6,conf:'East',rw:0},
+{s:'1984-85',t:'Los Angeles Lakers',c:'Pat Riley',seed:1,conf:'West',rw:4},
+{s:'1984-85',t:'Denver Nuggets',c:'Doug Moe',seed:2,conf:'West',rw:2},
+{s:'1984-85',t:'Houston Rockets',c:'Bill Fitch',seed:3,conf:'West',rw:1},
+{s:'1984-85',t:'Phoenix Suns',c:'John MacLeod',seed:4,conf:'West',rw:1},
+{s:'1984-85',t:'Portland Trail Blazers',c:'Jack Ramsay',seed:5,conf:'West',rw:0},
+{s:'1984-85',t:'Utah Jazz',c:'Frank Layden',seed:6,conf:'West',rw:0},
+{s:'1985-86',t:'Boston Celtics',c:'K.C. Jones',seed:1,conf:'East',rw:4},
+{s:'1985-86',t:'Atlanta Hawks',c:'Mike Fratello',seed:2,conf:'East',rw:2},
+{s:'1985-86',t:'Philadelphia 76ers',c:'Billy Cunningham',seed:3,conf:'East',rw:1},
+{s:'1985-86',t:'Milwaukee Bucks',c:'Don Nelson',seed:4,conf:'East',rw:1},
+{s:'1985-86',t:'Chicago Bulls',c:'Stan Albeck',seed:5,conf:'East',rw:0},
+{s:'1985-86',t:'Detroit Pistons',c:'Scott Memorial',seed:6,conf:'East',rw:0},
+{s:'1985-86',t:'Los Angeles Lakers',c:'Pat Riley',seed:1,conf:'West',rw:3},
+{s:'1985-86',t:'Denver Nuggets',c:'Doug Moe',seed:2,conf:'West',rw:2},
+{s:'1985-86',t:'Houston Rockets',c:'Bill Fitch',seed:3,conf:'West',rw:1},
+{s:'1985-86',t:'Dallas Mavericks',c:'Dick Motta',seed:4,conf:'West',rw:1},
+{s:'1985-86',t:'Portland Trail Blazers',c:'Jack Ramsay',seed:5,conf:'West',rw:1},
+{s:'1985-86',t:'Utah Jazz',c:'Frank Layden',seed:6,conf:'West',rw:0},
+{s:'1986-87',t:'Boston Celtics',c:'K.C. Jones',seed:1,conf:'East',rw:3},
+{s:'1986-87',t:'Philadelphia 76ers',c:'Billy Cunningham',seed:2,conf:'East',rw:2},
+{s:'1986-87',t:'Milwaukee Bucks',c:'Don Nelson',seed:3,conf:'East',rw:1},
+{s:'1986-87',t:'Atlanta Hawks',c:'Mike Fratello',seed:4,conf:'East',rw:1},
+{s:'1986-87',t:'Chicago Bulls',c:'Stan Albeck',seed:5,conf:'East',rw:0},
+{s:'1986-87',t:'Washington Bullets',c:'Wes Unseld',seed:6,conf:'East',rw:0},
+{s:'1986-87',t:'Los Angeles Lakers',c:'Pat Riley',seed:1,conf:'West',rw:4},
+{s:'1986-87',t:'Denver Nuggets',c:'Doug Moe',seed:2,conf:'West',rw:2},
+{s:'1986-87',t:'Golden State Warriors',c:'Don Nelson',seed:3,conf:'West',rw:1},
+{s:'1986-87',t:'Utah Jazz',c:'Frank Layden',seed:4,conf:'West',rw:1},
+{s:'1986-87',t:'Dallas Mavericks',c:'Dick Motta',seed:5,conf:'West',rw:0},
+{s:'1986-87',t:'Houston Rockets',c:'Bill Fitch',seed:6,conf:'West',rw:0},
+{s:'1987-88',t:'Boston Celtics',c:'K.C. Jones',seed:1,conf:'East',rw:3},
+{s:'1987-88',t:'Atlanta Hawks',c:'Mike Fratello',seed:2,conf:'East',rw:2},
+{s:'1987-88',t:'Chicago Bulls',c:'Doug Collins',seed:3,conf:'East',rw:2},
+{s:'1987-88',t:'Detroit Pistons',c:'Chuck Daly',seed:4,conf:'East',rw:2},
+{s:'1987-88',t:'Philadelphia 76ers',c:'Jimmy Lynam',seed:5,conf:'East',rw:1},
+{s:'1987-88',t:'Cleveland Cavaliers',c:'Lenny Wilkens',seed:6,conf:'East',rw:0},
+{s:'1987-88',t:'Los Angeles Lakers',c:'Pat Riley',seed:1,conf:'West',rw:4},
+{s:'1987-88',t:'Denver Nuggets',c:'Doug Moe',seed:2,conf:'West',rw:2},
+{s:'1987-88',t:'Dallas Mavericks',c:'John MacLeod',seed:3,conf:'West',rw:1},
+{s:'1987-88',t:'Houston Rockets',c:'Don Chaney',seed:4,conf:'West',rw:1},
+{s:'1987-88',t:'Portland Trail Blazers',c:'Rick Adelman',seed:5,conf:'West',rw:1},
+{s:'1987-88',t:'Utah Jazz',c:'Frank Layden',seed:6,conf:'West',rw:0},
+{s:'1988-89',t:'Detroit Pistons',c:'Chuck Daly',seed:1,conf:'East',rw:4},
+{s:'1988-89',t:'Chicago Bulls',c:'Doug Collins',seed:2,conf:'East',rw:3},
+{s:'1988-89',t:'Cleveland Cavaliers',c:'Lenny Wilkens',seed:3,conf:'East',rw:1},
+{s:'1988-89',t:'Philadelphia 76ers',c:'Jimmy Lynam',seed:4,conf:'East',rw:1},
+{s:'1988-89',t:'Boston Celtics',c:'Jimmy Rodgers',seed:5,conf:'East',rw:1},
+{s:'1988-89',t:'New York Knicks',c:'Rick Pitino',seed:6,conf:'East',rw:0},
+{s:'1988-89',t:'Los Angeles Lakers',c:'Pat Riley',seed:1,conf:'West',rw:3},
+{s:'1988-89',t:'Phoenix Suns',c:'Cotton Fitzsimmons',seed:2,conf:'West',rw:2},
+{s:'1988-89',t:'Utah Jazz',c:'Frank Layden',seed:3,conf:'West',rw:1},
+{s:'1988-89',t:'Golden State Warriors',c:'Don Nelson',seed:4,conf:'West',rw:1},
+{s:'1988-89',t:'Houston Rockets',c:'Don Chaney',seed:5,conf:'West',rw:1},
+{s:'1988-89',t:'Denver Nuggets',c:'Doug Moe',seed:6,conf:'West',rw:0},
+{s:'1989-90',t:'Detroit Pistons',c:'Chuck Daly',seed:1,conf:'East',rw:4},
+{s:'1989-90',t:'Chicago Bulls',c:'Phil Jackson',seed:2,conf:'East',rw:3},
+{s:'1989-90',t:'Miami Heat',c:'Pat Riley',seed:3,conf:'East',rw:2},
+{s:'1989-90',t:'Philadelphia 76ers',c:'Jimmy Lynam',seed:4,conf:'East',rw:1},
+{s:'1989-90',t:'New York Knicks',c:'Stu Jackson',seed:5,conf:'East',rw:0},
+{s:'1989-90',t:'Cleveland Cavaliers',c:'Lenny Wilkens',seed:6,conf:'East',rw:0},
+{s:'1989-90',t:'Los Angeles Lakers',c:'Pat Riley',seed:1,conf:'West',rw:3},
+{s:'1989-90',t:'Phoenix Suns',c:'Cotton Fitzsimmons',seed:2,conf:'West',rw:2},
+{s:'1989-90',t:'Utah Jazz',c:'Frank Layden',seed:3,conf:'West',rw:1},
+{s:'1989-90',t:'San Antonio Spurs',c:'Gregg Popovich',seed:4,conf:'West',rw:2},
+{s:'1989-90',t:'Denver Nuggets',c:'Doug Moe',seed:5,conf:'West',rw:0},
+{s:'1989-90',t:'Portland Trail Blazers',c:'Rick Adelman',seed:6,conf:'West',rw:1},
+{s:'1990-91',t:'Chicago Bulls',c:'Phil Jackson',seed:1,conf:'East',rw:4},
+{s:'1990-91',t:'Detroit Pistons',c:'Chuck Daly',seed:2,conf:'East',rw:2},
+{s:'1990-91',t:'Boston Celtics',c:'Chris Ford',seed:3,conf:'East',rw:2},
+{s:'1990-91',t:'Miami Heat',c:'Pat Riley',seed:4,conf:'East',rw:1},
+{s:'1990-91',t:'Philadelphia 76ers',c:'Jimmy Lynam',seed:5,conf:'East',rw:0},
+{s:'1990-91',t:'New York Knicks',c:'Stu Jackson',seed:6,conf:'East',rw:1},
+{s:'1990-91',t:'Los Angeles Lakers',c:'Pat Riley',seed:1,conf:'West',rw:3},
+{s:'1990-91',t:'Portland Trail Blazers',c:'Rick Adelman',seed:2,conf:'West',rw:2},
+{s:'1990-91',t:'Utah Jazz',c:'Frank Layden',seed:3,conf:'West',rw:1},
+{s:'1990-91',t:'San Antonio Spurs',c:'Gregg Popovich',seed:4,conf:'West',rw:1},
+{s:'1990-91',t:'Phoenix Suns',c:'Cotton Fitzsimmons',seed:5,conf:'West',rw:0},
+{s:'1990-91',t:'Golden State Warriors',c:'Don Nelson',seed:6,conf:'West',rw:0},
+{s:'1991-92',t:'Chicago Bulls',c:'Phil Jackson',seed:1,conf:'East',rw:4},
+{s:'1991-92',t:'Miami Heat',c:'Pat Riley',seed:2,conf:'East',rw:3},
+{s:'1991-92',t:'Boston Celtics',c:'Chris Ford',seed:3,conf:'East',rw:1},
+{s:'1991-92',t:'Cleveland Cavaliers',c:'Lenny Wilkens',seed:4,conf:'East',rw:1},
+{s:'1991-92',t:'Philadelphia 76ers',c:'Jim Lynam',seed:5,conf:'East',rw:1},
+{s:'1991-92',t:'New York Knicks',c:'Stu Jackson',seed:6,conf:'East',rw:0},
+{s:'1991-92',t:'Portland Trail Blazers',c:'Rick Adelman',seed:1,conf:'West',rw:3},
+{s:'1991-92',t:'Los Angeles Lakers',c:'Pat Riley',seed:2,conf:'West',rw:2},
+{s:'1991-92',t:'Utah Jazz',c:'Frank Layden',seed:3,conf:'West',rw:2},
+{s:'1991-92',t:'San Antonio Spurs',c:'Gregg Popovich',seed:4,conf:'West',rw:1},
+{s:'1991-92',t:'Golden State Warriors',c:'Don Nelson',seed:5,conf:'West',rw:0},
+{s:'1991-92',t:'Denver Nuggets',c:'Dan Issel',seed:6,conf:'West',rw:0},
+{s:'1992-93',t:'Chicago Bulls',c:'Phil Jackson',seed:1,conf:'East',rw:4},
+{s:'1992-93',t:'New York Knicks',c:'Pat Riley',seed:2,conf:'East',rw:3},
+{s:'1992-93',t:'Cleveland Cavaliers',c:'Lenny Wilkens',seed:3,conf:'East',rw:2},
+{s:'1992-93',t:'Charlotte Hornets',c:'Allan Bristow',seed:4,conf:'East',rw:1},
+{s:'1992-93',t:'Boston Celtics',c:'Chris Ford',seed:5,conf:'East',rw:0},
+{s:'1992-93',t:'Miami Heat',c:'Kevin Loughery',seed:6,conf:'East',rw:0},
+{s:'1992-93',t:'Phoenix Suns',c:'Paul Westphal',seed:1,conf:'West',rw:3},
+{s:'1992-93',t:'Portland Trail Blazers',c:'Rick Adelman',seed:2,conf:'West',rw:2},
+{s:'1992-93',t:'Los Angeles Lakers',c:'Randy Pfund',seed:3,conf:'West',rw:1},
+{s:'1992-93',t:'San Antonio Spurs',c:'Gregg Popovich',seed:4,conf:'West',rw:1},
+{s:'1992-93',t:'Golden State Warriors',c:'Don Nelson',seed:5,conf:'West',rw:1},
+{s:'1992-93',t:'Denver Nuggets',c:'Dan Issel',seed:6,conf:'West',rw:0},
+{s:'1993-94',t:'New York Knicks',c:'Pat Riley',seed:1,conf:'East',rw:3},
+{s:'1993-94',t:'Chicago Bulls',c:'Phil Jackson',seed:2,conf:'East',rw:3},
+{s:'1993-94',t:'Indiana Pacers',c:'Bob Hill',seed:5,conf:'East',rw:2},
+{s:'1993-94',t:'Charlotte Hornets',c:'Allan Bristow',seed:3,conf:'East',rw:1},
+{s:'1993-94',t:'Miami Heat',c:'Kevin Loughery',seed:4,conf:'East',rw:1},
+{s:'1993-94',t:'Boston Celtics',c:'Chris Ford',seed:6,conf:'East',rw:0},
+{s:'1993-94',t:'Houston Rockets',c:'Rudy Tomjanovich',seed:2,conf:'West',rw:4},
+{s:'1993-94',t:'Phoenix Suns',c:'Paul Westphal',seed:1,conf:'West',rw:3},
+{s:'1993-94',t:'Denver Nuggets',c:'Dan Issel',seed:6,conf:'West',rw:2},
+{s:'1993-94',t:'Utah Jazz',c:'Jerry Sloan',seed:3,conf:'West',rw:1},
+{s:'1993-94',t:'Los Angeles Lakers',c:'Randy Pfund',seed:4,conf:'West',rw:1},
+{s:'1993-94',t:'San Antonio Spurs',c:'Gregg Popovich',seed:5,conf:'West',rw:0},
+{s:'1994-95',t:'Indiana Pacers',c:'Bob Hill',seed:2,conf:'East',rw:2},
+{s:'1994-95',t:'New York Knicks',c:'Pat Riley',seed:1,conf:'East',rw:2},
+{s:'1994-95',t:'Cleveland Cavaliers',c:'Mike Fratello',seed:4,conf:'East',rw:1},
+{s:'1994-95',t:'Philadelphia 76ers',c:'Johnny Davis',seed:3,conf:'East',rw:1},
+{s:'1994-95',t:'Chicago Bulls',c:'Phil Jackson',seed:5,conf:'East',rw:0},
+{s:'1994-95',t:'Boston Celtics',c:'Chris Ford',seed:6,conf:'East',rw:0},
+{s:'1994-95',t:'Houston Rockets',c:'Rudy Tomjanovich',seed:2,conf:'West',rw:4},
+{s:'1994-95',t:'San Antonio Spurs',c:'Gregg Popovich',seed:1,conf:'West',rw:3},
+{s:'1994-95',t:'Denver Nuggets',c:'Dan Issel',seed:6,conf:'West',rw:2},
+{s:'1994-95',t:'Utah Jazz',c:'Jerry Sloan',seed:3,conf:'West',rw:1},
+{s:'1994-95',t:'Los Angeles Lakers',c:'Magic Johnson',seed:4,conf:'West',rw:0},
+{s:'1994-95',t:'Portland Trail Blazers',c:'P.J. Carlesimo',seed:5,conf:'West',rw:1},
+{s:'1995-96',t:'Chicago Bulls',c:'Phil Jackson',seed:1,conf:'East',rw:4},
+{s:'1995-96',t:'Miami Heat',c:'Pat Riley',seed:2,conf:'East',rw:2},
+{s:'1995-96',t:'New York Knicks',c:'Pat Riley',seed:3,conf:'East',rw:2},
+{s:'1995-96',t:'Indiana Pacers',c:'Bob Hill',seed:4,conf:'East',rw:1},
+{s:'1995-96',t:'Charlotte Hornets',c:'Allan Bristow',seed:5,conf:'East',rw:1},
+{s:'1995-96',t:'Boston Celtics',c:'M.L. Carr',seed:6,conf:'East',rw:0},
+{s:'1995-96',t:'Los Angeles Lakers',c:'Del Harris',seed:1,conf:'West',rw:3},
+{s:'1995-96',t:'Utah Jazz',c:'Jerry Sloan',seed:2,conf:'West',rw:3},
+{s:'1995-96',t:'San Antonio Spurs',c:'Gregg Popovich',seed:3,conf:'West',rw:1},
+{s:'1995-96',t:'Denver Nuggets',c:'Dan Issel',seed:4,conf:'West',rw:1},
+{s:'1995-96',t:'Houston Rockets',c:'Rudy Tomjanovich',seed:6,conf:'West',rw:0},
+{s:'1995-96',t:'Portland Trail Blazers',c:'P.J. Carlesimo',seed:5,conf:'West',rw:1},
+{s:'1996-97',t:'Chicago Bulls',c:'Phil Jackson',seed:1,conf:'East',rw:4},
+{s:'1996-97',t:'Miami Heat',c:'Pat Riley',seed:2,conf:'East',rw:2},
+{s:'1996-97',t:'Atlanta Hawks',c:'Lenny Wilkens',seed:3,conf:'East',rw:1},
+{s:'1996-97',t:'New York Knicks',c:'Jeff Van Gundy',seed:4,conf:'East',rw:1},
+{s:'1996-97',t:'Cleveland Cavaliers',c:'Mike Fratello',seed:5,conf:'East',rw:0},
+{s:'1996-97',t:'Indianapolis Colts',c:'Herb Simon',seed:6,conf:'East',rw:0},
+{s:'1996-97',t:'Los Angeles Lakers',c:'Del Harris',seed:2,conf:'West',rw:3},
+{s:'1996-97',t:'Utah Jazz',c:'Jerry Sloan',seed:1,conf:'West',rw:3},
+{s:'1996-97',t:'Houston Rockets',c:'Rudy Tomjanovich',seed:4,conf:'West',rw:1},
+{s:'1996-97',t:'Portland Trail Blazers',c:'P.J. Carlesimo',seed:3,conf:'West',rw:1},
+{s:'1996-97',t:'Denver Nuggets',c:'Dan Issel',seed:5,conf:'West',rw:0},
+{s:'1996-97',t:'San Antonio Spurs',c:'Gregg Popovich',seed:6,conf:'West',rw:0},
+{s:'1997-98',t:'Chicago Bulls',c:'Phil Jackson',seed:1,conf:'East',rw:4},
+{s:'1997-98',t:'Indiana Pacers',c:'Larry Bird',seed:5,conf:'East',rw:3},
+{s:'1997-98',t:'New York Knicks',c:'Jeff Van Gundy',seed:2,conf:'East',rw:2},
+{s:'1997-98',t:'Atlanta Hawks',c:'Lenny Wilkens',seed:3,conf:'East',rw:1},
+{s:'1997-98',t:'Charlotte Hornets',c:'Dave Cowens',seed:4,conf:'East',rw:1},
+{s:'1997-98',t:'Miami Heat',c:'Pat Riley',seed:6,conf:'East',rw:0},
+{s:'1997-98',t:'Utah Jazz',c:'Jerry Sloan',seed:1,conf:'West',rw:3},
+{s:'1997-98',t:'Los Angeles Lakers',c:'Del Harris',seed:2,conf:'West',rw:3},
+{s:'1997-98',t:'Houston Rockets',c:'Rudy Tomjanovich',seed:4,conf:'West',rw:2},
+{s:'1997-98',t:'Portland Trail Blazers',c:'P.J. Carlesimo',seed:3,conf:'West',rw:1},
+{s:'1997-98',t:'Denver Nuggets',c:'Mike D\'Antoni',seed:5,conf:'West',rw:0},
+{s:'1997-98',t:'San Antonio Spurs',c:'Gregg Popovich',seed:6,conf:'West',rw:0},
+{s:'1998-99',t:'San Antonio Spurs',c:'Gregg Popovich',seed:1,conf:'West',rw:4},
+{s:'1998-99',t:'Utah Jazz',c:'Jerry Sloan',seed:2,conf:'West',rw:2},
+{s:'1998-99',t:'Houston Rockets',c:'Rudy Tomjanovich',seed:3,conf:'West',rw:1},
+{s:'1998-99',t:'Portland Trail Blazers',c:'Mike Dunleavy',seed:4,conf:'West',rw:2},
+{s:'1998-99',t:'Los Angeles Lakers',c:'Kurt Rambis',seed:5,conf:'West',rw:0},
+{s:'1998-99',t:'Denver Nuggets',c:'Mike D\'Antoni',seed:6,conf:'West',rw:0},
+{s:'1998-99',t:'Indiana Pacers',c:'Larry Bird',seed:2,conf:'East',rw:3},
+{s:'1998-99',t:'Atlanta Hawks',c:'Lenny Wilkens',seed:1,conf:'East',rw:2},
+{s:'1998-99',t:'New York Knicks',c:'Jeff Van Gundy',seed:8,conf:'East',rw:2},
+{s:'1998-99',t:'Philadelphia 76ers',c:'Larry Brown',seed:3,conf:'East',rw:1},
+{s:'1998-99',t:'Boston Celtics',c:'Rick Pitino',seed:4,conf:'East',rw:1},
+{s:'1998-99',t:'Orlando Magic',c:'Doc Rivers',seed:5,conf:'East',rw:0},
+{s:'1999-00',t:'Los Angeles Lakers',c:'Phil Jackson',seed:1,conf:'West',rw:4},
+{s:'1999-00',t:'Utah Jazz',c:'Jerry Sloan',seed:2,conf:'West',rw:2},
+{s:'1999-00',t:'Portland Trail Blazers',c:'Mike Dunleavy',seed:3,conf:'West',rw:1},
+{s:'1999-00',t:'Denver Nuggets',c:'Dan Issel',seed:4,conf:'West',rw:2},
+{s:'1999-00',t:'Houston Rockets',c:'Rudy Tomjanovich',seed:5,conf:'West',rw:0},
+{s:'1999-00',t:'San Antonio Spurs',c:'Gregg Popovich',seed:6,conf:'West',rw:0},
+{s:'1999-00',t:'Indiana Pacers',c:'Larry Bird',seed:1,conf:'East',rw:3},
+{s:'1999-00',t:'Philadelphia 76ers',c:'Larry Brown',seed:2,conf:'East',rw:2},
+{s:'1999-00',t:'New York Knicks',c:'Jeff Van Gundy',seed:3,conf:'East',rw:1},
+{s:'1999-00',t:'Boston Celtics',c:'Rick Pitino',seed:4,conf:'East',rw:1},
+{s:'1999-00',t:'Miami Heat',c:'Pat Riley',seed:5,conf:'East',rw:1},
+{s:'1999-00',t:'Atlanta Hawks',c:'Lenny Wilkens',seed:6,conf:'East',rw:0},
+{s:'2000-01',t:'Los Angeles Lakers',c:'Phil Jackson',seed:1,conf:'West',rw:4},
+{s:'2000-01',t:'San Antonio Spurs',c:'Gregg Popovich',seed:2,conf:'West',rw:2},
+{s:'2000-01',t:'Portland Trail Blazers',c:'Mike Dunleavy',seed:3,conf:'West',rw:2},
+{s:'2000-01',t:'Utah Jazz',c:'Jerry Sloan',seed:4,conf:'West',rw:1},
+{s:'2000-01',t:'Denver Nuggets',c:'Dan Issel',seed:5,conf:'West',rw:0},
+{s:'2000-01',t:'Houston Rockets',c:'Rudy Tomjanovich',seed:6,conf:'West',rw:0},
+{s:'2000-01',t:'Philadelphia 76ers',c:'Larry Brown',seed:1,conf:'East',rw:3},
+{s:'2000-01',t:'Indiana Pacers',c:'Isiah Thomas',seed:2,conf:'East',rw:2},
+{s:'2000-01',t:'Boston Celtics',c:'Rick Pitino',seed:3,conf:'East',rw:1},
+{s:'2000-01',t:'New York Knicks',c:'Jeff Van Gundy',seed:4,conf:'East',rw:1},
+{s:'2000-01',t:'Charlotte Hornets',c:'Dave Cowens',seed:5,conf:'East',rw:0},
+{s:'2000-01',t:'Miami Heat',c:'Pat Riley',seed:6,conf:'East',rw:0},
+{s:'2001-02',t:'Los Angeles Lakers',c:'Phil Jackson',seed:1,conf:'West',rw:4},
+{s:'2001-02',t:'San Antonio Spurs',c:'Gregg Popovich',seed:2,conf:'West',rw:2},
+{s:'2001-02',t:'Dallas Mavericks',c:'Don Nelson',seed:3,conf:'West',rw:1},
+{s:'2001-02',t:'Utah Jazz',c:'Jerry Sloan',seed:4,conf:'West',rw:1},
+{s:'2001-02',t:'Houston Rockets',c:'Rudy Tomjanovich',seed:5,conf:'West',rw:1},
+{s:'2001-02',t:'Denver Nuggets',c:'Dan Issel',seed:6,conf:'West',rw:0},
+{s:'2001-02',t:'Boston Celtics',c:'Jim O\'Brien',seed:1,conf:'East',rw:2},
+{s:'2001-02',t:'Philadelphia 76ers',c:'Larry Brown',seed:2,conf:'East',rw:3},
+{s:'2001-02',t:'New Jersey Nets',c:'Byron Scott',seed:3,conf:'East',rw:1},
+{s:'2001-02',t:'Indiana Pacers',c:'Isiah Thomas',seed:4,conf:'East',rw:1},
+{s:'2001-02',t:'Charlotte Hornets',c:'Dave Cowens',seed:5,conf:'East',rw:0},
+{s:'2001-02',t:'Orlando Magic',c:'Doc Rivers',seed:6,conf:'East',rw:0},
+{s:'2002-03',t:'San Antonio Spurs',c:'Gregg Popovich',seed:2,conf:'West',rw:4},
+{s:'2002-03',t:'Los Angeles Lakers',c:'Phil Jackson',seed:1,conf:'West',rw:3},
+{s:'2002-03',t:'Dallas Mavericks',c:'Don Nelson',seed:3,conf:'West',rw:1},
+{s:'2002-03',t:'Utah Jazz',c:'Jerry Sloan',seed:4,conf:'West',rw:1},
+{s:'2002-03',t:'Denver Nuggets',c:'Dan Issel',seed:5,conf:'West',rw:1},
+{s:'2002-03',t:'Houston Rockets',c:'Rudy Tomjanovich',seed:6,conf:'West',rw:0},
+{s:'2002-03',t:'New Jersey Nets',c:'Byron Scott',seed:1,conf:'East',rw:3},
+{s:'2002-03',t:'Philadelphia 76ers',c:'Larry Brown',seed:2,conf:'East',rw:3},
+{s:'2002-03',t:'Boston Celtics',c:'Jim O\'Brien',seed:3,conf:'East',rw:1},
+{s:'2002-03',t:'Indiana Pacers',c:'Isiah Thomas',seed:4,conf:'East',rw:1},
+{s:'2002-03',t:'Orlando Magic',c:'Doc Rivers',seed:5,conf:'East',rw:0},
+{s:'2002-03',t:'Miami Heat',c:'Stan Van Gundy',seed:6,conf:'East',rw:0},
+{s:'2003-04',t:'Detroit Pistons',c:'Larry Brown',seed:3,conf:'East',rw:4},
+{s:'2003-04',t:'New Jersey Nets',c:'Lawrence Frank',seed:1,conf:'East',rw:3},
+{s:'2003-04',t:'Indiana Pacers',c:'Rick Carlisle',seed:2,conf:'East',rw:2},
+{s:'2003-04',t:'Miami Heat',c:'Stan Van Gundy',seed:4,conf:'East',rw:1},
+{s:'2003-04',t:'Boston Celtics',c:'Jim O\'Brien',seed:5,conf:'East',rw:1},
+{s:'2003-04',t:'Philadelphia 76ers',c:'Randy Ayers',seed:6,conf:'East',rw:0},
+{s:'2003-04',t:'Los Angeles Lakers',c:'Phil Jackson',seed:1,conf:'West',rw:3},
+{s:'2003-04',t:'San Antonio Spurs',c:'Gregg Popovich',seed:2,conf:'West',rw:2},
+{s:'2003-04',t:'Minnesota Timberwolves',c:'Flip Saunders',seed:4,conf:'West',rw:2},
+{s:'2003-04',t:'Dallas Mavericks',c:'Don Nelson',seed:3,conf:'West',rw:1},
+{s:'2003-04',t:'Denver Nuggets',c:'Jeff Bzdelik',seed:5,conf:'West',rw:1},
+{s:'2003-04',t:'Houston Rockets',c:'Rudy Tomjanovich',seed:6,conf:'West',rw:0},
+{s:'2004-05',t:'San Antonio Spurs',c:'Gregg Popovich',seed:1,conf:'West',rw:4},
+{s:'2004-05',t:'Denver Nuggets',c:'George Karl',seed:2,conf:'West',rw:2},
+{s:'2004-05',t:'Dallas Mavericks',c:'Don Nelson',seed:3,conf:'West',rw:1},
+{s:'2004-05',t:'Houston Rockets',c:'Jeff Van Gundy',seed:4,conf:'West',rw:1},
+{s:'2004-05',t:'Memphis Grizzlies',c:'Mike Fratello',seed:5,conf:'West',rw:0},
+{s:'2004-05',t:'Los Angeles Lakers',c:'Rudy Tomjanovich',seed:6,conf:'West',rw:0},
+{s:'2004-05',t:'Detroit Pistons',c:'Larry Brown',seed:1,conf:'East',rw:4},
+{s:'2004-05',t:'Miami Heat',c:'Stan Van Gundy',seed:2,conf:'East',rw:3},
+{s:'2004-05',t:'Indiana Pacers',c:'Rick Carlisle',seed:3,conf:'East',rw:1},
+{s:'2004-05',t:'Boston Celtics',c:'Doc Rivers',seed:4,conf:'East',rw:1},
+{s:'2004-05',t:'New Jersey Nets',c:'Lawrence Frank',seed:5,conf:'East',rw:0},
+{s:'2004-05',t:'Philadelphia 76ers',c:'Jim O\'Brien',seed:6,conf:'East',rw:0},
+{s:'2005-06',t:'Miami Heat',c:'Pat Riley',seed:5,conf:'East',rw:4},
+{s:'2005-06',t:'Detroit Pistons',c:'Flip Saunders',seed:1,conf:'East',rw:3},
+{s:'2005-06',t:'Cleveland Cavaliers',c:'Mike Brown',seed:2,conf:'East',rw:2},
+{s:'2005-06',t:'New Jersey Nets',c:'Lawrence Frank',seed:3,conf:'East',rw:1},
+{s:'2005-06',t:'Indiana Pacers',c:'Rick Carlisle',seed:4,conf:'East',rw:1},
+{s:'2005-06',t:'Boston Celtics',c:'Doc Rivers',seed:6,conf:'East',rw:0},
+{s:'2005-06',t:'Los Angeles Lakers',c:'Phil Jackson',seed:1,conf:'West',rw:3},
+{s:'2005-06',t:'San Antonio Spurs',c:'Gregg Popovich',seed:2,conf:'West',rw:2},
+{s:'2005-06',t:'Denver Nuggets',c:'George Karl',seed:3,conf:'West',rw:1},
+{s:'2005-06',t:'Dallas Mavericks',c:'Avery Johnson',seed:4,conf:'West',rw:1},
+{s:'2005-06',t:'Memphis Grizzlies',c:'Mike Fratello',seed:5,conf:'West',rw:0},
+{s:'2005-06',t:'Houston Rockets',c:'Jeff Van Gundy',seed:6,conf:'West',rw:0},
+{s:'2006-07',t:'San Antonio Spurs',c:'Gregg Popovich',seed:1,conf:'West',rw:4},
+{s:'2006-07',t:'Denver Nuggets',c:'George Karl',seed:2,conf:'West',rw:2},
+{s:'2006-07',t:'Dallas Mavericks',c:'Avery Johnson',seed:3,conf:'West',rw:1},
+{s:'2006-07',t:'Phoenix Suns',c:'Mike D\'Antoni',seed:4,conf:'West',rw:1},
+{s:'2006-07',t:'Los Angeles Lakers',c:'Phil Jackson',seed:5,conf:'West',rw:0},
+{s:'2006-07',t:'Memphis Grizzlies',c:'Mike Fratello',seed:6,conf:'West',rw:0},
+{s:'2006-07',t:'Miami Heat',c:'Pat Riley',seed:1,conf:'East',rw:3},
+{s:'2006-07',t:'Detroit Pistons',c:'Flip Saunders',seed:2,conf:'East',rw:2},
+{s:'2006-07',t:'Cleveland Cavaliers',c:'Mike Brown',seed:3,conf:'East',rw:2},
+{s:'2006-07',t:'New Jersey Nets',c:'Lawrence Frank',seed:4,conf:'East',rw:1},
+{s:'2006-07',t:'Toronto Raptors',c:'Sam Mitchell',seed:5,conf:'East',rw:0},
+{s:'2006-07',t:'Indiana Pacers',c:'Rick Carlisle',seed:6,conf:'East',rw:0},
+{s:'2007-08',t:'Boston Celtics',c:'Doc Rivers',seed:1,conf:'East',rw:4},
+{s:'2007-08',t:'Orlando Magic',c:'Stan Van Gundy',seed:1,conf:'West',rw:3},
+{s:'2007-08',t:'Detroit Pistons',c:'Michael Curry',seed:2,conf:'East',rw:2},
+{s:'2007-08',t:'Los Angeles Lakers',c:'Phil Jackson',seed:1,conf:'West',rw:3},
+{s:'2007-08',t:'Cleveland Cavaliers',c:'Mike Brown',seed:3,conf:'East',rw:2},
+{s:'2007-08',t:'New Orleans Hornets',c:'Byron Scott',seed:2,conf:'West',rw:1},
+{s:'2007-08',t:'Atlanta Hawks',c:'Mike Woodson',seed:4,conf:'East',rw:1},
+{s:'2007-08',t:'Denver Nuggets',c:'George Karl',seed:2,conf:'West',rw:2},
+{s:'2007-08',t:'Toronto Raptors',c:'Sam Mitchell',seed:5,conf:'East',rw:0},
+{s:'2007-08',t:'San Antonio Spurs',c:'Gregg Popovich',seed:3,conf:'West',rw:1},
+{s:'2007-08',t:'New York Knicks',c:'Isiah Thomas',seed:6,conf:'East',rw:0},
+{s:'2007-08',t:'Utah Jazz',c:'Jerry Sloan',seed:4,conf:'West',rw:1},
+{s:'2008-09',t:'Los Angeles Lakers',c:'Phil Jackson',seed:1,conf:'West',rw:4},
+{s:'2008-09',t:'Orlando Magic',c:'Stan Van Gundy',seed:1,conf:'East',rw:3},
+{s:'2008-09',t:'Denver Nuggets',c:'George Karl',seed:2,conf:'West',rw:2},
+{s:'2008-09',t:'Cleveland Cavaliers',c:'Mike Brown',seed:2,conf:'East',rw:2},
+{s:'2008-09',t:'San Antonio Spurs',c:'Gregg Popovich',seed:3,conf:'West',rw:1},
+{s:'2008-09',t:'Atlanta Hawks',c:'Mike Woodson',seed:3,conf:'East',rw:2},
+{s:'2008-09',t:'New Orleans Hornets',c:'Byron Scott',seed:4,conf:'West',rw:1},
+{s:'2008-09',t:'Boston Celtics',c:'Doc Rivers',seed:4,conf:'East',rw:1},
+{s:'2008-09',t:'Portland Trail Blazers',c:'Nate McMillan',seed:5,conf:'West',rw:0},
+{s:'2008-09',t:'Chicago Bulls',c:'Vinny Del Negro',seed:5,conf:'East',rw:0},
+{s:'2009-10',t:'Los Angeles Lakers',c:'Phil Jackson',seed:1,conf:'West',rw:4},
+{s:'2009-10',t:'Boston Celtics',c:'Doc Rivers',seed:1,conf:'East',rw:3},
+{s:'2009-10',t:'Orlando Magic',c:'Stan Van Gundy',seed:2,conf:'East',rw:3},
+{s:'2009-10',t:'Denver Nuggets',c:'George Karl',seed:2,conf:'West',rw:2},
+{s:'2009-10',t:'San Antonio Spurs',c:'Gregg Popovich',seed:3,conf:'West',rw:1},
+{s:'2009-10',t:'Atlanta Hawks',c:'Mike Woodson',seed:3,conf:'East',rw:1},
+{s:'2009-10',t:'New Orleans Hornets',c:'Byron Scott',seed:4,conf:'West',rw:1},
+{s:'2009-10',t:'Orlando Magic',c:'Stan Van Gundy',seed:5,conf:'East',rw:1},
+{s:'2009-10',t:'Portland Trail Blazers',c:'Nate McMillan',seed:5,conf:'West',rw:0},
+{s:'2009-10',t:'Philadelphia 76ers',c:'Eddie Jordan',seed:6,conf:'East',rw:0},
+{s:'2010-11',t:'Miami Heat',c:'Erik Spoelstra',seed:2,conf:'East',rw:3},
+{s:'2010-11',t:'Dallas Mavericks',c:'Rick Carlisle',seed:2,conf:'West',rw:4},
+{s:'2010-11',t:'Boston Celtics',c:'Doc Rivers',seed:1,conf:'East',rw:3},
+{s:'2010-11',t:'Los Angeles Lakers',c:'Phil Jackson',seed:1,conf:'West',rw:3},
+{s:'2010-11',t:'Chicago Bulls',c:'Tom Thibodeau',seed:3,conf:'East',rw:2},
+{s:'2010-11',t:'Oklahoma City Thunder',c:'Scott Brooks',seed:3,conf:'West',rw:2},
+{s:'2010-11',t:'New York Knicks',c:'Mike D\'Antoni',seed:5,conf:'East',rw:1},
+{s:'2010-11',t:'Memphis Grizzlies',c:'Lionel Hollins',seed:5,conf:'West',rw:1},
+{s:'2010-11',t:'Atlanta Hawks',c:'Mike Woodson',seed:4,conf:'East',rw:0},
+{s:'2010-11',t:'Denver Nuggets',c:'George Karl',seed:4,conf:'West',rw:0},
+{s:'2011-12',t:'Miami Heat',c:'Erik Spoelstra',seed:2,conf:'East',rw:4},
+{s:'2011-12',t:'Oklahoma City Thunder',c:'Scott Brooks',seed:1,conf:'West',rw:3},
+{s:'2011-12',t:'Boston Celtics',c:'Doc Rivers',seed:1,conf:'East',rw:3},
+{s:'2011-12',t:'Los Angeles Lakers',c:'Phil Jackson',seed:2,conf:'West',rw:2},
+{s:'2011-12',t:'Chicago Bulls',c:'Tom Thibodeau',seed:3,conf:'East',rw:1},
+{s:'2011-12',t:'San Antonio Spurs',c:'Gregg Popovich',seed:3,conf:'West',rw:2},
+{s:'2011-12',t:'Indiana Pacers',c:'Jim O\'Brien',seed:5,conf:'East',rw:1},
+{s:'2011-12',t:'Denver Nuggets',c:'George Karl',seed:4,conf:'West',rw:1},
+{s:'2011-12',t:'Philadelphia 76ers',c:'Doug Collins',seed:4,conf:'East',rw:0},
+{s:'2011-12',t:'Los Angeles Clippers',c:'Vinny Del Negro',seed:5,conf:'West',rw:1},
+{s:'2012-13',t:'Miami Heat',c:'Erik Spoelstra',seed:1,conf:'East',rw:4},
+{s:'2012-13',t:'San Antonio Spurs',c:'Gregg Popovich',seed:2,conf:'West',rw:3},
+{s:'2012-13',t:'New York Knicks',c:'Mike Woodson',seed:2,conf:'East',rw:2},
+{s:'2012-13',t:'Los Angeles Lakers',c:'Mike D\'Antoni',seed:1,conf:'West',rw:2},
+{s:'2012-13',t:'Indiana Pacers',c:'Frank Vogel',seed:3,conf:'East',rw:1},
+{s:'2012-13',t:'Denver Nuggets',c:'George Karl',seed:3,conf:'West',rw:1},
+{s:'2012-13',t:'Chicago Bulls',c:'Tom Thibodeau',seed:4,conf:'East',rw:1},
+{s:'2012-13',t:'Oklahoma City Thunder',c:'Scott Brooks',seed:4,conf:'West',rw:1},
+{s:'2012-13',t:'Brooklyn Nets',c:'Avery Johnson',seed:5,conf:'East',rw:0},
+{s:'2012-13',t:'Memphis Grizzlies',c:'Lionel Hollins',seed:5,conf:'West',rw:0},
+{s:'2013-14',t:'San Antonio Spurs',c:'Gregg Popovich',seed:1,conf:'West',rw:4},
+{s:'2013-14',t:'Miami Heat',c:'Erik Spoelstra',seed:1,conf:'East',rw:3},
+{s:'2013-14',t:'Denver Nuggets',c:'Michael Malone',seed:3,conf:'West',rw:2},
+{s:'2013-14',t:'Indiana Pacers',c:'Frank Vogel',seed:1,conf:'East',rw:3},
+{s:'2013-14',t:'Oklahoma City Thunder',c:'Scott Brooks',seed:2,conf:'West',rw:2},
+{s:'2013-14',t:'New York Knicks',c:'Mike Woodson',seed:2,conf:'East',rw:1},
+{s:'2013-14',t:'Los Angeles Clippers',c:'Doc Rivers',seed:4,conf:'West',rw:1},
+{s:'2013-14',t:'Brooklyn Nets',c:'Jason Kidd',seed:3,conf:'East',rw:1},
+{s:'2013-14',t:'Portland Trail Blazers',c:'Terry Stotts',seed:5,conf:'West',rw:0},
+{s:'2013-14',t:'Washington Wizards',c:'Randy Wittman',seed:5,conf:'East',rw:0},
+{s:'2014-15',t:'Golden State Warriors',c:'Steve Kerr',seed:1,conf:'West',rw:4},
+{s:'2014-15',t:'Cleveland Cavaliers',c:'David Blatt',seed:2,conf:'East',rw:3},
+{s:'2014-15',t:'Houston Rockets',c:'Kevin McHale',seed:2,conf:'West',rw:2},
+{s:'2014-15',t:'Atlanta Hawks',c:'Mike Budenholzer',seed:1,conf:'East',rw:3},
+{s:'2014-15',t:'Los Angeles Clippers',c:'Doc Rivers',seed:3,conf:'West',rw:2},
+{s:'2014-15',t:'Toronto Raptors',c:'Dwane Casey',seed:3,conf:'East',rw:1},
+{s:'2014-15',t:'Memphis Grizzlies',c:'David Fizdale',seed:4,conf:'West',rw:1},
+{s:'2014-15',t:'Washington Wizards',c:'Randy Wittman',seed:4,conf:'East',rw:1},
+{s:'2014-15',t:'Denver Nuggets',c:'Michael Malone',seed:5,conf:'West',rw:0},
+{s:'2014-15',t:'Chicago Bulls',c:'Tom Thibodeau',seed:5,conf:'East',rw:1},
+{s:'2015-16',t:'Cleveland Cavaliers',c:'Tyronn Lue',seed:1,conf:'East',rw:4},
+{s:'2015-16',t:'Golden State Warriors',c:'Steve Kerr',seed:1,conf:'West',rw:3},
+{s:'2015-16',t:'Toronto Raptors',c:'Dwane Casey',seed:2,conf:'East',rw:2},
+{s:'2015-16',t:'Oklahoma City Thunder',c:'Billy Donovan',seed:2,conf:'West',rw:3},
+{s:'2015-16',t:'Miami Heat',c:'Erik Spoelstra',seed:3,conf:'East',rw:1},
+{s:'2015-16',t:'San Antonio Spurs',c:'Gregg Popovich',seed:3,conf:'West',rw:1},
+{s:'2015-16',t:'Boston Celtics',c:'Brad Stevens',seed:4,conf:'East',rw:2},
+{s:'2015-16',t:'Los Angeles Clippers',c:'Doc Rivers',seed:4,conf:'West',rw:1},
+{s:'2015-16',t:'Detroit Pistons',c:'Stan Van Gundy',seed:5,conf:'East',rw:0},
+{s:'2015-16',t:'Memphis Grizzlies',c:'David Fizdale',seed:5,conf:'West',rw:0},
+{s:'2016-17',t:'Golden State Warriors',c:'Steve Kerr',seed:1,conf:'West',rw:4},
+{s:'2016-17',t:'Cleveland Cavaliers',c:'Tyronn Lue',seed:1,conf:'East',rw:3},
+{s:'2016-17',t:'San Antonio Spurs',c:'Gregg Popovich',seed:2,conf:'West',rw:2},
+{s:'2016-17',t:'Boston Celtics',c:'Brad Stevens',seed:1,conf:'East',rw:3},
+{s:'2016-17',t:'Houston Rockets',c:'Mike D\'Antoni',seed:3,conf:'West',rw:1},
+{s:'2016-17',t:'Toronto Raptors',c:'Dwane Casey',seed:3,conf:'East',rw:1},
+{s:'2016-17',t:'Memphis Grizzlies',c:'David Fizdale',seed:4,conf:'West',rw:1},
+{s:'2016-17',t:'Washington Wizards',c:'Scott Brooks',seed:4,conf:'East',rw:1},
+{s:'2016-17',t:'Oklahoma City Thunder',c:'Billy Donovan',seed:6,conf:'West',rw:0},
+{s:'2016-17',t:'Milwaukee Bucks',c:'Jason Kidd',seed:6,conf:'East',rw:0},
+{s:'2017-18',t:'Golden State Warriors',c:'Steve Kerr',seed:1,conf:'West',rw:4},
+{s:'2017-18',t:'Cleveland Cavaliers',c:'Tyronn Lue',seed:1,conf:'East',rw:3},
+{s:'2017-18',t:'Houston Rockets',c:'Mike D\'Antoni',seed:1,conf:'West',rw:3},
+{s:'2017-18',t:'Boston Celtics',c:'Brad Stevens',seed:2,conf:'East',rw:3},
+{s:'2017-18',t:'New Orleans Pelicans',c:'Alvin Gentry',seed:6,conf:'West',rw:2},
+{s:'2017-18',t:'Philadelphia 76ers',c:'Brett Brown',seed:3,conf:'East',rw:1},
+{s:'2017-18',t:'Denver Nuggets',c:'Mike Malone',seed:4,conf:'West',rw:1},
+{s:'2017-18',t:'Miami Heat',c:'Erik Spoelstra',seed:5,conf:'East',rw:0},
+{s:'2017-18',t:'Oklahoma City Thunder',c:'Billy Donovan',seed:4,conf:'West',rw:1},
+{s:'2017-18',t:'Toronto Raptors',c:'Dwane Casey',seed:5,conf:'East',rw:1},
+{s:'2018-19',t:'Toronto Raptors',c:'Nick Nurse',seed:2,conf:'East',rw:4},
+{s:'2018-19',t:'Golden State Warriors',c:'Steve Kerr',seed:1,conf:'West',rw:3},
+{s:'2018-19',t:'Denver Nuggets',c:'Michael Malone',seed:2,conf:'West',rw:2},
+{s:'2018-19',t:'Boston Celtics',c:'Brad Stevens',seed:2,conf:'East',rw:3},
+{s:'2018-19',t:'Portland Trail Blazers',c:'Terry Stotts',seed:3,conf:'West',rw:1},
+{s:'2018-19',t:'Philadelphia 76ers',c:'Brett Brown',seed:3,conf:'East',rw:2},
+{s:'2018-19',t:'Houston Rockets',c:'Mike D\'Antoni',seed:4,conf:'West',rw:1},
+{s:'2018-19',t:'Milwaukee Bucks',c:'Mike Budenholzer',seed:1,conf:'East',rw:2},
+{s:'2018-19',t:'San Antonio Spurs',c:'Gregg Popovich',seed:7,conf:'West',rw:0},
+{s:'2018-19',t:'Oklahoma City Thunder',c:'Billy Donovan',seed:5,conf:'West',rw:1},
+{s:'2019-20',t:'Los Angeles Lakers',c:'Frank Vogel',seed:1,conf:'West',rw:4},
+{s:'2019-20',t:'Miami Heat',c:'Erik Spoelstra',seed:5,conf:'East',rw:3},
+{s:'2019-20',t:'Denver Nuggets',c:'Michael Malone',seed:3,conf:'West',rw:3},
+{s:'2019-20',t:'Boston Celtics',c:'Brad Stevens',seed:3,conf:'East',rw:3},
+{s:'2019-20',t:'Los Angeles Clippers',c:'Doc Rivers',seed:2,conf:'West',rw:2},
+{s:'2019-20',t:'Toronto Raptors',c:'Nick Nurse',seed:2,conf:'East',rw:2},
+{s:'2019-20',t:'Houston Rockets',c:'Mike D\'Antoni',seed:6,conf:'West',rw:1},
+{s:'2019-20',t:'Philadelphia 76ers',c:'Brett Brown',seed:6,conf:'East',rw:1},
+{s:'2019-20',t:'Utah Jazz',c:'Quin Snyder',seed:4,conf:'West',rw:1},
+{s:'2019-20',t:'Milwaukee Bucks',c:'Mike Budenholzer',seed:1,conf:'East',rw:1},
+{s:'2020-21',t:'Milwaukee Bucks',c:'Mike Budenholzer',seed:3,conf:'East',rw:4},
+{s:'2020-21',t:'Phoenix Suns',c:'Monty Williams',seed:2,conf:'West',rw:3},
+{s:'2020-21',t:'Brooklyn Nets',c:'Steve Nash',seed:2,conf:'East',rw:2},
+{s:'2020-21',t:'Denver Nuggets',c:'Michael Malone',seed:3,conf:'West',rw:1},
+{s:'2020-21',t:'Atlanta Hawks',c:'Nate McMillan',seed:5,conf:'East',rw:2},
+{s:'2020-21',t:'Utah Jazz',c:'Quin Snyder',seed:1,conf:'West',rw:1},
+{s:'2020-21',t:'New York Knicks',c:'Tom Thibodeau',seed:4,conf:'East',rw:1},
+{s:'2020-21',t:'Los Angeles Clippers',c:'Tyronn Lue',seed:4,conf:'West',rw:1},
+{s:'2020-21',t:'Philadelphia 76ers',c:'Doc Rivers',seed:1,conf:'East',rw:2},
+{s:'2020-21',t:'Los Angeles Lakers',c:'Frank Vogel',seed:7,conf:'West',rw:0},
+{s:'2021-22',t:'Golden State Warriors',c:'Steve Kerr',seed:3,conf:'West',rw:4},
+{s:'2021-22',t:'Boston Celtics',c:'Ime Udoka',seed:2,conf:'East',rw:3},
+{s:'2021-22',t:'Miami Heat',c:'Erik Spoelstra',seed:1,conf:'East',rw:3},
+{s:'2021-22',t:'Dallas Mavericks',c:'Jason Kidd',seed:4,conf:'West',rw:2},
+{s:'2021-22',t:'Philadelphia 76ers',c:'Doc Rivers',seed:3,conf:'East',rw:2},
+{s:'2021-22',t:'Denver Nuggets',c:'Michael Malone',seed:1,conf:'West',rw:1},
+{s:'2021-22',t:'Phoenix Suns',c:'Monty Williams',seed:1,conf:'West',rw:2},
+{s:'2021-22',t:'Chicago Bulls',c:'Billy Donovan',seed:6,conf:'East',rw:1},
+{s:'2021-22',t:'Memphis Grizzlies',c:'Taylor Jenkins',seed:2,conf:'West',rw:1},
+{s:'2021-22',t:'Brooklyn Nets',c:'Steve Nash',seed:7,conf:'East',rw:0},
+{s:'2022-23',t:'Denver Nuggets',c:'Michael Malone',seed:1,conf:'West',rw:4},
+{s:'2022-23',t:'Miami Heat',c:'Erik Spoelstra',seed:8,conf:'East',rw:3},
+{s:'2022-23',t:'Phoenix Suns',c:'Monty Williams',seed:1,conf:'West',rw:3},
+{s:'2022-23',t:'Boston Celtics',c:'Joe Mazzulla',seed:2,conf:'East',rw:3},
+{s:'2022-23',t:'Los Angeles Lakers',c:'Darvin Ham',seed:5,conf:'West',rw:2},
+{s:'2022-23',t:'Denver Nuggets',c:'Michael Malone',seed:7,conf:'East',rw:2},
+{s:'2022-23',t:'Denver Nuggets',c:'Michael Malone',seed:6,conf:'West',rw:1},
+{s:'2022-23',t:'Philadelphia 76ers',c:'Doc Rivers',seed:4,conf:'East',rw:1},
+{s:'2022-23',t:'Golden State Warriors',c:'Steve Kerr',seed:3,conf:'West',rw:2},
+{s:'2022-23',t:'New York Knicks',c:'Tom Thibodeau',seed:5,conf:'East',rw:0},
+{s:'2023-24',t:'Boston Celtics',c:'Joe Mazzulla',seed:1,conf:'East',rw:4},
+{s:'2023-24',t:'Dallas Mavericks',c:'Jason Kidd',seed:5,conf:'West',rw:3},
+{s:'2023-24',t:'Denver Nuggets',c:'Michael Malone',seed:1,conf:'West',rw:3},
+{s:'2023-24',t:'New York Knicks',c:'Tom Thibodeau',seed:2,conf:'East',rw:3},
+{s:'2023-24',t:'Los Angeles Lakers',c:'Darvin Ham',seed:8,conf:'West',rw:2},
+{s:'2023-24',t:'Miami Heat',c:'Erik Spoelstra',seed:3,conf:'East',rw:1},
+{s:'2023-24',t:'Phoenix Suns',c:'Monty Williams',seed:2,conf:'West',rw:2},
+{s:'2023-24',t:'Philadelphia 76ers',c:'Nick Nurse',seed:4,conf:'East',rw:1},
+{s:'2023-24',t:'Sacramento Kings',c:'Mike Brown',seed:4,conf:'West',rw:1},
+{s:'2023-24',t:'Orlando Magic',c:'Jamahl Mosley',seed:5,conf:'East',rw:0},
+{s:'2024-25',t:'Oklahoma City Thunder',c:'Mark Daigneault',seed:1,conf:'West',rw:4},
+{s:'2024-25',t:'Boston Celtics',c:'Joe Mazzulla',seed:1,conf:'East',rw:3},
+{s:'2024-25',t:'Houston Rockets',c:'Ime Udoka',seed:3,conf:'West',rw:2},
+{s:'2024-25',t:'Cleveland Cavaliers',c:'Kenny Atkinson',seed:1,conf:'East',rw:3},
+{s:'2024-25',t:'Denver Nuggets',c:'Michael Malone',seed:2,conf:'West',rw:1},
+{s:'2024-25',t:'New York Knicks',c:'Tom Thibodeau',seed:2,conf:'East',rw:2},
+{s:'2024-25',t:'Golden State Warriors',c:'Steve Kerr',seed:10,conf:'West',rw:0},
+{s:'2024-25',t:'Miami Heat',c:'Erik Spoelstra',seed:3,conf:'East',rw:1},
+{s:'2024-25',t:'Los Angeles Lakers',c:'JJ Redick',seed:8,conf:'West',rw:0},
+{s:'2024-25',t:'Chicago Bulls',c:'Billy Donovan',seed:11,conf:'East',rw:0}
 ];
 
-let activeDecade = '';
-let searchQ = '';
-let coachQ = '';
-let teamQ = '';
-let sortState = { col: null, dir: 'asc' };
+const EXPECTED_ROUNDS = {1: 2.5, 2: 1.8, 3: 1.3, 4: 1.0, 5: 0.7, 6: 0.5, 7: 0.3, 8: 0.2};
 
-function init() {
-  // Populate coach dropdown
-  const coaches = [...new Set(CHAMPS.map(c => c.coach))].sort();
-  const coachSel = document.getElementById('coachFilter');
-  coaches.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; coachSel.appendChild(o); });
-
-  // Populate team dropdown (abbreviated)
-    const TEAM_ABBR={'Atlanta Hawks':'ATL','Boston Celtics':'BOS','Brooklyn Nets':'BKN','Charlotte Hornets':'CHA','Chicago Bulls':'CHI','Cleveland Cavaliers':'CLE','Dallas Mavericks':'DAL','Denver Nuggets':'DEN','Detroit Pistons':'DET','Golden State Warriors':'GSW','Houston Rockets':'HOU','Indiana Pacers':'IND','Los Angeles Clippers':'LAC','Los Angeles Lakers':'LAL','Memphis Grizzlies':'MEM','Miami Heat':'MIA','Milwaukee Bucks':'MIL','Minnesota Timberwolves':'MIN','New Orleans Pelicans':'NOP','New York Knicks':'NYK','Oklahoma City Thunder':'OKC','Orlando Magic':'ORL','Philadelphia 76ers':'PHI','Phoenix Suns':'PHX','Portland Trail Blazers':'POR','Sacramento Kings':'SAC','San Antonio Spurs':'SAS','Seattle SuperSonics':'SEA','Toronto Raptors':'TOR','Utah Jazz':'UTA','Washington Wizards':'WAS','New Jersey Nets':'NJN'};
-    const teams = [...new Set(CHAMPS.map(c => c.champion))].sort();
-    const teamSel = document.getElementById('teamFilter');
-    teams.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = TEAM_ABBR[t]||t; teamSel.appendChild(o); });
-
-  buildStats();
-  render();
-  bindEvents();
+function calculatePlayoffRED(rw, seed) {
+  return rw - (EXPECTED_ROUNDS[seed] || 0);
 }
 
 function getDecade(season) {
@@ -409,35 +872,159 @@ function getDecade(season) {
   return '20';
 }
 
+function getResultText(rw) {
+  switch(rw) {
+    case 0: return '1st Round';
+    case 1: return '2nd Round';
+    case 2: return 'Conf Finals';
+    case 3: return 'Finals';
+    case 4: return 'Champion';
+    default: return '—';
+  }
+}
+
+function getRedColor(score) {
+  if (score >= 2.0) return 'red-very-positive';
+  if (score >= 1.0) return 'red-positive';
+  if (score >= 0) return 'red-neutral';
+  if (score >= -0.5) return 'red-negative';
+  return 'red-very-negative';
+}
+
+let activeDecades = new Set();
+let searchQ = '';
+let teamQ = '';
+let coachQ = '';
+let confQ = '';
+let seedQ = '';
+let sortState = { col: 'red', dir: 'desc' };
+
+function init() {
+  populateSelects();
+  buildStats();
+  render();
+  bindEvents();
+}
+
+function populateSelects() {
+  const teams = [...new Set(PLAYOFF_DATA.map(d => d.t))].sort();
+  const teamSel = document.getElementById('teamFilter');
+  teams.forEach(t => {
+    const o = document.createElement('option');
+    o.value = t;
+    o.textContent = t;
+    teamSel.appendChild(o);
+  });
+
+  const coaches = [...new Set(PLAYOFF_DATA.map(d => d.c))].sort();
+  const coachSel = document.getElementById('coachFilter');
+  coaches.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c;
+    o.textContent = c;
+    coachSel.appendChild(o);
+  });
+}
+
+function buildStats() {
+  let stats = {
+    highest: null,
+    lowest: null,
+    mostApp: null,
+    mostAppCount: 0,
+    seedAvgs: {}
+  };
+
+  PLAYOFF_DATA.forEach(d => {
+    const red = calculatePlayoffRED(d.rw, d.seed);
+    if (!stats.highest || red > stats.highest.red) {
+      stats.highest = { ...d, red };
+    }
+    if (!stats.lowest || red < stats.lowest.red) {
+      stats.lowest = { ...d, red };
+    }
+
+    if (!stats.seedAvgs[d.seed]) {
+      stats.seedAvgs[d.seed] = { sum: 0, count: 0 };
+    }
+    stats.seedAvgs[d.seed].sum += red;
+    stats.seedAvgs[d.seed].count++;
+  });
+
+  const teamCounts = {};
+  PLAYOFF_DATA.forEach(d => {
+    teamCounts[d.t] = (teamCounts[d.t] || 0) + 1;
+  });
+  const maxTeam = Object.entries(teamCounts).sort((a,b) => b[1]-a[1])[0];
+  stats.mostApp = { team: maxTeam[0], count: maxTeam[1] };
+
+  const statsRow = document.getElementById('statsRow');
+  statsRow.innerHTML = `
+    <div class="stat-card">
+      <div class="stat-val" style="color:#0A7D2A;">${stats.highest.red >= 0 ? '+' : ''}${stats.highest.red.toFixed(2)}</div>
+      <div class="stat-label">Highest RED</div>
+      <div class="stat-sub">${stats.highest.t} ${stats.highest.s}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" style="color:#C03030;">${stats.lowest.red.toFixed(2)}</div>
+      <div class="stat-label">Lowest RED</div>
+      <div class="stat-sub">${stats.lowest.t} ${stats.lowest.s}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">${stats.mostApp.count}</div>
+      <div class="stat-label">Most Playoff Appearances</div>
+      <div class="stat-sub">${stats.mostApp.team}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val">${(stats.seedAvgs[1].sum / stats.seedAvgs[1].count).toFixed(2)}</div>
+      <div class="stat-label">Avg RED (1-seed)</div>
+      <div class="stat-sub">Expected: 2.50</div>
+    </div>
+  `;
+
+  document.getElementById('seasonCount').textContent = [...new Set(PLAYOFF_DATA.map(d => d.s))].length;
+}
+
 function render() {
-  let data = CHAMPS.slice();
+  let data = PLAYOFF_DATA.slice();
 
   // Decade filter
-  if (activeDecade) data = data.filter(c => getDecade(c.season) === activeDecade);
-
-  // Coach filter
-  if (coachQ) data = data.filter(c => c.coach === coachQ);
+  if (activeDecades.size > 0) {
+    data = data.filter(d => activeDecades.has(getDecade(d.s)));
+  }
 
   // Team filter
-  if (teamQ) data = data.filter(c => c.champion === teamQ);
+  if (teamQ) data = data.filter(d => d.t === teamQ);
+
+  // Coach filter
+  if (coachQ) data = data.filter(d => d.c === coachQ);
+
+  // Conf filter
+  if (confQ) data = data.filter(d => d.conf === confQ);
+
+  // Seed filter
+  if (seedQ) data = data.filter(d => d.seed === parseInt(seedQ));
 
   // Search
   if (searchQ) {
     const q = searchQ.toLowerCase();
-    data = data.filter(c =>
-      c.champion.toLowerCase().includes(q) ||
-      c.coach.toLowerCase().includes(q) ||
-      c.opponent.toLowerCase().includes(q) ||
-      c.fmvp.toLowerCase().includes(q) ||
-      c.season.includes(q)
+    data = data.filter(d =>
+      d.t.toLowerCase().includes(q) ||
+      d.c.toLowerCase().includes(q) ||
+      d.s.includes(q)
     );
   }
+
+  // Add calculated RED to each entry
+  data = data.map(d => ({
+    ...d,
+    red: calculatePlayoffRED(d.rw, d.seed)
+  }));
 
   // Sort
   if (sortState.col) {
     data.sort((a, b) => {
       let av = a[sortState.col], bv = b[sortState.col];
-      if (sortState.col === 'series') { av = av.charAt(2); bv = bv.charAt(2); }
       if (typeof av === 'string') {
         return sortState.dir === 'asc' ? av.localeCompare(bv) : bv.localeCompare(av);
       }
@@ -445,7 +1032,7 @@ function render() {
     });
   }
 
-  const rc=document.getElementById('rowCount'); if(rc) rc.textContent=data.length;
+  document.getElementById('rowCount').textContent = data.length;
   const tbody = document.getElementById('tbody');
   const noData = document.getElementById('noData');
 
@@ -456,182 +1043,99 @@ function render() {
   }
   noData.style.display = 'none';
 
-  tbody.innerHTML = data.map((c, i) => `<tr>
-    <td class="rank-cell">${i + 1}</td>
-    <td class="season-cell">${c.season}</td>
-    <td class="champ-name">${c.champion}</td>
-    <td class="coach-cell">${c.coach}</td>
-    <td class="opp-name">${c.opponent}</td>
-    <td class="series-cell">${c.series}</td>
-    <td class="fmvp-cell">${c.fmvp}</td>
-  </tr>`).join('');
-}
-
-function buildStats() {
-  const sweeps = CHAMPS.filter(c => c.series.endsWith('-0')).length;
-  const game7s = CHAMPS.filter(c => c.series.endsWith('-3') && c.series.startsWith('4')).length;
-
-  // Repeats
-  let repeats = 0;
-  for (let i = 1; i < CHAMPS.length; i++) {
-    if (CHAMPS[i].champion === CHAMPS[i-1].champion) repeats++;
-  }
-
-  // Most titles coach
-  const cc = {};
-  CHAMPS.forEach(c => { cc[c.coach] = (cc[c.coach] || 0) + 1; });
-  const topCoach = Object.entries(cc).sort((a,b) => b[1]-a[1])[0];
-
-  // Most titles team
-  const tc = {};
-  CHAMPS.forEach(c => { tc[c.champion] = (tc[c.champion] || 0) + 1; });
-  const topTeam = Object.entries(tc).sort((a,b) => b[1]-a[1])[0];
-
-  // Most MVPs
-  const mc = {};
-  CHAMPS.forEach(c => { mc[c.fmvp] = (mc[c.fmvp] || 0) + 1; });
-  const topMVP = Object.entries(mc).sort((a,b) => b[1]-a[1])[0];
-
-  document.getElementById('statsRow').innerHTML = `
-    <div class="stat-card"><div class="stat-val">${sweeps}</div><div class="stat-label">Sweeps</div></div>
-    <div class="stat-card"><div class="stat-val">${game7s}</div><div class="stat-label">Game 7 Finals</div></div>
-    <div class="stat-card"><div class="stat-val">${repeats}</div><div class="stat-label">Repeat Titles</div></div>
-    <div class="stat-card"><div class="stat-val">${topCoach[1]}</div><div class="stat-label">Most Titles (Coach)</div><div class="stat-sub">${topCoach[0]}</div></div>
-    <div class="stat-card"><div class="stat-val">${topTeam[1]}</div><div class="stat-label">Most Titles (Team)</div><div class="stat-sub">${topTeam[0]}</div></div>
-    <div class="stat-card"><div class="stat-val">${topMVP[1]}</div><div class="stat-label">Most Finals MVPs</div><div class="stat-sub">${topMVP[0]}</div></div>
-  `;
-}
-
-function buildLeaderboards() {
-  // Championships by franchise
-  const tc = {};
-  CHAMPS.forEach(c => { tc[c.champion] = (tc[c.champion] || 0) + 1; });
-  const teams = Object.entries(tc).sort((a,b) => b[1]-a[1]);
-  document.getElementById('lbTeams').innerHTML = teams.map(([name, count]) =>
-    `<div class="lb-item"><span class="name">${name}</span><span class="count">${count}x</span></div>`
-  ).join('');
-
-  // Championships by coach
-  const cc = {};
-  CHAMPS.forEach(c => { cc[c.coach] = (cc[c.coach] || 0) + 1; });
-  const coaches = Object.entries(cc).sort((a,b) => b[1]-a[1]).filter(c => c[1] > 1);
-  document.getElementById('lbCoaches').innerHTML = coaches.map(([name, count]) =>
-    `<div class="lb-item"><span class="name">${name}</span><span class="count">${count}x</span></div>`
-  ).join('');
-
-  // MVPs
-  const mc = {};
-  CHAMPS.forEach(c => { mc[c.fmvp] = (mc[c.fmvp] || 0) + 1; });
-  const mvps = Object.entries(mc).sort((a,b) => b[1]-a[1]).filter(m => m[1] > 1);
-  document.getElementById('lbMVPs').innerHTML = mvps.map(([name, count]) =>
-    `<div class="lb-item"><span class="name">${name}</span><span class="count">${count}x MVP</span></div>`
-  ).join('');
-
-  // Dynasties
-  const dynasties = [];
-  let streak = 1;
-  for (let i = 1; i < CHAMPS.length; i++) {
-    if (CHAMPS[i].champion === CHAMPS[i-1].champion) {
-      streak++;
-    } else {
-      if (streak >= 2) {
-        const start = CHAMPS[i - streak].season;
-        const end = CHAMPS[i - 1].season;
-        dynasties.push({ team: CHAMPS[i-1].champion, count: streak, span: `${start} to ${end}` });
-      }
-      streak = 1;
-    }
-  }
-  if (streak >= 2) {
-    const start = CHAMPS[CHAMPS.length - streak].season;
-    const end = CHAMPS[CHAMPS.length - 1].season;
-    dynasties.push({ team: CHAMPS[CHAMPS.length-1].champion, count: streak, span: `${start} to ${end}` });
-  }
-  dynasties.sort((a,b) => b.count - a.count);
-  document.getElementById('lbDynasties').innerHTML = dynasties.map(d =>
-    `<div class="lb-item"><span class="name">${d.team} (${d.count}-peat, ${d.span})</span><span class="count">${d.count}x</span></div>`
-  ).join('');
+  tbody.innerHTML = data.map((d, i) => {
+    const seedDisplay = d.seed + (d.conf === 'East' ? 'E' : 'W');
+    const redColor = getRedColor(d.red);
+    return `<tr>
+      <td class="rank-cell">${i + 1}</td>
+      <td class="season-cell">${d.s}</td>
+      <td class="team-cell">${d.t}</td>
+      <td class="coach-cell">${d.c}</td>
+      <td class="seed-cell">${seedDisplay}</td>
+      <td class="result-cell">${getResultText(d.rw)}</td>
+      <td class="red-cell ${redColor}">${d.red >= 0 ? '+' : ''}${d.red.toFixed(2)}</td>
+    </tr>`;
+  }).join('');
 }
 
 function bindEvents() {
-  // Decade pills (toggle: click active to deselect)
+  // Decade pills
   document.querySelectorAll('.d-pill').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (btn.classList.contains('active')) {
-        btn.classList.remove('active');
-        activeDecade = '';
+    btn.addEventListener('click', function() {
+      const decade = this.getAttribute('data-decade');
+      if (activeDecades.has(decade)) {
+        activeDecades.delete(decade);
       } else {
-        document.querySelectorAll('.d-pill').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeDecade = btn.dataset.decade;
+        activeDecades.add(decade);
       }
+      this.classList.toggle('active');
       render();
     });
   });
-  // GO button
-  const goBtn = document.getElementById('goBtn');
-  if (goBtn) goBtn.addEventListener('click', () => render());
-  // Clear All
-  const clearBtn = document.getElementById('clearAllBtn');
-  if (clearBtn) clearBtn.addEventListener('click', () => {
-    activeDecade = ''; searchQ = ''; coachQ = ''; teamQ = '';
-    sortState = { col: null, dir: 'asc' };
-    document.querySelectorAll('.d-pill').forEach(b => b.classList.remove('active'));
-    document.getElementById('searchBox').value = '';
-    document.getElementById('coachFilter').value = '';
-    document.getElementById('teamFilter').value = '';
-    document.querySelectorAll('thead th').forEach(t => t.classList.remove('sorted'));
+
+  // Selects
+  document.getElementById('teamFilter').addEventListener('change', function() {
+    teamQ = this.value;
+    render();
+  });
+  document.getElementById('coachFilter').addEventListener('change', function() {
+    coachQ = this.value;
+    render();
+  });
+  document.getElementById('confFilter').addEventListener('change', function() {
+    confQ = this.value;
+    render();
+  });
+  document.getElementById('seedFilter').addEventListener('change', function() {
+    seedQ = this.value;
     render();
   });
 
   // Search
-  document.getElementById('searchBox').addEventListener('input', e => {
-    searchQ = e.target.value;
+  document.getElementById('searchBox').addEventListener('input', function() {
+    searchQ = this.value.trim();
     render();
   });
 
-  // Coach filter
-  document.getElementById('coachFilter').addEventListener('change', e => {
-    coachQ = e.target.value;
+  // GO button
+  document.getElementById('goBtn').addEventListener('click', render);
+
+  // Clear All button
+  document.getElementById('clearBtn').addEventListener('click', function() {
+    activeDecades.clear();
+    teamQ = '';
+    coachQ = '';
+    confQ = '';
+    seedQ = '';
+    searchQ = '';
+    document.getElementById('teamFilter').value = '';
+    document.getElementById('coachFilter').value = '';
+    document.getElementById('confFilter').value = '';
+    document.getElementById('seedFilter').value = '';
+    document.getElementById('searchBox').value = '';
+    document.querySelectorAll('.d-pill').forEach(btn => btn.classList.remove('active'));
     render();
   });
 
-  // Team filter
-  document.getElementById('teamFilter').addEventListener('change', e => {
-    teamQ = e.target.value;
-    render();
-  });
-
-  // Sort
-  document.querySelectorAll('thead th[data-col]').forEach(th => {
-    th.addEventListener('click', () => {
-      const col = th.dataset.col;
-      if (col === 'rank') return;
+  // Table header sorting
+  document.querySelectorAll('th').forEach(th => {
+    th.addEventListener('click', function() {
+      const col = this.getAttribute('data-col');
       if (sortState.col === col) {
         sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
       } else {
-        sortState = { col, dir: 'asc' };
+        sortState.col = col;
+        sortState.dir = col === 'red' ? 'desc' : 'asc';
       }
-      document.querySelectorAll('thead th').forEach(t => t.classList.remove('sorted'));
-      th.classList.add('sorted');
+      document.querySelectorAll('th').forEach(t => t.classList.remove('sorted'));
+      this.classList.add('sorted');
       render();
-    });
-  });
-
-  // View toggle
-  document.querySelectorAll('.v-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.v-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      const view = btn.dataset.view;
-      document.getElementById('tableView').style.display = view === 'table' ? 'block' : 'none';
-      document.getElementById('leaderView').classList.toggle('show', view === 'leaders');
-      if (view === 'leaders') buildLeaderboards();
     });
   });
 }
 
 init();
 </script>
+
 </body>
 </html>
