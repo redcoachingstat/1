@@ -650,6 +650,7 @@ Teams overperforming their margin regress; elite margins hold up.</div>
             if(teamCount) teamCount.textContent = allResults.length;
 
             renderLeaderboard(allResults);
+    attachSortListeners();
         }
 
         function getRedScoreClass(score) {
@@ -710,7 +711,6 @@ Teams overperforming their margin regress; elite margins hold up.</div>
                 leaderboardBody.appendChild(row);
             });
 
-            attachSortListeners();
         }
 
         function attachSortListeners() {
