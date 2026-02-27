@@ -220,6 +220,11 @@ tr:hover td { background: var(--s2); }
   .logo { font-size: 1.4rem; }
   th, td { padding: 7px 8px; }
 }
+.model-toggle{display:flex;gap:0;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-right:1rem;}
+.model-btn{padding:5px 16px;font-size:0.78rem;font-weight:600;font-family:'Inter',sans-serif;border:none;cursor:pointer;transition:all .15s;letter-spacing:0.5px;background:transparent;color:var(--muted);}
+.model-btn.active{background:var(--chrome);color:#fff;}
+.model-btn:hover:not(.active){background:var(--bg);color:var(--chrome);}
+.pred-note{font-size:0.72rem;color:var(--gold);font-style:italic;margin-left:8px;}
 </style>
 </head>
 <body>
@@ -264,8 +269,14 @@ tr:hover td { background: var(--s2); }
 
   <div id="resultsContainer" style="display:none;">
     <div class="results-header">
-      <div class="results-info">
-        Sorted by RED Score &nbsp;·&nbsp; click any column to re-sort
+      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+        <div class="model-toggle">
+          <button class="model-btn active" data-model="red" id="btnRED">RED</button>
+          <button class="model-btn" data-model="pred" id="btnPRED">PRED</button>
+        </div>
+        <div class="results-info" id="sortInfo">
+          Sorted by RED Score &nbsp;·&nbsp; click any column to re-sort
+        </div>
       </div>
       <div>
         <span id="nextRefreshLabel" style="display:none;"></span>
@@ -325,11 +336,19 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
         <li>Uses live ESPN standings data; falls back to All-Star break snapshot</li>
         <li>Compare against all historical seasons at <a href="https://redcoachingstat.github.io/1/All/" style="color:var(--gold)">All Seasons</a></li>
       </ul>
+      <h3>PRED Mode</h3>
+      <p>Toggle to <strong>PRED</strong> (Predictive RED) for rankings based on underlying performance indicators that better predict future success:</p>
+      <div class="formula-box">PRED = 0.50 × NetRating + 0.25 × (PythWin% × 100) + 0.15 × (ActualWin% - 50) + 0.10 × Momentum
+
+NetRating: Points scored minus allowed per game (strongest playoff predictor)
+PythWin%: Expected win% from scoring margin
+Momentum: Current win/loss streak</div>
+      <p><strong>Key difference:</strong> RED rewards clutch coaching (winning close games beyond scoring margin). PRED focuses on net rating — the #1 predictor of playoff success.</p>
     
     <div style="margin-top:1.2rem; padding-top:1rem; border-top:1px solid var(--border); font-size:0.82rem; color:var(--muted); line-height:1.6;">
       <strong style="color:var(--chrome);">RED Formula:</strong>
       <span class="fc">RED = 0.70 × WinsAbove.500 + 0.30 × PythagoreanDelta</span><br>
-      Descriptive only — not predictive. · Data via ESPN API (auto-refreshes every 20 min).
+      Toggle PRED mode for predictive rankings based on net rating. · Data via ESPN API (auto-refreshes every 20 min).
     </div>
 </div>
   </div>
@@ -394,6 +413,7 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
 
         let allResults = [];
         let currentSort = { column: 'red', direction: 'desc' };
+    let activeModel = 'red';
 
         // Helper Functions
         function formatDate(date) {
@@ -476,7 +496,11 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
                     const ptsFor   = get('pointsFor', 'avgPoints',    'ppg',  'Points For');
                     const ptsAgainst = get('pointsAgainst', 'oppAvgPoints', 'oppg', 'Points Against');
 
-                    records[name] = { wins, losses, ptsFor, ptsAgainst };
+                    // Extract streak for PRED momentum
+            const streakType = (stats.find(s => s.name === 'streak') || {}).displayValue || '';
+            const streakMatch = streakType.match(/(W|L)(\d+)/);
+            const streak = streakMatch ? (streakMatch[1] === 'W' ? 1 : -1) * parseInt(streakMatch[2]) : 0;
+            records[name] = { wins, losses, ptsFor, ptsAgainst, streak };
                 }
 
                 // If ESPN didn't return points data, pull it from our fallback
@@ -559,7 +583,24 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
             };
         }
 
-        async function initializeSystem() {
+        
+    // PRED (Predictive RED) - focuses on underlying performance indicators
+    // PRED = 0.50*NetRtg + 0.25*(PythPct*100) + 0.15*(WinPct*100-50) + 0.10*Momentum
+    function calculatePRED(wins, losses, ptsFor, ptsAgainst, streak) {
+      const gp = wins + losses;
+      if (gp === 0 || ptsFor === 0 || ptsAgainst === 0) return { predScore: 0, predPerGame: 0 };
+      const netRtg = ptsFor - ptsAgainst;
+      const EXP = 13.91;
+      const pfP = Math.pow(ptsFor, EXP);
+      const paP = Math.pow(ptsAgainst, EXP);
+      const pythPct = pfP / (pfP + paP);
+      const winPct = wins / gp;
+      const mom = streak || 0;
+      const predScore = (0.50 * netRtg) + (0.25 * (pythPct * 100)) + (0.15 * ((winPct * 100) - 50)) + (0.10 * mom);
+      return { predScore: parseFloat(predScore.toFixed(2)), predPerGame: predScore / gp };
+    }
+
+    async function initializeSystem() {
             allResults = [];
             progressText.textContent = 'Fetching standings...';
 
@@ -574,7 +615,8 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
                 const redData = calculateRED(
                     rec.wins, rec.losses, rec.ptsFor, rec.ptsAgainst
                 );
-                allResults.push({ ...team, ...redData });
+                const predData = calculatePRED(rec.wins, rec.losses, rec.ptsFor, rec.ptsAgainst, rec.streak || 0);
+            allResults.push({ ...team, ...redData, ...predData, ptsFor: rec.ptsFor, ptsAgainst: rec.ptsAgainst, streak: rec.streak || 0 });
             }
 
             // Show data source in timestamp
@@ -583,7 +625,7 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
                 : 'Standings as of All-Star Break 2026 (fallback)';
 
             // Sort by RED score descending
-            allResults.sort((a, b) => b.redScore - a.redScore);
+            allResults.sort((a, b) => activeModel === 'pred' ? b.predScore - a.predScore : b.redScore - a.redScore);
 
             // Show results
             loadingContainer.style.display = 'none';
@@ -618,10 +660,12 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
                 const rank = index + 1;
                 const row = document.createElement('tr');
 
-                const redScoreClass = getRedScoreClass(result.redScore);
+                const activeScore = activeModel === 'pred' ? result.predScore : result.redScore;
+            const activePerGame = activeModel === 'pred' ? result.predPerGame : result.redPerGame;
+            const redScoreClass = getRedScoreClass(activeScore);
                 const medal = getRankMedal(rank);
                 const record = `${result.actualWins}-${result.actualLosses}`;
-                const redPerGameStr = (result.redPerGame >= 0 ? '+' : '') + result.redPerGame.toFixed(3);
+                const redPerGameStr = (activePerGame >= 0 ? '+' : '') + activePerGame.toFixed(3);
                 const redScoreStr   = (result.redScore   >= 0 ? '+' : '') + result.redScore.toFixed(2);
 
                 row.innerHTML = `
@@ -746,7 +790,30 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
         }
 
         // Event Listeners
-        searchBox.addEventListener('input', (e) => {
+        // ── Model Toggle (RED vs PRED) ──────────────────────────────────
+    document.querySelectorAll('.model-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeModel = btn.dataset.model;
+        document.querySelectorAll('.model-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        // Update column headers
+        const label = activeModel === 'pred' ? 'PRED' : 'RED';
+        const ths = document.querySelectorAll('th.sortable');
+        ths.forEach(th => {
+          if (th.dataset.sort === 'red') th.textContent = label + ' Score';
+          if (th.dataset.sort === 'red-per-game') th.textContent = label + '/G';
+        });
+        // Update sort info text
+        const sortInfo = document.getElementById('sortInfo');
+        if (sortInfo) sortInfo.innerHTML = 'Sorted by ' + label + ' Score &nbsp;\u00b7&nbsp; click any column to re-sort';
+        // Re-sort and render
+        allResults.sort((a, b) => activeModel === 'pred' ? b.predScore - a.predScore : b.redScore - a.redScore);
+        currentSort = { column: 'red', direction: 'desc' };
+        renderLeaderboard(allResults);
+      });
+    });
+
+    searchBox.addEventListener('input', (e) => {
             filterBySearch(e.target.value);
         });
 
