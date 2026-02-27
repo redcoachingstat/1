@@ -272,6 +272,8 @@ tr:hover td { background: var(--s2); }
       <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
         <div class="model-toggle">
           <button class="model-btn active" data-model="red" id="btnRED">RED</button>
+          <button class="model-btn" data-model="redb" id="btnREDB">RED-B</button>
+          <button class="model-btn" data-model="redc" id="btnREDC">RED-C</button>
           <button class="model-btn" data-model="pred" id="btnPRED">Prediction</button>
         </div>
         <div class="results-info" id="sortInfo">
@@ -336,7 +338,19 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
         <li>Uses live ESPN standings data; falls back to All-Star break snapshot</li>
         <li>Compare against all historical seasons at <a href="https://redcoachingstat.github.io/1/All/" style="color:var(--gold)">All Seasons</a></li>
       </ul>
-      <h3>Prediction Mode</h3>
+      <h3>RED-B (Less Win Duplication)</h3>
+        <p>Standard RED double-counts wins in both terms. RED-B replaces the efficiency term with a win% comparison:</p>
+        <div class="formula-box">RED-B = 0.70 x WinsAbove.500 + 0.30 x (ActualWin% - PythWin%) x 100
+Term 1 = volume dominance (how many wins above .500)
+Term 2 = conversion skill (winning more than scoring margin predicts)</div>
+
+        <h3>RED-C (Margin Signal)</h3>
+        <p>Makes efficiency purely about scoring margin overperformance, reducing win circularity:</p>
+        <div class="formula-box">RED-C = 0.75 x WinsAbove.500 + 0.25 x (PythWin% - ActualWin%) x 100
+Term 1 = resume (75% weight)
+Term 2 = margin signal (teams whose point differential exceeds their record)</div>
+
+        <h3>Prediction Mode</h3>
       <p>Toggle to <strong>Prediction</strong> mode to see projected end-of-season RED scores based on current pace:</p>
       <div class="formula-box">Prediction extrapolates current W-L pace to 82 games,
 then computes what the RED score would be at season end.
@@ -585,7 +599,39 @@ Estimates where each team will finish if they maintain current trajectory.</div>
         
     // PRED (Predictive RED) - focuses on underlying performance indicators
     // PRED = 0.50*NetRtg + 0.25*(PythPct*100) + 0.15*(WinPct*100-50) + 0.10*Momentum
-    function calculatePRED(wins, losses, ptsFor, ptsAgainst, streak) {
+    // RED Option B: Reduces win duplication
+  // RED_B = 0.70 * WinsAbove.500 + 0.30 * (ActualWin% - ExpectedWin%)
+  function calculateRED_B(wins, losses, ptsFor, ptsAgainst) {
+    const gp = wins + losses;
+    if (gp === 0 || ptsFor === 0 || ptsAgainst === 0) return { redBScore: 0, redBPerGame: 0 };
+    const winsAboveAvg = wins - (gp * 0.5);
+    const EXP = 13.91;
+    const pfP = Math.pow(ptsFor, EXP);
+    const paP = Math.pow(ptsAgainst, EXP);
+    const pythPct = pfP / (pfP + paP);
+    const actualWinPct = wins / gp;
+    const conversionSkill = actualWinPct - pythPct;
+    const redBScore = (0.70 * winsAboveAvg) + (0.30 * conversionSkill * 100);
+    return { redBScore: parseFloat(redBScore.toFixed(2)), redBPerGame: parseFloat((redBScore / gp).toFixed(4)) };
+  }
+
+  // RED Option C: Margin-only efficiency, less circularity
+  // RED_C = 0.75 * WinsAbove.500 + 0.25 * (PythWin% - ActualWin%) * 100
+  function calculateRED_C(wins, losses, ptsFor, ptsAgainst) {
+    const gp = wins + losses;
+    if (gp === 0 || ptsFor === 0 || ptsAgainst === 0) return { redCScore: 0, redCPerGame: 0 };
+    const winsAboveAvg = wins - (gp * 0.5);
+    const EXP = 13.91;
+    const pfP = Math.pow(ptsFor, EXP);
+    const paP = Math.pow(ptsAgainst, EXP);
+    const pythPct = pfP / (pfP + paP);
+    const actualWinPct = wins / gp;
+    const marginSignal = pythPct - actualWinPct;
+    const redCScore = (0.75 * winsAboveAvg) + (0.25 * marginSignal * 100);
+    return { redCScore: parseFloat(redCScore.toFixed(2)), redCPerGame: parseFloat((redCScore / gp).toFixed(4)) };
+  }
+
+  function calculatePRED(wins, losses, ptsFor, ptsAgainst, streak) {
     const gp = wins + losses;
     if (gp === 0 || ptsFor === 0 || ptsAgainst === 0) return { predScore: 0, predPerGame: 0 };
     const pace = 82 / gp;
@@ -617,7 +663,9 @@ Estimates where each team will finish if they maintain current trajectory.</div>
                     rec.wins, rec.losses, rec.ptsFor, rec.ptsAgainst
                 );
                 const predData = calculatePRED(rec.wins, rec.losses, rec.ptsFor, rec.ptsAgainst, rec.streak || 0);
-            allResults.push({ ...team, ...redData, ...predData, ptsFor: rec.ptsFor, ptsAgainst: rec.ptsAgainst, streak: rec.streak || 0 });
+        const redBData = calculateRED_B(rec.wins, rec.losses, rec.ptsFor, rec.ptsAgainst);
+        const redCData = calculateRED_C(rec.wins, rec.losses, rec.ptsFor, rec.ptsAgainst);
+            allResults.push({ ...team, ...redData, ...predData, ...redBData, ...redCData, ptsFor: rec.ptsFor, ptsAgainst: rec.ptsAgainst, streak: rec.streak || 0 });
             }
 
             // Show data source in timestamp
@@ -626,7 +674,7 @@ Estimates where each team will finish if they maintain current trajectory.</div>
                 : 'Standings as of All-Star Break 2026 (fallback)';
 
             // Sort by RED score descending
-            allResults.sort((a, b) => activeModel === 'pred' ? b.predScore - a.predScore : b.redScore - a.redScore);
+            allResults.sort((a, b) => { const sa = activeModel === 'pred' ? a.predScore : activeModel === 'redb' ? a.redBScore : activeModel === 'redc' ? a.redCScore : a.redScore; const sb = activeModel === 'pred' ? b.predScore : activeModel === 'redb' ? b.redBScore : activeModel === 'redc' ? b.redCScore : b.redScore; return sb - sa; });
 
             // Show results
             loadingContainer.style.display = 'none';
@@ -661,8 +709,8 @@ Estimates where each team will finish if they maintain current trajectory.</div>
                 const rank = index + 1;
                 const row = document.createElement('tr');
 
-                const activeScore = activeModel === 'pred' ? result.predScore : result.redScore;
-            const activePerGame = activeModel === 'pred' ? result.predPerGame : result.redPerGame;
+                const activeScore = activeModel === 'pred' ? result.predScore : activeModel === 'redb' ? result.redBScore : activeModel === 'redc' ? result.redCScore : result.redScore;
+            const activePerGame = activeModel === 'pred' ? result.predPerGame : activeModel === 'redb' ? result.redBPerGame : activeModel === 'redc' ? result.redCPerGame : result.redPerGame;
             const redScoreClass = getRedScoreClass(activeScore);
                 const medal = getRankMedal(rank);
                 const record = activeModel === 'pred' ? `${result.projWins}-${result.projLosses}` : `${result.actualWins}-${result.actualLosses}`;
@@ -689,7 +737,7 @@ Estimates where each team will finish if they maintain current trajectory.</div>
                     </td>
                     <td class="stats-cell">${redPerGameStr}</td>
                     <td class="record-cell">${record}</td>
-                    <td class="stats-cell">${result.gamesPlayed}</td>
+                    <td class="stats-cell">${activeModel === 'pred' ? (82 - result.gamesPlayed) : result.gamesPlayed}</td>
                 `;
 
                 leaderboardBody.appendChild(row);
@@ -798,18 +846,19 @@ Estimates where each team will finish if they maintain current trajectory.</div>
         document.querySelectorAll('.model-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         // Update column headers
-        const label = activeModel === 'pred' ? 'Predicted' : 'RED';
+        const label = activeModel === 'pred' ? 'Predicted' : activeModel === 'redb' ? 'RED-B' : activeModel === 'redc' ? 'RED-C' : 'RED';
         const ths = document.querySelectorAll('th.sortable');
         ths.forEach(th => {
           if (th.dataset.sort === 'red') th.textContent = label + ' RED Score';
           if (th.dataset.sort === 'red-per-game') th.textContent = label + ' RED/G';
           if (th.dataset.sort === 'record') th.textContent = activeModel === 'pred' ? 'Proj Record' : 'Record';
+          if (th.dataset.sort === 'games') th.textContent = activeModel === 'pred' ? 'GL' : 'GP';
         });
         // Update sort info text
         const sortInfo = document.getElementById('sortInfo');
         if (sortInfo) sortInfo.innerHTML = 'Sorted by ' + label + ' RED Score &nbsp;\u00b7&nbsp; click any column to re-sort';
         // Re-sort and render
-        allResults.sort((a, b) => activeModel === 'pred' ? b.predScore - a.predScore : b.redScore - a.redScore);
+        allResults.sort((a, b) => { const sa = activeModel === 'pred' ? a.predScore : activeModel === 'redb' ? a.redBScore : activeModel === 'redc' ? a.redCScore : a.redScore; const sb = activeModel === 'pred' ? b.predScore : activeModel === 'redb' ? b.redBScore : activeModel === 'redc' ? b.redCScore : b.redScore; return sb - sa; });
         currentSort = { column: 'red', direction: 'desc' };
         renderLeaderboard(allResults);
       });
