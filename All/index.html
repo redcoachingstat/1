@@ -18353,9 +18353,20 @@ function populateFilters(){
 }
 
 // ── Build ────────────────────────────────────────────────────────────────────
-async function build(){
+async const FRANCHISE_MAP = {
+  'New Jersey Nets':'Brooklyn Nets',
+  'Kansas City Kings':'Sacramento Kings',
+  'Vancouver Grizzlies':'Memphis Grizzlies',
+  'Washington Bullets':'Washington Wizards',
+  'San Diego Clippers':'Los Angeles Clippers',
+  'LA Clippers':'Los Angeles Clippers',
+  'Charlotte Bobcats':'Charlotte Hornets',
+  'New Orleans Hornets':'Charlotte Hornets',
+  'New Orleans/Oklahoma City Hornets':'Charlotte Hornets'
+};
+function build(){
   // Tag HIST entries with champ flag
-  allRows=HIST.map(h=>({...h, champ:CHAMPS[h.season]===h.name}));
+  allRows=HIST.map(h=>{const n=FRANCHISE_MAP[h.name]||h.name;return{...h,name:n,origName:h.name,champ:CHAMPS[h.season]===h.name||CHAMPS[h.season]===n};});
   // Load live
   const live=await loadLive();
   allRows=[...allRows,...live];
