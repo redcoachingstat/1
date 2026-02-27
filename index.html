@@ -272,7 +272,7 @@ tr:hover td { background: var(--s2); }
       <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
         <div class="model-toggle">
           <button class="model-btn active" data-model="red" id="btnRED">RED</button>
-          <button class="model-btn" data-model="pred" id="btnPRED">PRED</button>
+          <button class="model-btn" data-model="pred" id="btnPRED">Prediction</button>
         </div>
         <div class="results-info" id="sortInfo">
           Sorted by RED Score &nbsp;·&nbsp; click any column to re-sort
@@ -336,19 +336,21 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
         <li>Uses live ESPN standings data; falls back to All-Star break snapshot</li>
         <li>Compare against all historical seasons at <a href="https://redcoachingstat.github.io/1/All/" style="color:var(--gold)">All Seasons</a></li>
       </ul>
-      <h3>PRED Mode</h3>
-      <p>Toggle to <strong>PRED</strong> (Predictive RED) for rankings based on underlying performance indicators that better predict future success:</p>
-      <div class="formula-box">PRED = 0.50 × NetRating + 0.25 × (PythWin% × 100) + 0.15 × (ActualWin% - 50) + 0.10 × Momentum
+      <h3>Prediction Mode</h3>
+      <p>Toggle to <strong>Prediction</strong> mode to see projected end-of-season RED scores based on current pace:</p>
+      <div class="formula-box">Prediction extrapolates current W-L pace to 82 games,
+then computes what the RED score would be at season end.
 
-NetRating: Points scored minus allowed per game (strongest playoff predictor)
-PythWin%: Expected win% from scoring margin
-Momentum: Current win/loss streak</div>
-      <p><strong>Key difference:</strong> RED rewards clutch coaching (winning close games beyond scoring margin). PRED focuses on net rating — the #1 predictor of playoff success.</p>
+Projected Wins = CurrentWins x (82 / GamesPlayed)
+Predicted RED  = 0.70 x (ProjWins - 41) + 0.30 x (ProjWins - PythExpWins82)
+
+Estimates where each team will finish if they maintain current trajectory.</div>
+      <p><strong>Key difference:</strong> RED shows current performance. Prediction extrapolates your pace to estimate where you finish the 82-game season.</p>
     
     <div style="margin-top:1.2rem; padding-top:1rem; border-top:1px solid var(--border); font-size:0.82rem; color:var(--muted); line-height:1.6;">
       <strong style="color:var(--chrome);">RED Formula:</strong>
       <span class="fc">RED = 0.70 × WinsAbove.500 + 0.30 × PythagoreanDelta</span><br>
-      Toggle PRED mode for predictive rankings based on net rating. · Data via ESPN API (auto-refreshes every 20 min).
+      Toggle Prediction mode to see projected end-of-season RED scores. · Data via ESPN API (auto-refreshes every 20 min).
     </div>
 </div>
   </div>
@@ -584,18 +586,20 @@ Momentum: Current win/loss streak</div>
     // PRED (Predictive RED) - focuses on underlying performance indicators
     // PRED = 0.50*NetRtg + 0.25*(PythPct*100) + 0.15*(WinPct*100-50) + 0.10*Momentum
     function calculatePRED(wins, losses, ptsFor, ptsAgainst, streak) {
-      const gp = wins + losses;
-      if (gp === 0 || ptsFor === 0 || ptsAgainst === 0) return { predScore: 0, predPerGame: 0 };
-      const netRtg = ptsFor - ptsAgainst;
-      const EXP = 13.91;
-      const pfP = Math.pow(ptsFor, EXP);
-      const paP = Math.pow(ptsAgainst, EXP);
-      const pythPct = pfP / (pfP + paP);
-      const winPct = wins / gp;
-      const mom = streak || 0;
-      const predScore = (0.50 * netRtg) + (0.25 * (pythPct * 100)) + (0.15 * ((winPct * 100) - 50)) + (0.10 * mom);
-      return { predScore: parseFloat(predScore.toFixed(2)), predPerGame: predScore / gp };
-    }
+    const gp = wins + losses;
+    if (gp === 0 || ptsFor === 0 || ptsAgainst === 0) return { predScore: 0, predPerGame: 0 };
+    const pace = 82 / gp;
+    const projWins = wins * pace;
+    const projWinsAboveAvg = projWins - 41;
+    const EXP = 13.91;
+    const pfP = Math.pow(ptsFor, EXP);
+    const paP = Math.pow(ptsAgainst, EXP);
+    const pythPct = pfP / (pfP + paP);
+    const projExpWins = pythPct * 82;
+    const projPythDelta = projWins - projExpWins;
+    const predScore = (0.70 * projWinsAboveAvg) + (0.30 * projPythDelta);
+    return { predScore: parseFloat(predScore.toFixed(2)), predPerGame: parseFloat((predScore / 82).toFixed(4)) };
+  }
 
     async function initializeSystem() {
             allResults = [];
@@ -794,15 +798,15 @@ Momentum: Current win/loss streak</div>
         document.querySelectorAll('.model-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         // Update column headers
-        const label = activeModel === 'pred' ? 'PRED' : 'RED';
+        const label = activeModel === 'pred' ? 'Predicted' : 'RED';
         const ths = document.querySelectorAll('th.sortable');
         ths.forEach(th => {
-          if (th.dataset.sort === 'red') th.textContent = label + ' Score';
-          if (th.dataset.sort === 'red-per-game') th.textContent = label + '/G';
+          if (th.dataset.sort === 'red') th.textContent = label + ' RED Score';
+          if (th.dataset.sort === 'red-per-game') th.textContent = label + ' RED/G';
         });
         // Update sort info text
         const sortInfo = document.getElementById('sortInfo');
-        if (sortInfo) sortInfo.innerHTML = 'Sorted by ' + label + ' Score &nbsp;\u00b7&nbsp; click any column to re-sort';
+        if (sortInfo) sortInfo.innerHTML = 'Sorted by ' + label + ' RED Score &nbsp;\u00b7&nbsp; click any column to re-sort';
         // Re-sort and render
         allResults.sort((a, b) => activeModel === 'pred' ? b.predScore - a.predScore : b.redScore - a.redScore);
         currentSort = { column: 'red', direction: 'desc' };
