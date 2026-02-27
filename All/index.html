@@ -18181,7 +18181,7 @@ function render(){
   // Search
   if(searchQ){
     const q=searchQ.toLowerCase();
-    rows=rows.filter(r=>r.name.toLowerCase().includes(q)||r.coach.toLowerCase().includes(q)||r.seasonLabel.toLowerCase().includes(q));
+    rows=rows.filter(r=>(r.origName||r.name).toLowerCase().includes(q)||r.name.toLowerCase().includes(q)||r.coach.toLowerCase().includes(q)||r.seasonLabel.toLowerCase().includes(q));
   }
   // Sort
   const{col:c,dir:d}=sortState;
@@ -18224,7 +18224,7 @@ function render(){
     tr.innerHTML=`
       <td class="rank-cell">${rank}</td>
       <td><span class="season-tag"><span class="s-dot" style="background:${r.color||'#888'}"></span>${r.seasonLabel}</span></td>
-      <td>${trophy} ${r.name}</td>
+      <td>${trophy} ${r.origName||r.name}</td>
       <td>${r.coach}</td>
       <td class="${cls(r.redScore)}">${r.redScore>0?'+':''}${r.redScore.toFixed(2)}</td>
       <td class="mono ${cls(r.redPerGame)}">${r.redPerGame>0?'+':''}${r.redPerGame.toFixed(4)}</td>
