@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RED â Historical Playoffs</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:       #C8CDD6;
+  --surface:  #D4D9E2;
+  --s2:       #BEC4CF;
+  --border:   #A8AEBB;
+  --border2:  #B5BBC8;
+  --text:     #1A1D2B;
+  --muted:    #4A5068;
+  --silver:   #6B7590;
+  --chrome:   #2D3348;
+  --gold:     #8B6914;
+  --gold-bg:  rgba(139,105,20,0.10);
+  --bred:     #1B804A;
+  --card-bg:  rgba(255,255,255,0.45);
+  --card-bd:  rgba(255,255,255,0.55);
+  --hdr-bg:   rgba(45,51,72,0.92);
+  --row-alt:  rgba(255,255,255,0.22);
+  --row-hov:  rgba(139,105,20,0.08);
+  --pill:     rgba(255,255,255,0.45);
+  --pill-act: rgba(139,105,20,0.18);
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ââ Header ââ */
+header {
+  background: linear-gradient(135deg, var(--chrome) 0%, #3a4260 100%);
+  color: #fff;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  position: relative;
+}
+header h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem,4vw,2.4rem);
+  letter-spacing: 2px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+header h1 .gold { color: #d4a843; }
+header .subtitle {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.65);
+  margin-top: 0.3rem;
+  letter-spacing: 1px;
+}
+
+/* ââ Nav ââ */
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+nav a {
+  color: var(--chrome);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+  background: var(--pill);
+  border: 1px solid var(--border2);
+  transition: all 0.2s;
+}
+nav a:hover, nav a.active {
+  background: var(--pill-act);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ââ Meta Bar ââ */
+.meta-bar {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--s2);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+.meta-bar strong { color: var(--chrome); }
+
+/* ââ Filters ââ */
+.filters-bar {
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.filters-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.decade-pills {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+.d-pill {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  border-radius: 16px;
+  border: 1px solid var(--border2);
+  background: var(--pill);
+  color: var(--chrome);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.d-pill:hover { border-color: var(--gold); color: var(--gold); }
+.d-pill.active { background: var(--pill-act); border-color: var(--gold); color: var(--gold); }
+
+.search-box {
+  margin-left: auto;
+  padding: 0.35rem 0.75rem;
+  border-radius: 16px;
+  border: 1px solid var(--border2);
+  background: var(--card-bg);
+  font-size: 0.78rem;
+  color: var(--text);
+  width: 180px;
+  outline: none;
+}
+.search-box:focus { border-color: var(--gold); }
+.search-box::placeholder { color: var(--silver); }
+
+.filter-select {
+  padding: 0.35rem 0.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--border2);
+  background: var(--card-bg);
+  font-size: 0.72rem;
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+  max-width: 140px;
+}
+.filter-select:focus { border-color: var(--gold); }
+
+/* ââ Stats Cards ââ */
+.stats-row {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-bd);
+  border-radius: 12px;
+  padding: 0.75rem 1.25rem;
+  text-align: center;
+  min-width: 120px;
+  flex: 1;
+  max-width: 200px;
+}
+.stat-card .num {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: var(--chrome);
+}
+.stat-card .lbl {
+  font-size: 0.68rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.15rem;
+}
+
+/* ââ Table ââ */
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+}
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+thead th {
+  background: var(--hdr-bg);
+  color: #fff;
+  padding: 0.6rem 0.5rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+thead th:hover { background: rgba(45,51,72,0.98); }
+thead th .arrow { font-size: 0.6rem; margin-left: 3px; opacity: 0.5; }
+thead th.sorted .arrow { opacity: 1; color: #d4a843; }
+tbody td {
+  padding: 0.55rem 0.5rem;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  white-space: nowrap;
+}
+tbody tr:nth-child(even) { background: var(--row-alt); }
+tbody tr:hover { background: var(--row-hov); }
+.champion-name { font-weight: 600; color: var(--chrome); }
+.coach-name { color: var(--muted); }
+.series-sweep { color: var(--bred); font-weight: 700; }
+.series-7 { color: #8B1A1A; font-weight: 600; }
+.fmvp { font-style: italic; color: var(--muted); font-size: 0.75rem; }
+.trophy { color: var(--gold); font-size: 0.85rem; }
+.rank { color: var(--silver); font-weight: 600; text-align: center; }
+td.num-cell { text-align: center; font-variant-numeric: tabular-nums; }
+
+/* ââ Footer ââ */
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 0.7rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  margin-top: 1rem;
+}
+footer a { color: var(--gold); text-decoration: none; }
+
+/* ââ View Toggle ââ */
+.view-toggle {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0.75rem 0;
+}
+.v-btn {
+  padding: 0.35rem 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: var(--pill);
+  color: var(--chrome);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.v-btn:hover { border-color: var(--gold); }
+.v-btn.active { background: var(--pill-act); border-color: var(--gold); color: var(--gold); }
+
+/* ââ Leaderboard ââ */
+.leaderboard {
+  display: none;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+}
+.leaderboard.show { display: block; }
+.lb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+.lb-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-bd);
+  border-radius: 10px;
+  padding: 1rem;
+}
+.lb-card h3 {
+  font-size: 0.82rem;
+  color: var(--chrome);
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+.lb-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+  font-size: 0.78rem;
+}
+.lb-item .name { color: var(--text); }
+.lb-item .count { font-weight: 700; color: var(--gold); }
+.lb-item:nth-child(2) .name { font-weight: 700; }
+
+/* ââ Responsive ââ */
+@media (max-width: 768px) {
+  header { padding: 1rem; }
+  .stats-row { padding: 0.75rem; gap: 0.5rem; }
+  .stat-card { min-width: 80px; padding: 0.5rem 0.75rem; }
+  .stat-card .num { font-size: 1.2rem; }
+  .filters-inner { gap: 0.4rem; }
+  .search-box { width: 140px; margin-left: 0; }
+  main, .leaderboard { padding: 0 0.5rem 1.5rem; }
+  table { font-size: 0.72rem; }
+  thead th, tbody td { padding: 0.4rem 0.35rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="gold">RED</span> â Historical Playoffs</h1>
+  <div class="subtitle">NBA Champions &middot; 1980&ndash;81 to 2024&ndash;25</div>
+</header>
+
+<nav>
+  <a href="../">Dashboard</a>
+  <a href="../All/">All Seasons</a>
+  <a href="./" class="active">Playoffs</a>
+</nav>
+
+<div class="meta-bar">
+  <span><strong id="totalChamps">45</strong> champions</span>
+  <span><strong id="totalSeasons">45</strong> seasons</span>
+  <span><strong id="uniqueTeams">0</strong> franchises</span>
+  <span><strong id="uniqueCoaches">0</strong> coaches</span>
+</div>
+
+<div class="filters-bar">
+  <div class="filters-inner">
+    <div class="decade-pills">
+      <button class="d-pill active" data-decade="all">All</button>
+      <button class="d-pill" data-decade="1980">80s</button>
+      <button class="d-pill" data-decade="1990">90s</button>
+      <button class="d-pill" data-decade="2000">00s</button>
+      <button class="d-pill" data-decade="2010">10s</button>
+      <button class="d-pill" data-decade="2020">20s</button>
+    </div>
+    <select class="filter-select" id="coachFilter"><option value="">All Coaches</option></select>
+    <select class="filter-select" id="teamFilter"><option value="">All Teams</option></select>
+    <input type="text" class="search-box" id="searchBox" placeholder="Search...">
+  </div>
+</div>
+
+<div class="stats-row" id="statsRow">
+  <div class="stat-card"><div class="num" id="statSweeps">0</div><div class="lbl">Sweeps</div></div>
+  <div class="stat-card"><div class="num" id="statGame7">0</div><div class="lbl">Game 7s</div></div>
+  <div class="stat-card"><div class="num" id="statRepeats">0</div><div class="lbl">Repeats</div></div>
+  <div class="stat-card"><div class="num" id="statTopCoach">â</div><div class="lbl">Most Titles (Coach)</div></div>
+  <div class="stat-card"><div class="num" id="statTopTeam">â</div><div class="lbl">Most Titles (Team)</div></div>
+</div>
+
+<div class="view-toggle">
+  <button class="v-btn active" data-view="table">Champions Table</button>
+  <button class="v-btn" data-view="leaders">Leaderboards</button>
+</div>
+
+<main id="tableView">
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th data-col="rank" style="width:35px"><span class="arrow">#</span></th>
+          <th data-col="season">Season <span class="arrow">â</span></th>
+          <th data-col="champion">Champion <span class="arrow">â</span></th>
+          <th data-col="coach">Coach <span class="arrow">â</span></th>
+          <th data-col="opponent">Finals Opponent <span class="arrow">â</span></th>
+          <th data-col="series">Series <span class="arrow">â</span></th>
+          <th data-col="fmvp">Finals MVP <span class="arrow">â</span></th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+</main>
+
+<div class="leaderboard" id="leaderView">
+  <div class="lb-grid">
+    <div class="lb-card">
+      <h3>Championships by Coach</h3>
+      <div id="lbCoaches"></div>
+    </div>
+    <div class="lb-card">
+      <h3>Championships by Franchise</h3>
+      <div id="lbTeams"></div>
+    </div>
+    <div class="lb-card">
+      <h3>Finals MVP Awards</h3>
+      <div id="lbMVPs"></div>
+    </div>
+    <div class="lb-card">
+      <h3>Dynasties &amp; Repeat Champions</h3>
+      <div id="lbDynasties"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="../">RED System</a> &middot; Historical Playoffs &middot; Data from 1980&ndash;81 to 2024&ndash;25
+</footer>
+
+<script>
+const CHAMPS = [
+  {season:'1980-81',champion:'Boston Celtics',coach:'Bill Fitch',opponent:'Houston Rockets',series:'4-2',fmvp:'Cedric Maxwell'},
+  {season:'1981-82',champion:'Los Angeles Lakers',coach:'Pat Riley',opponent:'Philadelphia 76ers',series:'4-2',fmvp:'Magic Johnson'},
+  {season:'1982-83',champion:'Philadelphia 76ers',coach:'Billy Cunningham',opponent:'Los Angeles Lakers',series:'4-0',fmvp:'Moses Malone'},
+  {season:'1983-84',champion:'Boston Celtics',coach:'K.C. Jones',opponent:'Los Angeles Lakers',series:'4-3',fmvp:'Larry Bird'},
+  {season:'1984-85',champion:'Los Angeles Lakers',coach:'Pat Riley',opponent:'Boston Celtics',series:'4-2',fmvp:'Kareem Abdul-Jabbar'},
+  {season:'1985-86',champion:'Boston Celtics',coach:'K.C. Jones',opponent:'Houston Rockets',series:'4-2',fmvp:'Larry Bird'},
+  {season:'1986-87',champion:'Los Angeles Lakers',coach:'Pat Riley',opponent:'Boston Celtics',series:'4-2',fmvp:'Magic Johnson'},
+  {season:'1987-88',champion:'Los Angeles Lakers',coach:'Pat Riley',opponent:'Detroit Pistons',series:'4-3',fmvp:'James Worthy'},
+  {season:'1988-89',champion:'Detroit Pistons',coach:'Chuck Daly',opponent:'Los Angeles Lakers',series:'4-0',fmvp:'Joe Dumars'},
+  {season:'1989-90',champion:'Detroit Pistons',coach:'Chuck Daly',opponent:'Portland Trail Blazers',series:'4-1',fmvp:'Isiah Thomas'},
+  {season:'1990-91',champion:'Chicago Bulls',coach:'Phil Jackson',opponent:'Los Angeles Lakers',series:'4-1',fmvp:'Michael Jordan'},
+  {season:'1991-92',champion:'Chicago Bulls',coach:'Phil Jackson',opponent:'Portland Trail Blazers',series:'4-2',fmvp:'Michael Jordan'},
+  {season:'1992-93',champion:'Chicago Bulls',coach:'Phil Jackson',opponent:'Phoenix Suns',series:'4-2',fmvp:'Michael Jordan'},
+  {season:'1993-94',champion:'Houston Rockets',coach:'Rudy Tomjanovich',opponent:'New York Knicks',series:'4-3',fmvp:'Hakeem Olajuwon'},
+  {season:'1994-95',champion:'Houston Rockets',coach:'Rudy Tomjanovich',opponent:'Orlando Magic',series:'4-0',fmvp:'Hakeem Olajuwon'},
+  {season:'1995-96',champion:'Chicago Bulls',coach:'Phil Jackson',opponent:'Seattle SuperSonics',series:'4-2',fmvp:'Michael Jordan'},
+  {season:'1996-97',champion:'Chicago Bulls',coach:'Phil Jackson',opponent:'Utah Jazz',series:'4-2',fmvp:'Michael Jordan'},
+  {season:'1997-98',champion:'Chicago Bulls',coach:'Phil Jackson',opponent:'Utah Jazz',series:'4-2',fmvp:'Michael Jordan'},
+  {season:'1998-99',champion:'San Antonio Spurs',coach:'Gregg Popovich',opponent:'New York Knicks',series:'4-1',fmvp:'Tim Duncan'},
+  {season:'1999-00',champion:'Los Angeles Lakers',coach:'Phil Jackson',opponent:'Indiana Pacers',series:'4-2',fmvp:"Shaquille O'Neal"},
+  {season:'2000-01',champion:'Los Angeles Lakers',coach:'Phil Jackson',opponent:'Philadelphia 76ers',series:'4-1',fmvp:"Shaquille O'Neal"},
+  {season:'2001-02',champion:'Los Angeles Lakers',coach:'Phil Jackson',opponent:'New Jersey Nets',series:'4-0',fmvp:"Shaquille O'Neal"},
+  {season:'2002-03',champion:'San Antonio Spurs',coach:'Gregg Popovich',opponent:'New Jersey Nets',series:'4-2',fmvp:'Tim Duncan'},
+  {season:'2003-04',champion:'Detroit Pistons',coach:'Larry Brown',opponent:'Los Angeles Lakers',series:'4-1',fmvp:'Chauncey Billups'},
+  {season:'2004-05',champion:'San Antonio Spurs',coach:'Gregg Popovich',opponent:'Detroit Pistons',series:'4-3',fmvp:'Tim Duncan'},
+  {season:'2005-06',champion:'Miami Heat',coach:'Pat Riley',opponent:'Dallas Mavericks',series:'4-2',fmvp:'Dwyane Wade'},
+  {season:'2006-07',champion:'San Antonio Spurs',coach:'Gregg Popovich',opponent:'Cleveland Cavaliers',series:'4-0',fmvp:'Tony Parker'},
+  {season:'2007-08',champion:'Boston Celtics',coach:'Doc Rivers',opponent:'Los Angeles Lakers',series:'4-2',fmvp:'Paul Pierce'},
+  {season:'2008-09',champion:'Los Angeles Lakers',coach:'Phil Jackson',opponent:'Orlando Magic',series:'4-1',fmvp:'Kobe Bryant'},
+  {season:'2009-10',champion:'Los Angeles Lakers',coach:'Phil Jackson',opponent:'Boston Celtics',series:'4-3',fmvp:'Kobe Bryant'},
+  {season:'2010-11',champion:'Dallas Mavericks',coach:'Rick Carlisle',opponent:'Miami Heat',series:'4-2',fmvp:'Dirk Nowitzki'},
+  {season:'2011-12',champion:'Miami Heat',coach:'Erik Spoelstra',opponent:'Oklahoma City Thunder',series:'4-1',fmvp:'LeBron James'},
+  {season:'2012-13',champion:'Miami Heat',coach:'Erik Spoelstra',opponent:'San Antonio Spurs',series:'4-3',fmvp:'LeBron James'},
+  {season:'2013-14',champion:'San Antonio Spurs',coach:'Gregg Popovich',opponent:'Miami Heat',series:'4-1',fmvp:'Kawhi Leonard'},
+  {season:'2014-15',champion:'Golden State Warriors',coach:'Steve Kerr',opponent:'Cleveland Cavaliers',series:'4-2',fmvp:'Andre Iguodala'},
+  {season:'2015-16',champion:'Cleveland Cavaliers',coach:'Tyronn Lue',opponent:'Golden State Warriors',series:'4-3',fmvp:'LeBron James'},
+  {season:'2016-17',champion:'Golden State Warriors',coach:'Steve Kerr',opponent:'Cleveland Cavaliers',series:'4-1',fmvp:'Kevin Durant'},
+  {season:'2017-18',champion:'Golden State Warriors',coach:'Steve Kerr',opponent:'Cleveland Cavaliers',series:'4-0',fmvp:'Kevin Durant'},
+  {season:'2018-19',champion:'Toronto Raptors',coach:'Nick Nurse',opponent:'Golden State Warriors',series:'4-2',fmvp:'Kawhi Leonard'},
+  {season:'2019-20',champion:'Los Angeles Lakers',coach:'Frank Vogel',opponent:'Miami Heat',series:'4-2',fmvp:'LeBron James'},
+  {season:'2020-21',champion:'Milwaukee Bucks',coach:'Mike Budenholzer',opponent:'Phoenix Suns',series:'4-2',fmvp:'Giannis Antetokounmpo'},
+  {season:'2021-22',champion:'Golden State Warriors',coach:'Steve Kerr',opponent:'Boston Celtics',series:'4-2',fmvp:'Stephen Curry'},
+  {season:'2022-23',champion:'Denver Nuggets',coach:'Michael Malone',opponent:'Miami Heat',series:'4-1',fmvp:'Nikola Jokic'},
+  {season:'2023-24',champion:'Boston Celtics',coach:'Joe Mazzulla',opponent:'Dallas Mavericks',series:'4-1',fmvp:'Jaylen Brown'},
+  {season:'2024-25',champion:'Oklahoma City Thunder',coach:'Mark Daigneault',opponent:'Indiana Pacers',series:'4-3',fmvp:'Shai Gilgeous-Alexander'}
+];
+
+/* ââ State ââ */
+let activeDecade = 'all';
+let searchQ = '';
+let coachQ = '';
+let teamQ = '';
+let sortState = { col: 'season', dir: 'desc' };
+
+/* ââ Init ââ */
+function init() {
+  computeStats();
+  populateFilters();
+  render();
+  bindEvents();
+}
+
+function computeStats() {
+  const teams = new Set(CHAMPS.map(c => c.champion));
+  const coaches = new Set(CHAMPS.map(c => c.coach));
+  document.getElementById('uniqueTeams').textContent = teams.size;
+  document.getElementById('uniqueCoaches').textContent = coaches.size;
+
+  let sweeps = 0, game7s = 0, repeats = 0;
+  CHAMPS.forEach((c, i) => {
+    if (c.series === '4-0') sweeps++;
+    if (c.series === '4-3') game7s++;
+    if (i > 0 && CHAMPS[i-1].champion === c.champion) repeats++;
+  });
+  document.getElementById('statSweeps').textContent = sweeps;
+  document.getElementById('statGame7').textContent = game7s;
+  document.getElementById('statRepeats').textContent = repeats;
+
+  // Top coach
+  const coachCounts = {};
+  CHAMPS.forEach(c => { coachCounts[c.coach] = (coachCounts[c.coach] || 0) + 1; });
+  const topCoach = Object.entries(coachCounts).sort((a,b) => b[1]-a[1])[0];
+  document.getElementById('statTopCoach').innerHTML = `${topCoach[1]} <span style="font-size:0.55rem;display:block;font-family:Inter,sans-serif;font-weight:400;color:var(--muted)">${topCoach[0]}</span>`;
+
+  // Top team
+  const teamCounts = {};
+  CHAMPS.forEach(c => { teamCounts[c.champion] = (teamCounts[c.champion] || 0) + 1; });
+  const topTeam = Object.entries(teamCounts).sort((a,b) => b[1]-a[1])[0];
+  document.getElementById('statTopTeam').innerHTML = `${topTeam[1]} <span style="font-size:0.55rem;display:block;font-family:Inter,sans-serif;font-weight:400;color:var(--muted)">${topTeam[0]}</span>`;
+}
+
+function populateFilters() {
+  const coaches = [...new Set(CHAMPS.map(c => c.coach))].sort();
+  const sel1 = document.getElementById('coachFilter');
+  coaches.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; sel1.appendChild(o); });
+
+  const teams = [...new Set(CHAMPS.map(c => c.champion))].sort();
+  const sel2 = document.getElementById('teamFilter');
+  teams.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; sel2.appendChild(o); });
+}
+
+function getDecade(season) {
+  const yr = parseInt(season.split('-')[0]);
+  return Math.floor(yr / 10) * 10;
+}
+
+function render() {
+  let rows = [...CHAMPS];
+
+  // Decade filter
+  if (activeDecade !== 'all') {
+    const d = parseInt(activeDecade);
+    rows = rows.filter(r => getDecade(r.season) === d);
+  }
+
+  // Coach filter
+  if (coachQ) rows = rows.filter(r => r.coach === coachQ);
+
+  // Team filter
+  if (teamQ) rows = rows.filter(r => r.champion === teamQ);
+
+  // Search
+  if (searchQ) {
+    const q = searchQ.toLowerCase();
+    rows = rows.filter(r =>
+      r.champion.toLowerCase().includes(q) ||
+      r.coach.toLowerCase().includes(q) ||
+      r.opponent.toLowerCase().includes(q) ||
+      r.fmvp.toLowerCase().includes(q) ||
+      r.season.includes(q)
+    );
+  }
+
+  // Sort
+  rows.sort((a, b) => {
+    let va = a[sortState.col], vb = b[sortState.col];
+    if (sortState.col === 'series') {
+      // Sort by dominance: 4-0 > 4-1 > 4-2 > 4-3
+      const domA = parseInt(va.split('-')[0]) - parseInt(va.split('-')[1]);
+      const domB = parseInt(vb.split('-')[0]) - parseInt(vb.split('-')[1]);
+      va = domA; vb = domB;
+    }
+    if (typeof va === 'string') {
+      const cmp = va.localeCompare(vb);
+      return sortState.dir === 'asc' ? cmp : -cmp;
+    }
+    return sortState.dir === 'asc' ? va - vb : vb - va;
+  });
+
+  // Render
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = rows.map((r, i) => {
+    const seriesClass = r.series === '4-0' ? 'series-sweep' : r.series === '4-3' ? 'series-7' : '';
+    return `<tr>
+      <td class="rank num-cell">${i + 1}</td>
+      <td>${r.season}</td>
+      <td><span class="trophy">ð</span> <span class="champion-name">${r.champion}</span></td>
+      <td class="coach-name">${r.coach}</td>
+      <td>${r.opponent}</td>
+      <td class="num-cell ${seriesClass}">${r.series}</td>
+      <td class="fmvp">${r.fmvp}</td>
+    </tr>`;
+  }).join('');
+
+  // Update count
+  document.getElementById('totalChamps').textContent = rows.length;
+}
+
+function buildLeaderboards() {
+  // Coaches
+  const cc = {};
+  CHAMPS.forEach(c => { cc[c.coach] = (cc[c.coach] || 0) + 1; });
+  const coaches = Object.entries(cc).sort((a,b) => b[1]-a[1]);
+  document.getElementById('lbCoaches').innerHTML = coaches.map(([name, count]) =>
+    `<div class="lb-item"><span class="name">${name}</span><span class="count">${count}x ð</span></div>`
+  ).join('');
+
+  // Teams
+  const tc = {};
+  CHAMPS.forEach(c => { tc[c.champion] = (tc[c.champion] || 0) + 1; });
+  const teams = Object.entries(tc).sort((a,b) => b[1]-a[1]);
+  document.getElementById('lbTeams').innerHTML = teams.map(([name, count]) =>
+    `<div class="lb-item"><span class="name">${name}</span><span class="count">${count}x ð</span></div>`
+  ).join('');
+
+  // MVPs
+  const mc = {};
+  CHAMPS.forEach(c => { mc[c.fmvp] = (mc[c.fmvp] || 0) + 1; });
+  const mvps = Object.entries(mc).sort((a,b) => b[1]-a[1]).filter(m => m[1] > 1);
+  document.getElementById('lbMVPs').innerHTML = mvps.map(([name, count]) =>
+    `<div class="lb-item"><span class="name">${name}</span><span class="count">${count}x MVP</span></div>`
+  ).join('');
+
+  // Dynasties
+  const dynasties = [];
+  let streak = 1;
+  for (let i = 1; i < CHAMPS.length; i++) {
+    if (CHAMPS[i].champion === CHAMPS[i-1].champion) {
+      streak++;
+    } else {
+      if (streak >= 2) {
+        const start = CHAMPS[i - streak].season;
+        const end = CHAMPS[i - 1].season;
+        dynasties.push({ team: CHAMPS[i-1].champion, count: streak, span: `${start} to ${end}` });
+      }
+      streak = 1;
+    }
+  }
+  if (streak >= 2) {
+    const start = CHAMPS[CHAMPS.length - streak].season;
+    const end = CHAMPS[CHAMPS.length - 1].season;
+    dynasties.push({ team: CHAMPS[CHAMPS.length-1].champion, count: streak, span: `${start} to ${end}` });
+  }
+  dynasties.sort((a,b) => b.count - a.count);
+  document.getElementById('lbDynasties').innerHTML = dynasties.map(d =>
+    `<div class="lb-item"><span class="name">${d.team} (${d.count}-peat, ${d.span})</span><span class="count">${d.count}x</span></div>`
+  ).join('');
+}
+
+function bindEvents() {
+  // Decade pills
+  document.querySelectorAll('.d-pill').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.d-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeDecade = btn.dataset.decade;
+      render();
+    });
+  });
+
+  // Search
+  document.getElementById('searchBox').addEventListener('input', e => {
+    searchQ = e.target.value;
+    render();
+  });
+
+  // Coach filter
+  document.getElementById('coachFilter').addEventListener('change', e => {
+    coachQ = e.target.value;
+    render();
+  });
+
+  // Team filter
+  document.getElementById('teamFilter').addEventListener('change', e => {
+    teamQ = e.target.value;
+    render();
+  });
+
+  // Sort
+  document.querySelectorAll('thead th[data-col]').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      if (col === 'rank') return;
+      if (sortState.col === col) {
+        sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortState = { col, dir: 'asc' };
+      }
+      document.querySelectorAll('thead th').forEach(t => t.classList.remove('sorted'));
+      th.classList.add('sorted');
+      render();
+    });
+  });
+
+  // View toggle
+  document.querySelectorAll('.v-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.v-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const view = btn.dataset.view;
+      document.getElementById('tableView').style.display = view === 'table' ? 'block' : 'none';
+      document.getElementById('leaderView').classList.toggle('show', view === 'leaders');
+      if (view === 'leaders') buildLeaderboards();
+    });
+  });
+}
+
+init();
+</script>
+</body>
+</html>
