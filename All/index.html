@@ -159,12 +159,24 @@ tr:hover td { background: var(--s2); }
 .empty-state { text-align: center; padding: 4rem 2rem; color: var(--muted); font-size: 0.9rem; }
 
 /* ── FORMULA NOTE ── */
-.formula-note {
-  margin-top: 1.5rem; padding: 1.1rem 1.5rem;
-  background: var(--surface); border: 1px solid var(--border);
-  border-left: 3px solid var(--gold);
-  border-radius: 8px; font-size: 0.79rem; color: var(--muted); line-height: 1.8;
-}
+
+.help-btn { background: transparent; border: 1px solid var(--border2); color: var(--muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 0.85rem; font-weight: 700; font-family: Inter, sans-serif; transition: 0.15s; display: inline-flex; align-items: center; justify-content: center; }
+.help-btn:hover { background: var(--chrome); color: #fff; border-color: var(--chrome); }
+.modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:1000; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal-card { background:var(--surface); border-radius:14px; max-width:640px; width:92vw; max-height:85vh; overflow-y:auto; box-shadow:0 12px 40px rgba(0,0,0,.25); }
+.modal-header { display:flex; justify-content:space-between; align-items:center; padding:1.2rem 1.5rem; border-bottom:1px solid var(--border); }
+.modal-header h2 { font-family:Inter,sans-serif; font-size:1.15rem; font-weight:700; color:var(--chrome); margin:0; }
+.modal-close { background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--muted); padding:0 .3rem; }
+.modal-body { padding:1.5rem; font-size:.92rem; line-height:1.65; color:var(--text); }
+.modal-body h3 { font-size:.78rem; letter-spacing:.08em; color:var(--gold); margin:1.3rem 0 .5rem; font-family:Inter,sans-serif; }
+.modal-body p { margin:0 0 .8rem; }
+.modal-body ul { margin:.5rem 0; padding-left:1.3rem; }
+.modal-body li { margin-bottom:.4rem; }
+.fc-box { background:var(--bg); border-left:3px solid var(--gold); padding:.8rem 1rem; border-radius:0 8px 8px 0; font-size:.82rem; margin:.6rem 0; overflow-x:auto; }
+.fc-box code { font-family:'SF Mono',Monaco,monospace; font-size:.8rem; color:var(--chrome); }
+.fc { font-family:'SF Mono',Monaco,monospace; font-size:.8rem; color:var(--gold); }
+
 .formula-note strong { color: var(--chrome); }
 .fc { font-family: monospace; background: var(--bg); padding: 2px 8px; border-radius: 4px; color: var(--gold); }
 
@@ -290,17 +302,32 @@ tr:hover td { background: var(--s2); }
     <div class="empty-state" id="emptyState" style="display:none">No results match your filters.</div>
   </div>
 
-  <div class="formula-note">
-    <strong>RED Formula:</strong>
-    <span class="fc">RED = 0.70 × WinsAbove.500 + 0.30 × PythagoreanDelta</span>
-    &nbsp;·&nbsp;
-    <strong>WinsAbove.500</strong> = wins − (GP × 0.5)
-    &nbsp;·&nbsp;
-    <strong>PythagoreanDelta</strong> = actual wins − (PtsFor<sup>13.91</sup> / (PtsFor<sup>13.91</sup> + PtsAgainst<sup>13.91</sup>) × GP)
-    <br>
-    <strong>Era-neutral by design:</strong> both components are relative measures, making scores comparable across any era. The 1975–76 Warriors and 2015–16 Warriors exist on the same scale.
-    2025–26 data is live from ESPN and updates each time the page loads.
-  </div>
+  <div style="text-align:center; padding: 1.5rem 0 1rem;">
+      <button class="help-btn" id="helpBtn" title="How RED is calculated">?</button>
+    </div>
+    <div class="modal-overlay" id="helpModal">
+      <div class="modal-card">
+        <div class="modal-header"><h2>How RED Works</h2><button class="modal-close">&times;</button></div>
+        <div class="modal-body">
+          <p><strong>RED (Rating of Elite Dominance)</strong> is a team season performance metric. It measures how dominant a team truly is — combining their record relative to league-average with how efficiently they convert scoring margin into wins.</p>
+          <h3>THE CORE IDEA</h3>
+          <p>Every team has a "true" performance level hidden in their scoring margins. RED captures the gap between actual wins and what point differential predicts. This makes RED era-neutral — so you can compare the 2025–26 Spurs to the 1975–76 Warriors on the same scale.</p>
+          <h3>THE FORMULA</h3>
+          <div class="fc-box"><code>(A) Quality = Actual Wins – (GP × 0.5) → Wins above league-average pace</code><br><code>(B) Efficiency = Actual Wins – Pythagorean Expected Wins</code><br><code>Pythagorean Win% = PtsFor^13.91 / (PtsFor^13.91 + PtsAgainst^13.91)</code><br><code>→ Winning more than scoring margin predicts?</code><br><code>RED = (0.70 × Quality) + (0.30 × Efficiency)</code></div>
+          <h3>INTERPRETATION</h3>
+          <p><strong>Positive RED:</strong> Winning above pace and/or converting margin efficiently. Truly dominant teams score highest.</p>
+          <p><strong>Negative RED:</strong> Below .500 pace and/or underperforming point differential.</p>
+          <p><strong>The efficiency signal (30%):</strong> Rewards teams squeezing extra wins beyond what raw scoring predicts — defense-first teams, clutch units.</p>
+          <h3>NOTES</h3>
+          <ul><li>RED is <strong>descriptive</strong> — what happened, not what will happen</li><li>Uses live ESPN standings data; falls back to All-Star break snapshot</li><li>Compare against all historical seasons at <a href="/1/All/">All Seasons</a></li></ul>
+          <div style="margin-top:1.2rem; padding-top:1rem; border-top:1px solid var(--border); font-size:0.82rem; color:var(--muted); line-height:1.6;">
+            <strong style="color:var(--chrome);">RED Formula:</strong>
+            <span class="fc">RED = 0.70 × WinsAbove.500 + 0.30 × PythagoreanDelta</span><br>
+            Descriptive only — not predictive. · Data via ESPN API.
+          </div>
+        </div>
+      </div>
+    </div>
 </main>
 
 <script>
@@ -18343,6 +18370,15 @@ async function build(){
   render();
 }
 build();
+
+// ── Help modal ──
+document.getElementById('helpBtn').addEventListener('click',()=>{
+  document.getElementById('helpModal').classList.add('open');
+});
+document.getElementById('helpModal').addEventListener('click',(e)=>{
+  if(e.target.classList.contains('modal-overlay')||e.target.classList.contains('modal-close'))
+    document.getElementById('helpModal').classList.remove('open');
+});
 </script>
 </body>
 </html>
