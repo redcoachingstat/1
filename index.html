@@ -493,13 +493,10 @@ Momentum: Current win/loss streak</div>
                     const wins     = Math.round(get('wins',   'W'));
                     const losses   = Math.round(get('losses', 'L'));
                     // ESPN may expose avg points as 'pointsFor'/'pointsAgainst' or 'avgPoints'/'oppAvgPoints'
-                    const ptsFor   = get('pointsFor', 'avgPoints',    'ppg',  'Points For');
-                    const ptsAgainst = get('pointsAgainst', 'oppAvgPoints', 'oppg', 'Points Against');
+                    const ptsFor   = get('avgPointsFor', 'avgPoints', 'ppg', 'pointsFor', 'Points For');
+                    const ptsAgainst = get('avgPointsAgainst', 'oppAvgPoints', 'oppg', 'pointsAgainst', 'Points Against');
 
-                    // Extract streak for PRED momentum
-            const streakType = (stats.find(s => s.name === 'streak') || {}).displayValue || '';
-            const streakMatch = streakType.match(/(W|L)(\d+)/);
-            const streak = streakMatch ? (streakMatch[1] === 'W' ? 1 : -1) * parseInt(streakMatch[2]) : 0;
+            const streak = parseFloat((stats.find(s => s.name === 'streak') || {}).value) || 0;
             records[name] = { wins, losses, ptsFor, ptsAgainst, streak };
                 }
 
