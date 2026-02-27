@@ -18369,7 +18369,7 @@ async function build(){
   allRows=HIST.map(h=>{const n=FRANCHISE_MAP[h.name]||h.name;return{...h,name:n,origName:h.name,champ:CHAMPS[h.season]===h.name||CHAMPS[h.season]===n};});
   // Load live
   const live=await loadLive();
-  allRows=[...allRows,...live];
+  allRows=[...allRows,...live.map(r=>({...r,name:FRANCHISE_MAP[r.name]||r.name}))];
   // Update meta counts
   const seasons=new Set(allRows.map(r=>r.season));
   const _sc=document.getElementById('seasonCount');if(_sc)_sc.textContent=seasons.size;
