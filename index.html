@@ -337,20 +337,21 @@ RED = (0.70 × Quality) + (0.30 × Efficiency)</div>
         <li>Compare against all historical seasons at <a href="https://redcoachingstat.github.io/1/All/" style="color:var(--gold)">All Seasons</a></li>
       </ul>
       <h3>Prediction Mode</h3>
-      <p>Toggle to <strong>Prediction</strong> mode to see projected end-of-season RED scores based on current pace:</p>
-      <div class="formula-box">Prediction extrapolates current W-L pace to 82 games,
-then computes what the RED score would be at season end.
+      <p>Toggle to <strong>Prediction</strong> mode to see projected end-of-season RED scores that account for regression to true talent:</p>
+      <div class="formula-box">Prediction blends actual record (40%) with point-differential
+projection (60%) to estimate end-of-season standings.
 
-Projected Wins = CurrentWins x (82 / GamesPlayed)
-Predicted RED  = 0.70 x (ProjWins - 41) + 0.30 x (ProjWins - PythExpWins82)
+Projected Win% = 0.40 x ActualWin% + 0.60 x PythagoreanWin%
+Projected Wins  = ProjWin% x 82
+Predicted RED   = 0.70 x (ProjWins - 41) + 0.30 x (ProjWins - PythExpWins82)
 
-Estimates where each team will finish if they maintain current trajectory.</div>
+Teams overperforming their margin regress; elite margins hold up.</div>
       <p><strong>Key difference:</strong> RED shows current performance. Prediction extrapolates your pace to estimate where you finish the 82-game season.</p>
     
     <div style="margin-top:1.2rem; padding-top:1rem; border-top:1px solid var(--border); font-size:0.82rem; color:var(--muted); line-height:1.6;">
       <strong style="color:var(--chrome);">RED Formula:</strong>
       <span class="fc">RED = 0.70 × WinsAbove.500 + 0.30 × PythagoreanDelta</span><br>
-      Toggle Prediction mode to see projected end-of-season RED scores. · Data via ESPN API (auto-refreshes every 20 min).
+      Toggle Prediction mode for margin-weighted end-of-season projections. · Data via ESPN API (auto-refreshes every 20 min).
     </div>
 </div>
   </div>
@@ -605,18 +606,23 @@ Estimates where each team will finish if they maintain current trajectory.</div>
 
   function calculatePRED(wins, losses, ptsFor, ptsAgainst, streak) {
     const gp = wins + losses;
-    if (gp === 0 || ptsFor === 0 || ptsAgainst === 0) return { predScore: 0, predPerGame: 0 };
-    const pace = 82 / gp;
-    const projWins = wins * pace;
-    const projWinsAboveAvg = projWins - 41;
+    if (gp === 0 || ptsFor === 0 || ptsAgainst === 0) return { predScore: 0, predPerGame: 0, projWins: 0, projLosses: 82 };
+    const actualWinPct = wins / gp;
     const EXP = 13.91;
     const pfP = Math.pow(ptsFor, EXP);
     const paP = Math.pow(ptsAgainst, EXP);
     const pythPct = pfP / (pfP + paP);
+    // Blend: 40% actual record + 60% point-differential-based true talent
+    // This means teams overperforming their margin regress toward it
+    const projWinPct = (0.40 * actualWinPct) + (0.60 * pythPct);
+    const projWins = Math.round(projWinPct * 82);
+    const projLosses = 82 - projWins;
+    // Compute projected RED from blended projection
+    const projWinsAboveAvg = projWins - 41;
     const projExpWins = pythPct * 82;
     const projPythDelta = projWins - projExpWins;
     const predScore = (0.70 * projWinsAboveAvg) + (0.30 * projPythDelta);
-    return { predScore: parseFloat(predScore.toFixed(2)), predPerGame: parseFloat((predScore / 82).toFixed(4)), projWins: Math.round(projWins), projLosses: 82 - Math.round(projWins) };
+    return { predScore: parseFloat(predScore.toFixed(2)), predPerGame: parseFloat((predScore / 82).toFixed(4)), projWins, projLosses };
   }
 
     async function initializeSystem() {
