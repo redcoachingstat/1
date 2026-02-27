@@ -18364,7 +18364,7 @@ const FRANCHISE_MAP = {
   'New Orleans Hornets':'Charlotte Hornets',
   'New Orleans/Oklahoma City Hornets':'Charlotte Hornets'
 };
-function build(){
+async function build(){
   // Tag HIST entries with champ flag
   allRows=HIST.map(h=>{const n=FRANCHISE_MAP[h.name]||h.name;return{...h,name:n,origName:h.name,champ:CHAMPS[h.season]===h.name||CHAMPS[h.season]===n};});
   // Load live
