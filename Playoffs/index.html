@@ -127,6 +127,10 @@ nav {
 .d-pill:hover { color: var(--chrome); border-color: var(--silver); }
 .d-pill.active { background: var(--chrome); color: #fff; border-color: var(--chrome); }
 .filters-sep { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
+.go-btn { background: var(--gold); color: #fff; border: none; padding: 6px 20px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; letter-spacing: 0.5px; }
+.go-btn:hover { filter: brightness(1.1); }
+.clear-btn { background: transparent; border: 1px solid var(--border2); color: var(--muted); padding: 6px 14px; border-radius: 6px; font-size: 0.72rem; font-weight: 500; cursor: pointer; }
+.clear-btn:hover { border-color: var(--silver); color: var(--chrome); }
 .filter-select {
   font-family: 'Inter', sans-serif; background: var(--bg);
   border: 1px solid var(--border2); color: var(--text);
@@ -256,28 +260,15 @@ tr:hover td { background: var(--s2); }
   </div>
 </nav>
 
-<div class="meta-bar">
-  <div class="meta-inner">
-    <div class="meta-stat">
-      <strong id="rowCount">45</strong> champions &middot; 1980&ndash;81 to 2024&ndash;25 &middot; <strong>45</strong> seasons
-    </div>
-    <div style="display:flex;gap:0.5rem;">
-      <button class="v-btn active" data-view="table">Champions Table</button>
-      <button class="v-btn" data-view="leaders">Leaderboards</button>
-    </div>
-  </div>
-</div>
-
 <div class="container">
 
   <!-- Stats Cards -->
   <div class="stats-row" id="statsRow"></div>
 
   <!-- Filters -->
-  <div class="filters-bar">
+  <div class="filters-bar" style="justify-content:center;">
     <div class="filter-group">
       <span class="filter-label">Decade</span>
-      <button class="d-pill active" data-decade="all">All</button>
       <button class="d-pill" data-decade="80">80s</button>
       <button class="d-pill" data-decade="90">90s</button>
       <button class="d-pill" data-decade="00">00s</button>
@@ -294,6 +285,14 @@ tr:hover td { background: var(--s2); }
       <span class="filter-label">Team</span>
       <select class="filter-select" id="teamFilter"><option value="">All Teams</option></select>
     </div>
+    <div class="filters-sep"></div>
+    <button class="go-btn" id="goBtn">GO</button>
+    <button class="clear-btn" id="clearAllBtn">Clear All</button>
+  </div>
+
+  <div style="text-align:center;margin-bottom:1rem;">
+    <button class="v-btn active" data-view="table">Champions Table</button>
+    <button class="v-btn" data-view="leaders">Leaderboards</button>
   </div>
 
   <!-- Table View -->
@@ -378,7 +377,7 @@ const CHAMPS = [
   {season:'2024-25',champion:'Oklahoma City Thunder',coach:'Mark Daigneault',opponent:'Indiana Pacers',series:'4-3',fmvp:'Shai Gilgeous-Alexander'}
 ];
 
-let activeDecade = 'all';
+let activeDecade = '';
 let searchQ = '';
 let coachQ = '';
 let teamQ = '';
@@ -390,10 +389,11 @@ function init() {
   const coachSel = document.getElementById('coachFilter');
   coaches.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; coachSel.appendChild(o); });
 
-  // Populate team dropdown
-  const teams = [...new Set(CHAMPS.map(c => c.champion))].sort();
-  const teamSel = document.getElementById('teamFilter');
-  teams.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; teamSel.appendChild(o); });
+  // Populate team dropdown (abbreviated)
+    const TEAM_ABBR={'Atlanta Hawks':'ATL','Boston Celtics':'BOS','Brooklyn Nets':'BKN','Charlotte Hornets':'CHA','Chicago Bulls':'CHI','Cleveland Cavaliers':'CLE','Dallas Mavericks':'DAL','Denver Nuggets':'DEN','Detroit Pistons':'DET','Golden State Warriors':'GSW','Houston Rockets':'HOU','Indiana Pacers':'IND','Los Angeles Clippers':'LAC','Los Angeles Lakers':'LAL','Memphis Grizzlies':'MEM','Miami Heat':'MIA','Milwaukee Bucks':'MIL','Minnesota Timberwolves':'MIN','New Orleans Pelicans':'NOP','New York Knicks':'NYK','Oklahoma City Thunder':'OKC','Orlando Magic':'ORL','Philadelphia 76ers':'PHI','Phoenix Suns':'PHX','Portland Trail Blazers':'POR','Sacramento Kings':'SAC','San Antonio Spurs':'SAS','Seattle SuperSonics':'SEA','Toronto Raptors':'TOR','Utah Jazz':'UTA','Washington Wizards':'WAS','New Jersey Nets':'NJN'};
+    const teams = [...new Set(CHAMPS.map(c => c.champion))].sort();
+    const teamSel = document.getElementById('teamFilter');
+    teams.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = TEAM_ABBR[t]||t; teamSel.appendChild(o); });
 
   buildStats();
   render();
@@ -413,7 +413,7 @@ function render() {
   let data = CHAMPS.slice();
 
   // Decade filter
-  if (activeDecade !== 'all') data = data.filter(c => getDecade(c.season) === activeDecade);
+  if (activeDecade) data = data.filter(c => getDecade(c.season) === activeDecade);
 
   // Coach filter
   if (coachQ) data = data.filter(c => c.coach === coachQ);
@@ -445,7 +445,7 @@ function render() {
     });
   }
 
-  document.getElementById('rowCount').textContent = data.length;
+  const rc=document.getElementById('rowCount'); if(rc) rc.textContent=data.length;
   const tbody = document.getElementById('tbody');
   const noData = document.getElementById('noData');
 
@@ -554,14 +554,34 @@ function buildLeaderboards() {
 }
 
 function bindEvents() {
-  // Decade pills
+  // Decade pills (toggle: click active to deselect)
   document.querySelectorAll('.d-pill').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.d-pill').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeDecade = btn.dataset.decade;
+      if (btn.classList.contains('active')) {
+        btn.classList.remove('active');
+        activeDecade = '';
+      } else {
+        document.querySelectorAll('.d-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeDecade = btn.dataset.decade;
+      }
       render();
     });
+  });
+  // GO button
+  const goBtn = document.getElementById('goBtn');
+  if (goBtn) goBtn.addEventListener('click', () => render());
+  // Clear All
+  const clearBtn = document.getElementById('clearAllBtn');
+  if (clearBtn) clearBtn.addEventListener('click', () => {
+    activeDecade = ''; searchQ = ''; coachQ = ''; teamQ = '';
+    sortState = { col: null, dir: 'asc' };
+    document.querySelectorAll('.d-pill').forEach(b => b.classList.remove('active'));
+    document.getElementById('searchBox').value = '';
+    document.getElementById('coachFilter').value = '';
+    document.getElementById('teamFilter').value = '';
+    document.querySelectorAll('thead th').forEach(t => t.classList.remove('sorted'));
+    render();
   });
 
   // Search
