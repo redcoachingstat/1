@@ -666,7 +666,7 @@ Momentum: Current win/loss streak</div>
                 const medal = getRankMedal(rank);
                 const record = `${result.actualWins}-${result.actualLosses}`;
                 const redPerGameStr = (activePerGame >= 0 ? '+' : '') + activePerGame.toFixed(3);
-                const redScoreStr   = (result.redScore   >= 0 ? '+' : '') + result.redScore.toFixed(2);
+            const redScoreStr   = (activeScore   >= 0 ? '+' : '') + activeScore.toFixed(2);
 
                 row.innerHTML = `
                     <td class="rank-cell">
