@@ -242,8 +242,7 @@ tr:hover td { background: var(--s2); }
       <a href="/1/" style="text-decoration:none;color:inherit"><div class="logo-sub">Rating of Elite Dominance</div></a>
     </div>
     <div class="header-right">
-      <div class="live-badge"><span class="live-dot"></span>2025–26 Live</div>
-      <input type="text" class="header-search" id="searchBox" placeholder="Search team or coach…">
+            <input type="text" class="header-search" id="searchBox" placeholder="Search team or coach…">
     </div>
   </div>
 </header>
@@ -256,14 +255,6 @@ tr:hover td { background: var(--s2); }
   </div>
 </nav>
 
-<div class="meta-bar">
-  <div class="meta-inner">
-    <div class="meta-stat">
-      <strong id="teamCount">—</strong> teams · 2025–26 season
-    </div>
-    <div id="dataTimestamp">Loading…</div>
-  </div>
-</div>
 
 <div class="container">
   <div id="loadingContainer" class="loading-container">
@@ -274,20 +265,15 @@ tr:hover td { background: var(--s2); }
 
   <div id="resultsContainer" style="display:none;">
     <div class="results-header">
-      <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
-        <div class="model-toggle">
-          <button class="model-btn active" data-model="red" id="btnRED">RED</button>
-          <button class="model-btn" data-model="pred" id="btnPRED">Prediction</button>
-        </div>
-        <div class="results-info" id="sortInfo">
-          Sorted by RED Score &nbsp;·&nbsp; click any column to re-sort
-        </div>
+    <div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+      <div class="model-toggle">
+        <button class="model-btn active" data-model="red" id="btnRED">Current</button>
+        <button class="model-btn" data-model="pred" id="btnPRED">Prediction</button>
       </div>
-      <div>
-        <span id="nextRefreshLabel" style="display:none;"></span>
-        <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">⟳ Refresh</button>
-      </div>
+      <span id="nextRefreshLabel" style="display:none;"></span>
+      <button class="refresh-btn" id="refreshBtn" onclick="manualRefresh()">⟳ Refresh</button>
     </div>
+  </div>
     <div class="table-card">
       <table id="leaderboardTable">
         <thead>
