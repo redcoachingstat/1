@@ -239,6 +239,11 @@ tr:hover td { background: var(--s2); }
 .adv-select { padding: 5px 8px; border: 1px solid var(--chrome); border-radius: 6px; background: var(--surface); color: var(--chrome); font-size: 0.8rem; font-family: 'Inter', sans-serif; min-width: 120px; }
 .adv-select:focus { outline: none; border-color: var(--gold); }
 
+
+.page-bar{display:flex;align-items:center;justify-content:center;gap:12px;padding:0.8rem 1rem;color:var(--muted);font-size:0.85rem;}
+.page-bar select{padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);font-size:0.82rem;color:var(--text);cursor:pointer;}
+.load-more-btn{padding:8px 28px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--chrome);font-weight:600;font-size:0.85rem;cursor:pointer;transition:all .2s;}
+.load-more-btn:hover{background:var(--chrome);color:#fff;}
 </style>
 </head>
 <body>
@@ -279,6 +284,8 @@ tr:hover td { background: var(--s2); }
     <span class="range-sep">to</span>
     <input type="number" class="range-input" id="redMax" placeholder="Max" step="0.1">
     <button class="go-btn" id="goBtn">GO</button>
+    <label style="margin-left:12px;font-size:0.75rem;font-weight:600;letter-spacing:0.08em;color:var(--muted)">SHOW</label>
+    <select class="adv-select" id="pageSizeSelect" style="width:auto;min-width:60px;padding:6px 8px"><option value="100" selected>100</option><option value="250">250</option><option value="500">500</option><option value="1000">1000</option><option value="0">All</option></select>
     <button class="clear-btn" id="clearFilters">Clear All</button>
   </div>
 </div>
@@ -301,6 +308,7 @@ tr:hover td { background: var(--s2); }
     </table>
     <div class="empty-state" id="emptyState" style="display:none">No results match your filters.</div>
   </div>
+  <div class="page-bar" id="pageBar">Showing <strong id="showCount">100</strong> of <strong id="totalCount">0</strong> results&emsp;<button class="load-more-btn" id="loadMoreBtn">Load Next 100</button></div>
 
   <div style="text-align:center; padding: 1.5rem 0 1rem;">
       <button class="help-btn" id="helpBtn" title="How RED is calculated">?</button>
@@ -18107,6 +18115,8 @@ let activeYears = new Set(['all']);
 let searchQ = '';
 let sortState = {col:'red', dir:'desc'};
 let activeDecades = new Set();
+let pageSize = 100;
+let shownCount = 100;
 let yearFilter = '';
 let teamFilter = '';
 let redMin = null;
@@ -18142,6 +18152,7 @@ function sg(season){
 }
 
 // ── Render ───────────────────────────────────────────────────────────────────
+function renderFresh(){ shownCount = pageSize || 999999; render(); }
 function render(){
   let rows=[...allRows];
   // Year filter (pills)
@@ -18194,7 +18205,19 @@ function render(){
   tbody.innerHTML='';
   document.getElementById('emptyState').style.display=rows.length?'none':'block';
   
-  rows.forEach((r,i)=>{
+  // Pagination
+  const totalFiltered = rows.length;
+  const displayRows = pageSize === 0 ? rows : rows.slice(0, shownCount);
+  const sc = document.getElementById('showCount');
+  const tc = document.getElementById('totalCount');
+  const lb = document.getElementById('loadMoreBtn');
+  const pb = document.getElementById('pageBar');
+  if(sc) sc.textContent = displayRows.length;
+  if(tc) tc.textContent = totalFiltered;
+  if(lb) lb.style.display = (pageSize === 0 || shownCount >= totalFiltered) ? 'none' : '';
+  if(lb) lb.textContent = 'Load Next ' + pageSize;
+  if(pb) pb.style.display = totalFiltered === 0 ? 'none' : 'flex';
+  displayRows.forEach((r,i)=>{
     const rank=i+1;
     const tr=document.createElement('tr');
     const trophy=r.champ?'\u{1F3C6}':'';
@@ -18268,10 +18291,10 @@ document.querySelectorAll('.decade-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const dec=btn.dataset.decade;
     if(activeDecades.has(dec)){
-      activeDecades.delete(dec);
+      activeDecades.delete(dec); shownCount=pageSize||999999;
       btn.classList.remove('on');
     }else{
-      activeDecades.add(dec);
+      activeDecades.add(dec); shownCount=pageSize||999999;
       btn.classList.add('on');
     }
     render();
@@ -18281,6 +18304,7 @@ document.querySelectorAll('.decade-btn').forEach(btn=>{
 // ── Compare dropdowns ────────────────────────────────────────────────────────
 // ──── Year/Team/RED filter listeners ──────────────────
 document.getElementById('goBtn').addEventListener('click',()=>{
+  shownCount=pageSize||999999;
   const minVal=document.getElementById('redMin').value;
   const maxVal=document.getElementById('redMax').value;
   redMin=minVal!==''?parseFloat(minVal):null;
@@ -18289,12 +18313,13 @@ document.getElementById('goBtn').addEventListener('click',()=>{
   teamFilter=document.getElementById('teamFilter').value;
   render();
 });
-document.getElementById('yearFilter').addEventListener('change',e=>{yearFilter=e.target.value;render();});
-document.getElementById('teamFilter').addEventListener('change',e=>{teamFilter=e.target.value;render();});
+document.getElementById('yearFilter').addEventListener('change',e=>{yearFilter=e.target.value;shownCount=pageSize||999999;render();});
+document.getElementById('teamFilter').addEventListener('change',e=>{teamFilter=e.target.value;shownCount=pageSize||999999;render();});
 document.getElementById('redMin').addEventListener('keydown',e=>{if(e.key==='Enter'){document.getElementById('goBtn').click();}});
 document.getElementById('redMax').addEventListener('keydown',e=>{if(e.key==='Enter'){document.getElementById('goBtn').click();}});
 document.getElementById('clearFilters').addEventListener('click',()=>{
-  activeDecades.clear();document.querySelectorAll('.decade-btn').forEach(b=>b.classList.remove('on'));
+  activeDecades.clear();
+  shownCount = pageSize || 999999;document.querySelectorAll('.decade-btn').forEach(b=>b.classList.remove('on'));
   activeYears=new Set(['all']);
   yearFilter='';teamFilter='';redMin=null;redMax=null;searchQ='';
   document.getElementById('yearFilter').value='';
@@ -18362,7 +18387,8 @@ const FRANCHISE_MAP = {
   'LA Clippers':'Los Angeles Clippers',
   'Charlotte Bobcats':'Charlotte Hornets',
   'New Orleans Hornets':'Charlotte Hornets',
-  'New Orleans/Oklahoma City Hornets':'Charlotte Hornets'
+  'New Orleans/Oklahoma City Hornets':'Charlotte Hornets',
+  'Seattle SuperSonics':'Oklahoma City Thunder'
 };
 async function build(){
   // Tag HIST entries with champ flag
@@ -18380,9 +18406,34 @@ async function build(){
   stylePills();
   render();
 }
-build();
+
+function fixTeamDropdown(){
+  const sel = document.getElementById('teamFilter');
+  const current = sel.value;
+  sel.innerHTML = '<option value="">All Teams</option>';
+  const teams = ["Atlanta Hawks","Boston Celtics","Brooklyn Nets","Charlotte Hornets","Chicago Bulls","Cleveland Cavaliers","Dallas Mavericks","Denver Nuggets","Detroit Pistons","Golden State Warriors","Houston Rockets","Indiana Pacers","Los Angeles Clippers","Los Angeles Lakers","Memphis Grizzlies","Miami Heat","Milwaukee Bucks","Minnesota Timberwolves","New Orleans Pelicans","New York Knicks","Oklahoma City Thunder","Orlando Magic","Philadelphia 76ers","Phoenix Suns","Portland Trail Blazers","Sacramento Kings","San Antonio Spurs","Toronto Raptors","Utah Jazz","Washington Wizards"];
+  teams.forEach(t => {
+    const o = document.createElement('option');
+    o.value = t; o.textContent = t;
+    sel.appendChild(o);
+  });
+  if(current) sel.value = current;
+}
+
+build().then(fixTeamDropdown);
 
 // ── Help modal ──
+
+// ── Pagination controls ──
+document.getElementById('pageSizeSelect').addEventListener('change', e => {
+  pageSize = parseInt(e.target.value);
+  shownCount = pageSize || 999999;
+  render();
+});
+document.getElementById('loadMoreBtn').addEventListener('click', () => {
+  shownCount += pageSize;
+  render();
+});
 document.getElementById('helpBtn').addEventListener('click',()=>{
   document.getElementById('helpModal').classList.add('open');
 });
