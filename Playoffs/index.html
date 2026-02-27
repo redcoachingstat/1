@@ -1455,7 +1455,7 @@ function buildStats() {
     </div>
   `;
 
-  document.getElementById('seasonCount').textContent = [...new Set(PLAYOFF_DATA.map(d => d.s))].length;
+  const scEl=document.getElementById('seasonCount');if(scEl)scEl.textContent = [...new Set(PLAYOFF_DATA.map(d => d.s))].length;
 }
 
 function render() {
@@ -1512,7 +1512,7 @@ function render() {
     });
   }
 
-  document.getElementById('rowCount').textContent = data.length;
+  const rcEl=document.getElementById('rowCount');if(rcEl)rcEl.textContent=data.length;
   const tbody = document.getElementById('tbody');
   const noData = document.getElementById('noData');
 
