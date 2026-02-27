@@ -182,6 +182,7 @@ tr:hover td { background: var(--s2); }
 
 /* ── MOBILE ── */
 @media (max-width: 768px) {
+  #teamFilter { max-width: 80px; font-size: 0.75rem; }
   header { padding: 0 1rem; }
   .logo { font-size: 1.6rem; }
   .header-search { width: 100%; }
@@ -276,7 +277,7 @@ tr:hover td { background: var(--s2); }
     <label>Year</label>
     <select class="adv-select" id="yearFilter"><option value="">All Years</option></select>
     <label style="margin-left:12px">Team</label>
-    <select class="adv-select" id="teamFilter"><option value="">All Teams</option></select>
+    <select class="adv-select" id="teamFilter" style="max-width:90px;min-width:70px"><option value="">All Teams</option></select>
   </div>
   <div class="filter-group">
     <label>RED Score</label>
@@ -284,8 +285,7 @@ tr:hover td { background: var(--s2); }
     <span class="range-sep">to</span>
     <input type="number" class="range-input" id="redMax" placeholder="Max" step="0.1">
     <button class="go-btn" id="goBtn">GO</button>
-    <label style="margin-left:12px;font-size:0.75rem;font-weight:600;letter-spacing:0.08em;color:var(--muted)">SHOW</label>
-    <select class="adv-select" id="pageSizeSelect" style="width:auto;min-width:60px;padding:6px 8px"><option value="100" selected>100</option><option value="250">250</option><option value="500">500</option><option value="1000">1000</option><option value="0">All</option></select>
+    
     <button class="clear-btn" id="clearFilters">Clear All</button>
   </div>
 </div>
@@ -308,7 +308,7 @@ tr:hover td { background: var(--s2); }
     </table>
     <div class="empty-state" id="emptyState" style="display:none">No results match your filters.</div>
   </div>
-  <div class="page-bar" id="pageBar">Showing <strong id="showCount">100</strong> of <strong id="totalCount">0</strong> results&emsp;<button class="load-more-btn" id="loadMoreBtn">Load Next 100</button></div>
+  <div class="page-bar" id="pageBar">Showing <strong id="showCount">25</strong> of <strong id="totalCount">0</strong> results&emsp;<select class="adv-select" id="pageSizeSelect" style="padding:4px 8px;min-width:55px;font-size:0.82rem"><option value="25" selected>25</option><option value="50">50</option><option value="75">75</option><option value="100">100</option><option value="250">250</option><option value="500">500</option><option value="1000">1000</option><option value="0">All</option></select>&emsp;<button class="load-more-btn" id="loadMoreBtn">Load More</button></div>
 
   <div style="text-align:center; padding: 1.5rem 0 1rem;">
       <button class="help-btn" id="helpBtn" title="How RED is calculated">?</button>
@@ -18115,8 +18115,8 @@ let activeYears = new Set(['all']);
 let searchQ = '';
 let sortState = {col:'red', dir:'desc'};
 let activeDecades = new Set();
-let pageSize = 100;
-let shownCount = 100;
+let pageSize = 25;
+let shownCount = 25;
 let yearFilter = '';
 let teamFilter = '';
 let redMin = null;
@@ -18215,7 +18215,7 @@ function render(){
   if(sc) sc.textContent = displayRows.length;
   if(tc) tc.textContent = totalFiltered;
   if(lb) lb.style.display = (pageSize === 0 || shownCount >= totalFiltered) ? 'none' : '';
-  if(lb) lb.textContent = 'Load Next ' + pageSize;
+  if(lb) lb.textContent = 'Load More';
   if(pb) pb.style.display = totalFiltered === 0 ? 'none' : 'flex';
   displayRows.forEach((r,i)=>{
     const rank=i+1;
@@ -18386,8 +18386,8 @@ const FRANCHISE_MAP = {
   'San Diego Clippers':'Los Angeles Clippers',
   'LA Clippers':'Los Angeles Clippers',
   'Charlotte Bobcats':'Charlotte Hornets',
-  'New Orleans Hornets':'Charlotte Hornets',
-  'New Orleans/Oklahoma City Hornets':'Charlotte Hornets',
+  'New Orleans Hornets':'New Orleans Pelicans',
+  'New Orleans/Oklahoma City Hornets':'New Orleans Pelicans',
   'Seattle SuperSonics':'Oklahoma City Thunder'
 };
 async function build(){
@@ -18411,10 +18411,10 @@ function fixTeamDropdown(){
   const sel = document.getElementById('teamFilter');
   const current = sel.value;
   sel.innerHTML = '<option value="">All Teams</option>';
-  const teams = ["Atlanta Hawks","Boston Celtics","Brooklyn Nets","Charlotte Hornets","Chicago Bulls","Cleveland Cavaliers","Dallas Mavericks","Denver Nuggets","Detroit Pistons","Golden State Warriors","Houston Rockets","Indiana Pacers","Los Angeles Clippers","Los Angeles Lakers","Memphis Grizzlies","Miami Heat","Milwaukee Bucks","Minnesota Timberwolves","New Orleans Pelicans","New York Knicks","Oklahoma City Thunder","Orlando Magic","Philadelphia 76ers","Phoenix Suns","Portland Trail Blazers","Sacramento Kings","San Antonio Spurs","Toronto Raptors","Utah Jazz","Washington Wizards"];
-  teams.forEach(t => {
+  const teams = [["Atlanta Hawks","ATL"],["Boston Celtics","BOS"],["Brooklyn Nets","BKN"],["Charlotte Hornets","CHA"],["Chicago Bulls","CHI"],["Cleveland Cavaliers","CLE"],["Dallas Mavericks","DAL"],["Denver Nuggets","DEN"],["Detroit Pistons","DET"],["Golden State Warriors","GSW"],["Houston Rockets","HOU"],["Indiana Pacers","IND"],["Los Angeles Clippers","LAC"],["Los Angeles Lakers","LAL"],["Memphis Grizzlies","MEM"],["Miami Heat","MIA"],["Milwaukee Bucks","MIL"],["Minnesota Timberwolves","MIN"],["New Orleans Pelicans","NOP"],["New York Knicks","NYK"],["Oklahoma City Thunder","OKC"],["Orlando Magic","ORL"],["Philadelphia 76ers","PHI"],["Phoenix Suns","PHX"],["Portland Trail Blazers","POR"],["Sacramento Kings","SAC"],["San Antonio Spurs","SAS"],["Toronto Raptors","TOR"],["Utah Jazz","UTA"],["Washington Wizards","WAS"]];
+  teams.forEach(([t, abbr]) => {
     const o = document.createElement('option');
-    o.value = t; o.textContent = t;
+    o.value = t; o.textContent = abbr;
     sel.appendChild(o);
   });
   if(current) sel.value = current;
