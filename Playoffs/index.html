@@ -253,7 +253,7 @@ tr:hover td { background: var(--s2); }
 <div class="meta-bar">
   <div class="meta-inner">
     <div class="meta-stat">
-      <strong id="rowCount">0</strong> playoff teams ranked &middot; 1979â80 to 2024â25 &middot; <strong id="seasonCount">0</strong> seasons
+      <strong id="rowCount">0</strong> playoff teams ranked &middot; 1949â80 to 2024â25 &middot; <strong id="seasonCount">0</strong> seasons
     </div>
   </div>
 </div>
@@ -267,6 +267,9 @@ tr:hover td { background: var(--s2); }
   <div class="filters-bar">
     <div class="filter-group">
       <span class="filter-label">Decade</span>
+      <button class="d-pill" data-decade="50">50s</button>
+      <button class="d-pill" data-decade="60">60s</button>
+      <button class="d-pill" data-decade="70">70s</button>
       <button class="d-pill" data-decade="80">80s</button>
       <button class="d-pill" data-decade="90">90s</button>
       <button class="d-pill" data-decade="00">00s</button>
@@ -310,6 +313,17 @@ tr:hover td { background: var(--s2); }
     <div class="filters-sep"></div>
     <button class="filter-button primary" id="goBtn">GO</button>
     <button class="filter-button" id="clearBtn">Clear All</button>
+    <div class="filters-sep"></div>
+    <div class="filter-group">
+      <span class="filter-label">Era</span>
+      <select class="filter-select" id="eraFilter">
+        <option value="">All Eras</option>
+        <option value="modern">Modern 16-team (1984+)</option>
+        <option value="merger">Post-ABA Merger (1977+)</option>
+        <option value="expansion">Expansion Era (1971+)</option>
+        <option value="alltime">All-Time (1950+)</option>
+      </select>
+    </div>
   </div>
 
   <!-- Table View -->
@@ -337,6 +351,245 @@ tr:hover td { background: var(--s2); }
 
 <script>
 const PLAYOFF_DATA=[
+{s:'1949-50',t:'Minneapolis Lakers',c:'John Kundla',seed:1,conf:'',rw:5},
+{s:'1949-50',t:'Syracuse Nationals',c:'Al Cervi',seed:1,conf:'East',rw:2},
+{s:'1949-50',t:'Anderson Packers',c:'Howie Schultz',seed:2,conf:'West',rw:2},
+{s:'1949-50',t:'Fort Wayne Pistons',c:'Murray Mendenhall',seed:4,conf:'',rw:2},
+{s:'1949-50',t:'New York Knicks',c:'Joe Lapchick',seed:2,conf:'East',rw:1},
+{s:'1949-50',t:'Indianapolis Olympians',c:'Cliff Barker',seed:1,conf:'West',rw:1},
+{s:'1949-50',t:'Rochester Royals',c:'Les Harrison',seed:2,conf:'',rw:0},
+{s:'1949-50',t:'Chicago Stags',c:'Unknown',seed:5,conf:'',rw:0},
+{s:'1949-50',t:'Washington Capitols',c:'Unknown',seed:3,conf:'East',rw:0},
+{s:'1949-50',t:'Philadelphia Warriors',c:'Eddie Gottlieb',seed:4,conf:'East',rw:0},
+{s:'1949-50',t:'Tri-Cities Blackhawks',c:'Red Auerbach',seed:3,conf:'West',rw:0},
+{s:'1949-50',t:'Sheboygan Red Skins',c:'Ken Suesens',seed:4,conf:'West',rw:0},
+{s:'1950-51',t:'Rochester Royals',c:'Les Harrison',seed:2,conf:'West',rw:3},
+{s:'1950-51',t:'New York Knicks',c:'Joe Lapchick',seed:3,conf:'East',rw:2},
+{s:'1950-51',t:'Syracuse Nationals',c:'Al Cervi',seed:4,conf:'East',rw:1},
+{s:'1950-51',t:'Minneapolis Lakers',c:'John Kundla',seed:1,conf:'West',rw:1},
+{s:'1950-51',t:'Boston Celtics',c:'Red Auerbach',seed:2,conf:'East',rw:0},
+{s:'1950-51',t:'Philadelphia Warriors',c:'Eddie Gottlieb',seed:1,conf:'East',rw:0},
+{s:'1950-51',t:'Indianapolis Olympians',c:'Cliff Barker',seed:4,conf:'West',rw:0},
+{s:'1950-51',t:'Fort Wayne Pistons',c:'Murray Mendenhall',seed:3,conf:'West',rw:0},
+{s:'1951-52',t:'Minneapolis Lakers',c:'John Kundla',seed:2,conf:'West',rw:3},
+{s:'1951-52',t:'New York Knicks',c:'Joe Lapchick',seed:3,conf:'East',rw:2},
+{s:'1951-52',t:'Syracuse Nationals',c:'Al Cervi',seed:1,conf:'East',rw:1},
+{s:'1951-52',t:'Rochester Royals',c:'Les Harrison',seed:1,conf:'West',rw:1},
+{s:'1951-52',t:'Boston Celtics',c:'Red Auerbach',seed:2,conf:'East',rw:0},
+{s:'1951-52',t:'Fort Wayne Pistons',c:'Murray Mendenhall',seed:4,conf:'West',rw:0},
+{s:'1951-52',t:'Indianapolis Olympians',c:'Cliff Barker',seed:4,conf:'East',rw:0},
+{s:'1951-52',t:'Philadelphia Warriors',c:'Eddie Gottlieb',seed:3,conf:'West',rw:0},
+{s:'1952-53',t:'Minneapolis Lakers',c:'John Kundla',seed:1,conf:'West',rw:3},
+{s:'1952-53',t:'New York Knicks',c:'Joe Lapchick',seed:1,conf:'East',rw:2},
+{s:'1952-53',t:'Fort Wayne Pistons',c:'Paul Birch',seed:3,conf:'West',rw:1},
+{s:'1952-53',t:'Boston Celtics',c:'Red Auerbach',seed:3,conf:'East',rw:1},
+{s:'1952-53',t:'Syracuse Nationals',c:'Al Cervi',seed:2,conf:'East',rw:0},
+{s:'1952-53',t:'Baltimore Bullets',c:'Clair Bee',seed:4,conf:'East',rw:0},
+{s:'1952-53',t:'Rochester Royals',c:'Les Harrison',seed:2,conf:'West',rw:0},
+{s:'1952-53',t:'Indianapolis Olympians',c:'Cliff Barker',seed:4,conf:'West',rw:0},
+{s:'1953-54',t:'Minneapolis Lakers',c:'John Kundla',seed:1,conf:'West',rw:2},
+{s:'1953-54',t:'Syracuse Nationals',c:'Al Cervi',seed:2,conf:'East',rw:1},
+{s:'1953-54',t:'Fort Wayne Pistons',c:'Paul Birch',seed:2,conf:'West',rw:0},
+{s:'1953-54',t:'Boston Celtics',c:'Red Auerbach',seed:1,conf:'East',rw:0},
+{s:'1954-55',t:'Syracuse Nationals',c:'Al Cervi',seed:1,conf:'East',rw:2},
+{s:'1954-55',t:'Fort Wayne Pistons',c:'Charley Eckman',seed:1,conf:'West',rw:1},
+{s:'1954-55',t:'Minneapolis Lakers',c:'John Kundla',seed:2,conf:'West',rw:1},
+{s:'1954-55',t:'Boston Celtics',c:'Red Auerbach',seed:2,conf:'East',rw:1},
+{s:'1954-55',t:'New York Knicks',c:'Joe Lapchick',seed:3,conf:'East',rw:0},
+{s:'1954-55',t:'Rochester Royals',c:'Les Harrison',seed:3,conf:'West',rw:0},
+{s:'1955-56',t:'Philadelphia Warriors',c:'George Senesky',seed:1,conf:'East',rw:2},
+{s:'1955-56',t:'Fort Wayne Pistons',c:'Charley Eckman',seed:1,conf:'West',rw:1},
+{s:'1955-56',t:'Syracuse Nationals',c:'Paul Seymour',seed:3,conf:'East',rw:1},
+{s:'1955-56',t:'St. Louis Hawks',c:'Red Holzman',seed:3,conf:'West',rw:1},
+{s:'1955-56',t:'Boston Celtics',c:'Red Auerbach',seed:2,conf:'East',rw:0},
+{s:'1955-56',t:'Minneapolis Lakers',c:'John Kundla',seed:2,conf:'West',rw:1},
+{s:'1955-56',t:'New York Knicks',c:'Joe Lapchick',seed:4,conf:'East',rw:0},
+{s:'1956-57',t:'Boston Celtics',c:'Red Auerbach',seed:1,conf:'East',rw:2},
+{s:'1956-57',t:'St. Louis Hawks',c:'Red Holzman',seed:1,conf:'West',rw:3},
+{s:'1956-57',t:'Syracuse Nationals',c:'Paul Seymour',seed:2,conf:'East',rw:1},
+{s:'1956-57',t:'Minneapolis Lakers',c:'John Kundla',seed:2,conf:'West',rw:1},
+{s:'1956-57',t:'Philadelphia Warriors',c:'George Senesky',seed:3,conf:'East',rw:0},
+{s:'1956-57',t:'Fort Wayne Pistons',c:'Charley Eckman',seed:3,conf:'West',rw:0},
+{s:'1957-58',t:'St. Louis Hawks',c:'Alex Hannum',seed:1,conf:'West',rw:2},
+{s:'1957-58',t:'Boston Celtics',c:'Red Auerbach',seed:1,conf:'East',rw:1},
+{s:'1957-58',t:'Philadelphia Warriors',c:'George Senesky',seed:3,conf:'East',rw:1},
+{s:'1957-58',t:'Detroit Pistons',c:'Red Rocha',seed:2,conf:'West',rw:1},
+{s:'1957-58',t:'Syracuse Nationals',c:'Paul Seymour',seed:2,conf:'East',rw:0},
+{s:'1957-58',t:'Cincinnati Royals',c:'Bobby Wanzer',seed:3,conf:'West',rw:0},
+{s:'1958-59',t:'Boston Celtics',c:'Red Auerbach',seed:1,conf:'East',rw:2},
+{s:'1958-59',t:'Minneapolis Lakers',c:'John Kundla',seed:2,conf:'West',rw:2},
+{s:'1958-59',t:'Syracuse Nationals',c:'Paul Seymour',seed:3,conf:'East',rw:1},
+{s:'1958-59',t:'St. Louis Hawks',c:'Ed Macauley',seed:1,conf:'West',rw:0},
+{s:'1958-59',t:'New York Knicks',c:'Andrew Levane',seed:2,conf:'East',rw:0},
+{s:'1958-59',t:'Detroit Pistons',c:'Red Rocha',seed:3,conf:'West',rw:0},
+{s:'1959-60',t:'Boston Celtics',c:'Red Auerbach',seed:1,conf:'East',rw:2},
+{s:'1959-60',t:'St. Louis Hawks',c:'Ed Macauley',seed:1,conf:'West',rw:1},
+{s:'1959-60',t:'Minneapolis Lakers',c:'John Kundla',seed:3,conf:'West',rw:1},
+{s:'1959-60',t:'Philadelphia Warriors',c:'Neil Johnston',seed:2,conf:'East',rw:0},
+{s:'1959-60',t:'Syracuse Nationals',c:'Paul Seymour',seed:2,conf:'East',rw:0},
+{s:'1959-60',t:'Detroit Pistons',c:'Red Rocha',seed:2,conf:'West',rw:0},
+{s:'1960-61',t:'Boston Celtics',c:'Red Auerbach',seed:1,conf:'East',rw:2},
+{s:'1960-61',t:'St. Louis Hawks',c:'Paul Seymour',seed:1,conf:'West',rw:1},
+{s:'1960-61',t:'Syracuse Nationals',c:'Alex Hannum',seed:2,conf:'East',rw:1},
+{s:'1960-61',t:'Los Angeles Lakers',c:'Fred Schaus',seed:2,conf:'West',rw:1},
+{s:'1960-61',t:'Philadelphia Warriors',c:'Neil Johnston',seed:3,conf:'East',rw:0},
+{s:'1960-61',t:'Detroit Pistons',c:'Dick McGuire',seed:3,conf:'West',rw:0},
+{s:'1961-62',t:'Boston Celtics',c:'Red Auerbach',seed:1,conf:'East',rw:2},
+{s:'1961-62',t:'Los Angeles Lakers',c:'Fred Schaus',seed:1,conf:'West',rw:1},
+{s:'1961-62',t:'Philadelphia Warriors',c:'Frank McGuire',seed:3,conf:'East',rw:1},
+{s:'1961-62',t:'Detroit Pistons',c:'Dick McGuire',seed:3,conf:'West',rw:1},
+{s:'1961-62',t:'Syracuse Nationals',c:'Alex Hannum',seed:2,conf:'East',rw:0},
+{s:'1961-62',t:'Cincinnati Royals',c:'Charlie Wolf',seed:2,conf:'West',rw:0},
+{s:'1962-63',t:'Boston Celtics',c:'Red Auerbach',seed:1,conf:'East',rw:2},
+{s:'1962-63',t:'Los Angeles Lakers',c:'Fred Schaus',seed:1,conf:'West',rw:1},
+{s:'1962-63',t:'Cincinnati Royals',c:'Charlie Wolf',seed:2,conf:'East',rw:1},
+{s:'1962-63',t:'St. Louis Hawks',c:'Harry Gallatin',seed:2,conf:'West',rw:1},
+{s:'1962-63',t:'Syracuse Nationals',c:'Alex Hannum',seed:3,conf:'East',rw:0},
+{s:'1962-63',t:'Detroit Pistons',c:'Dick McGuire',seed:3,conf:'West',rw:0},
+{s:'1963-64',t:'Boston Celtics',c:'Red Auerbach',seed:1,conf:'East',rw:2},
+{s:'1963-64',t:'San Francisco Warriors',c:'Alex Hannum',seed:1,conf:'West',rw:1},
+{s:'1963-64',t:'Cincinnati Royals',c:'Jack McMahon',seed:2,conf:'East',rw:1},
+{s:'1963-64',t:'St. Louis Hawks',c:'Harry Gallatin',seed:2,conf:'West',rw:1},
+{s:'1963-64',t:'Philadelphia 76ers',c:'Dolph Schayes',seed:3,conf:'East',rw:0},
+{s:'1963-64',t:'Los Angeles Lakers',c:'Fred Schaus',seed:3,conf:'West',rw:0},
+{s:'1964-65',t:'Boston Celtics',c:'Red Auerbach',seed:1,conf:'East',rw:2},
+{s:'1964-65',t:'Los Angeles Lakers',c:'Fred Schaus',seed:1,conf:'West',rw:1},
+{s:'1964-65',t:'Philadelphia 76ers',c:'Dolph Schayes',seed:3,conf:'East',rw:1},
+{s:'1964-65',t:'Baltimore Bullets',c:'Buddy Jeannette',seed:3,conf:'West',rw:1},
+{s:'1964-65',t:'Cincinnati Royals',c:'Jack McMahon',seed:2,conf:'East',rw:0},
+{s:'1964-65',t:'St. Louis Hawks',c:'Richie Guerin',seed:2,conf:'West',rw:0},
+{s:'1965-66',t:'Boston Celtics',c:'Red Auerbach',seed:2,conf:'East',rw:3},
+{s:'1965-66',t:'Los Angeles Lakers',c:'Fred Schaus',seed:1,conf:'West',rw:1},
+{s:'1965-66',t:'Philadelphia 76ers',c:'Dolph Schayes',seed:1,conf:'East',rw:0},
+{s:'1965-66',t:'St. Louis Hawks',c:'Richie Guerin',seed:3,conf:'West',rw:1},
+{s:'1965-66',t:'Cincinnati Royals',c:'Jack McMahon',seed:3,conf:'East',rw:0},
+{s:'1965-66',t:'Baltimore Bullets',c:'Paul Seymour',seed:2,conf:'West',rw:0},
+{s:'1966-67',t:'Philadelphia 76ers',c:'Alex Hannum',seed:1,conf:'East',rw:3},
+{s:'1966-67',t:'San Francisco Warriors',c:'Bill Sharman',seed:1,conf:'West',rw:2},
+{s:'1966-67',t:'Boston Celtics',c:'Bill Russell',seed:2,conf:'East',rw:1},
+{s:'1966-67',t:'St. Louis Hawks',c:'Richie Guerin',seed:2,conf:'West',rw:1},
+{s:'1966-67',t:'New York Knicks',c:'Dick McGuire',seed:4,conf:'East',rw:0},
+{s:'1966-67',t:'Cincinnati Royals',c:'Jack McMahon',seed:3,conf:'East',rw:0},
+{s:'1966-67',t:'Los Angeles Lakers',c:'Fred Schaus',seed:3,conf:'West',rw:0},
+{s:'1966-67',t:'Chicago Bulls',c:'Red Kerr',seed:4,conf:'West',rw:0},
+{s:'1967-68',t:'Boston Celtics',c:'Bill Russell',seed:2,conf:'East',rw:3},
+{s:'1967-68',t:'Los Angeles Lakers',c:'Butch van Breda Kolff',seed:1,conf:'West',rw:2},
+{s:'1967-68',t:'Philadelphia 76ers',c:'Alex Hannum',seed:1,conf:'East',rw:1},
+{s:'1967-68',t:'San Francisco Warriors',c:'Bill Sharman',seed:3,conf:'West',rw:1},
+{s:'1967-68',t:'Detroit Pistons',c:'Donnie Butcher',seed:4,conf:'East',rw:0},
+{s:'1967-68',t:'Chicago Bulls',c:'Red Kerr',seed:4,conf:'West',rw:0},
+{s:'1967-68',t:'St. Louis Hawks',c:'Richie Guerin',seed:2,conf:'West',rw:0},
+{s:'1968-69',t:'Boston Celtics',c:'Bill Russell',seed:4,conf:'East',rw:3},
+{s:'1968-69',t:'Los Angeles Lakers',c:'Butch van Breda Kolff',seed:1,conf:'West',rw:2},
+{s:'1968-69',t:'New York Knicks',c:'Red Holzman',seed:3,conf:'East',rw:1},
+{s:'1968-69',t:'Atlanta Hawks',c:'Richie Guerin',seed:2,conf:'West',rw:1},
+{s:'1968-69',t:'Baltimore Bullets',c:'Gene Shue',seed:1,conf:'East',rw:0},
+{s:'1968-69',t:'San Francisco Warriors',c:'George Lee',seed:3,conf:'West',rw:0},
+{s:'1968-69',t:'Philadelphia 76ers',c:'Jack Ramsay',seed:2,conf:'East',rw:0},
+{s:'1969-70',t:'New York Knicks',c:'Red Holzman',seed:1,conf:'East',rw:3},
+{s:'1969-70',t:'Los Angeles Lakers',c:'Joe Mullaney',seed:2,conf:'West',rw:2},
+{s:'1969-70',t:'Milwaukee Bucks',c:'Larry Costello',seed:2,conf:'East',rw:1},
+{s:'1969-70',t:'Atlanta Hawks',c:'Richie Guerin',seed:1,conf:'West',rw:1},
+{s:'1969-70',t:'Baltimore Bullets',c:'Gene Shue',seed:3,conf:'East',rw:0},
+{s:'1969-70',t:'Philadelphia 76ers',c:'Jack Ramsay',seed:4,conf:'East',rw:0},
+{s:'1969-70',t:'Chicago Bulls',c:'Dick Motta',seed:4,conf:'West',rw:0},
+{s:'1969-70',t:'Phoenix Suns',c:'Red Kerr',seed:3,conf:'West',rw:0},
+{s:'1970-71',t:'Milwaukee Bucks',c:'Larry Costello',seed:1,conf:'West',rw:3},
+{s:'1970-71',t:'Baltimore Bullets',c:'Gene Shue',seed:1,conf:'East',rw:2},
+{s:'1970-71',t:'New York Knicks',c:'Red Holzman',seed:2,conf:'East',rw:1},
+{s:'1970-71',t:'Los Angeles Lakers',c:'Joe Mullaney',seed:3,conf:'West',rw:1},
+{s:'1970-71',t:'Philadelphia 76ers',c:'Jack Ramsay',seed:3,conf:'East',rw:0},
+{s:'1970-71',t:'Atlanta Hawks',c:'Richie Guerin',seed:5,conf:'East',rw:0},
+{s:'1970-71',t:'Chicago Bulls',c:'Dick Motta',seed:2,conf:'West',rw:0},
+{s:'1970-71',t:'San Francisco Warriors',c:'Al Attles',seed:6,conf:'West',rw:0},
+{s:'1971-72',t:'Los Angeles Lakers',c:'Bill Sharman',seed:1,conf:'West',rw:3},
+{s:'1971-72',t:'New York Knicks',c:'Red Holzman',seed:2,conf:'East',rw:2},
+{s:'1971-72',t:'Boston Celtics',c:'Tom Heinsohn',seed:1,conf:'East',rw:1},
+{s:'1971-72',t:'Milwaukee Bucks',c:'Larry Costello',seed:2,conf:'West',rw:1},
+{s:'1971-72',t:'Atlanta Hawks',c:'Richie Guerin',seed:4,conf:'East',rw:0},
+{s:'1971-72',t:'Baltimore Bullets',c:'Gene Shue',seed:3,conf:'East',rw:0},
+{s:'1971-72',t:'Chicago Bulls',c:'Dick Motta',seed:3,conf:'West',rw:0},
+{s:'1971-72',t:'Golden State Warriors',c:'Al Attles',seed:4,conf:'West',rw:0},
+{s:'1972-73',t:'New York Knicks',c:'Red Holzman',seed:2,conf:'East',rw:3},
+{s:'1972-73',t:'Los Angeles Lakers',c:'Bill Sharman',seed:2,conf:'West',rw:2},
+{s:'1972-73',t:'Boston Celtics',c:'Tom Heinsohn',seed:1,conf:'East',rw:1},
+{s:'1972-73',t:'Golden State Warriors',c:'Al Attles',seed:4,conf:'West',rw:1},
+{s:'1972-73',t:'Atlanta Hawks',c:'Cotton Fitzsimmons',seed:4,conf:'East',rw:0},
+{s:'1972-73',t:'Baltimore Bullets',c:'Gene Shue',seed:3,conf:'East',rw:0},
+{s:'1972-73',t:'Milwaukee Bucks',c:'Larry Costello',seed:1,conf:'West',rw:0},
+{s:'1972-73',t:'Chicago Bulls',c:'Dick Motta',seed:3,conf:'West',rw:0},
+{s:'1973-74',t:'Boston Celtics',c:'Tom Heinsohn',seed:1,conf:'East',rw:3},
+{s:'1973-74',t:'Milwaukee Bucks',c:'Larry Costello',seed:1,conf:'West',rw:2},
+{s:'1973-74',t:'New York Knicks',c:'Red Holzman',seed:2,conf:'East',rw:1},
+{s:'1973-74',t:'Chicago Bulls',c:'Dick Motta',seed:3,conf:'West',rw:1},
+{s:'1973-74',t:'Capital Bullets',c:'K.C. Jones',seed:3,conf:'East',rw:0},
+{s:'1973-74',t:'Buffalo Braves',c:'Jack Ramsay',seed:2,conf:'East',rw:0},
+{s:'1973-74',t:'Los Angeles Lakers',c:'Bill Sharman',seed:4,conf:'West',rw:0},
+{s:'1973-74',t:'Detroit Pistons',c:'Ray Scott',seed:2,conf:'West',rw:0},
+{s:'1974-75',t:'Golden State Warriors',c:'Al Attles',seed:3,conf:'West',rw:3},
+{s:'1974-75',t:'Washington Bullets',c:'K.C. Jones',seed:1,conf:'East',rw:2},
+{s:'1974-75',t:'Boston Celtics',c:'Tom Heinsohn',seed:2,conf:'East',rw:1},
+{s:'1974-75',t:'Chicago Bulls',c:'Dick Motta',seed:2,conf:'West',rw:1},
+{s:'1974-75',t:'Houston Rockets',c:'John Egan',seed:3,conf:'East',rw:0},
+{s:'1974-75',t:'Seattle SuperSonics',c:'Bill Russell',seed:4,conf:'West',rw:0},
+{s:'1974-75',t:'Kansas City-Omaha Kings',c:'Phil Johnson',seed:4,conf:'West',rw:0},
+{s:'1974-75',t:'Detroit Pistons',c:'Ray Scott',seed:1,conf:'West',rw:0},
+{s:'1975-76',t:'Boston Celtics',c:'Tom Heinsohn',seed:1,conf:'East',rw:3},
+{s:'1975-76',t:'Phoenix Suns',c:'John MacLeod',seed:3,conf:'West',rw:2},
+{s:'1975-76',t:'Cleveland Cavaliers',c:'Bill Fitch',seed:3,conf:'East',rw:1},
+{s:'1975-76',t:'Golden State Warriors',c:'Al Attles',seed:1,conf:'West',rw:1},
+{s:'1975-76',t:'Buffalo Braves',c:'Jack Ramsay',seed:2,conf:'East',rw:0},
+{s:'1975-76',t:'Detroit Pistons',c:'Herb Brown',seed:4,conf:'West',rw:0},
+{s:'1975-76',t:'Philadelphia 76ers',c:'Gene Shue',seed:4,conf:'East',rw:0},
+{s:'1975-76',t:'Milwaukee Bucks',c:'Larry Costello',seed:2,conf:'West',rw:0},
+{s:'1976-77',t:'Portland Trail Blazers',c:'Jack Ramsay',seed:3,conf:'West',rw:4},
+{s:'1976-77',t:'Philadelphia 76ers',c:'Gene Shue',seed:2,conf:'East',rw:3},
+{s:'1976-77',t:'Houston Rockets',c:'Tom Nissalke',seed:1,conf:'East',rw:2},
+{s:'1976-77',t:'Los Angeles Lakers',c:'Jerry West',seed:1,conf:'West',rw:1},
+{s:'1976-77',t:'Washington Bullets',c:'Dick Motta',seed:3,conf:'East',rw:1},
+{s:'1976-77',t:'Boston Celtics',c:'Tom Heinsohn',seed:4,conf:'East',rw:1},
+{s:'1976-77',t:'Golden State Warriors',c:'Al Attles',seed:4,conf:'West',rw:1},
+{s:'1976-77',t:'Denver Nuggets',c:'Larry Brown',seed:2,conf:'West',rw:0},
+{s:'1976-77',t:'San Antonio Spurs',c:'Doug Moe',seed:5,conf:'East',rw:0},
+{s:'1976-77',t:'Cleveland Cavaliers',c:'Bill Fitch',seed:6,conf:'East',rw:0},
+{s:'1976-77',t:'Detroit Pistons',c:'Herb Brown',seed:5,conf:'West',rw:0},
+{s:'1976-77',t:'Chicago Bulls',c:'Ed Badger',seed:6,conf:'West',rw:0},
+{s:'1977-78',t:'Washington Bullets',c:'Dick Motta',seed:3,conf:'East',rw:4},
+{s:'1977-78',t:'Seattle SuperSonics',c:'Lenny Wilkens',seed:4,conf:'West',rw:3},
+{s:'1977-78',t:'Philadelphia 76ers',c:'Billy Cunningham',seed:1,conf:'East',rw:1},
+{s:'1977-78',t:'Denver Nuggets',c:'Larry Brown',seed:3,conf:'West',rw:1},
+{s:'1977-78',t:'New York Knicks',c:'Willis Reed',seed:4,conf:'East',rw:1},
+{s:'1977-78',t:'San Antonio Spurs',c:'Doug Moe',seed:2,conf:'East',rw:0},
+{s:'1977-78',t:'Milwaukee Bucks',c:'Don Nelson',seed:6,conf:'West',rw:1},
+{s:'1977-78',t:'Portland Trail Blazers',c:'Jack Ramsay',seed:1,conf:'West',rw:0},
+{s:'1977-78',t:'Cleveland Cavaliers',c:'Bill Fitch',seed:5,conf:'East',rw:0},
+{s:'1977-78',t:'Atlanta Hawks',c:'Hubie Brown',seed:6,conf:'East',rw:0},
+{s:'1977-78',t:'Phoenix Suns',c:'John MacLeod',seed:2,conf:'West',rw:0},
+{s:'1977-78',t:'Los Angeles Lakers',c:'Jerry West',seed:5,conf:'West',rw:0},
+{s:'1978-79',t:'Seattle SuperSonics',c:'Lenny Wilkens',seed:1,conf:'West',rw:3},
+{s:'1978-79',t:'Washington Bullets',c:'Dick Motta',seed:3,conf:'East',rw:2},
+{s:'1978-79',t:'Phoenix Suns',c:'John MacLeod',seed:3,conf:'West',rw:1},
+{s:'1978-79',t:'San Antonio Spurs',c:'Doug Moe',seed:2,conf:'East',rw:1},
+{s:'1978-79',t:'Philadelphia 76ers',c:'Billy Cunningham',seed:1,conf:'East',rw:1},
+{s:'1978-79',t:'Atlanta Hawks',c:'Hubie Brown',seed:4,conf:'East',rw:1},
+{s:'1978-79',t:'Houston Rockets',c:'Tom Nissalke',seed:5,conf:'West',rw:0},
+{s:'1978-79',t:'Los Angeles Lakers',c:'Jerry West',seed:4,conf:'West',rw:0},
+{s:'1978-79',t:'New Jersey Nets',c:'Kevin Loughery',seed:6,conf:'East',rw:0},
+{s:'1978-79',t:'Portland Trail Blazers',c:'Jack Ramsay',seed:6,conf:'West',rw:0},
+{s:'1978-79',t:'Kansas City Kings',c:'Cotton Fitzsimmons',seed:2,conf:'West',rw:0},
+{s:'1978-79',t:'Denver Nuggets',c:'Larry Brown',seed:5,conf:'East',rw:0},
+{s:'1979-80',t:'Los Angeles Lakers',c:'Jack McKinney',seed:1,conf:'West',rw:3},
+{s:'1979-80',t:'Philadelphia 76ers',c:'Billy Cunningham',seed:1,conf:'East',rw:2},
+{s:'1979-80',t:'Boston Celtics',c:'Bill Fitch',seed:1,conf:'East',rw:1},
+{s:'1979-80',t:'Houston Rockets',c:'Del Harris',seed:6,conf:'West',rw:1},
+{s:'1979-80',t:'Seattle SuperSonics',c:'Lenny Wilkens',seed:2,conf:'West',rw:1},
+{s:'1979-80',t:'San Antonio Spurs',c:'Doug Moe',seed:4,conf:'West',rw:1},
+{s:'1979-80',t:'Atlanta Hawks',c:'Hubie Brown',seed:2,conf:'East',rw:0},
+{s:'1979-80',t:'Milwaukee Bucks',c:'Don Nelson',seed:3,conf:'West',rw:0},
+{s:'1979-80',t:'Phoenix Suns',c:'John MacLeod',seed:3,conf:'West',rw:0},
+{s:'1979-80',t:'Washington Bullets',c:'Dick Motta',seed:5,conf:'East',rw:0},
+{s:'1979-80',t:'Kansas City Kings',c:'Cotton Fitzsimmons',seed:5,conf:'West',rw:0},
+{s:'1979-80',t:'Portland Trail Blazers',c:'Jack Ramsay',seed:6,conf:'West',rw:0},
 {s:'1979-80',t:'Boston Celtics',c:'Bill Fitch',seed:1,conf:'East',rw:2},
 {s:'1979-80',t:'Atlanta Hawks',c:'Lenny Wilkens',seed:2,conf:'East',rw:1},
 {s:'1979-80',t:'Philadelphia 76ers',c:'Billy Cunningham',seed:3,conf:'East',rw:3},
@@ -1058,14 +1311,29 @@ const PLAYOFF_DATA=[
 {s:'2024-25',t:'Memphis Grizzlies',c:'Tuomas Iisalo',seed:8,conf:'West',rw:0}
 ];
 
-const EXPECTED_ROUNDS = {1: 2.5, 2: 1.8, 3: 1.3, 4: 1.0, 5: 0.7, 6: 0.5, 7: 0.3, 8: 0.2};
+// Era-specific expected rounds based on playoff format
+const EXPECTED_ROUNDS_MODERN = {1: 2.5, 2: 1.8, 3: 1.3, 4: 1.0, 5: 0.7, 6: 0.5, 7: 0.3, 8: 0.2};
+const EXPECTED_ROUNDS_MERGER = {1: 2.2, 2: 1.5, 3: 1.0, 4: 0.6, 5: 0.3, 6: 0.2};
+const EXPECTED_ROUNDS_EXPANSION = {1: 1.8, 2: 1.2, 3: 0.7, 4: 0.4, 5: 0.2, 6: 0.1};
+const EXPECTED_ROUNDS_EARLY = {1: 1.5, 2: 1.0, 3: 0.6, 4: 0.3, 5: 0.15};
 
-function calculatePlayoffRED(rw, seed) {
-  return rw - (EXPECTED_ROUNDS[seed] || 0);
+function getExpectedRounds(seed, season) {
+  const y = parseInt(season.substring(0, 4));
+  if (y >= 1983) return EXPECTED_ROUNDS_MODERN[seed] || 0;
+  if (y >= 1976) return EXPECTED_ROUNDS_MERGER[seed] || 0;
+  if (y >= 1970) return EXPECTED_ROUNDS_EXPANSION[seed] || 0;
+  return EXPECTED_ROUNDS_EARLY[seed] || 0;
+}
+
+function calculatePlayoffRED(rw, seed, season) {
+  return rw - getExpectedRounds(seed, season || '1983-84');
 }
 
 function getDecade(season) {
   const y = parseInt(season.substring(0, 4));
+  if (y < 1960) return '50';
+  if (y < 1970) return '60';
+  if (y < 1980) return '70';
   if (y < 1990) return '80';
   if (y < 2000) return '90';
   if (y < 2010) return '00';
@@ -1073,14 +1341,24 @@ function getDecade(season) {
   return '20';
 }
 
-function getResultText(rw) {
-  switch(rw) {
-    case 0: return '1st Round';
-    case 1: return '2nd Round';
-    case 2: return 'Conf Finals';
-    case 3: return 'Finals';
-    case 4: return 'Champion';
-    default: return 'â';
+function getResultText(rw, season) {
+  const y = season ? parseInt(season.substring(0, 4)) : 1983;
+  if (y >= 1976) {
+    switch(rw) {
+      case 0: return '1st Round';
+      case 1: return '2nd Round';
+      case 2: return 'Conf Finals';
+      case 3: return 'Finals';
+      case 4: return 'Champion';
+      default: return '\u2014';
+    }
+  } else {
+    if (rw === 0) return '1st Round';
+    const maxRW = Math.max(...PLAYOFF_DATA.filter(d => d.s === season).map(d => d.rw));
+    if (rw === maxRW) return 'Champion';
+    if (rw === maxRW - 1) return 'Finals';
+    if (rw === maxRW - 2) return 'Semis';
+    return 'Round ' + rw;
   }
 }
 
@@ -1098,6 +1376,7 @@ let teamQ = '';
 let coachQ = '';
 let confQ = '';
 let seedQ = '';
+let eraQ = '';
 let sortState = { col: 'red', dir: 'desc' };
 
 function init() {
@@ -1137,7 +1416,7 @@ function buildStats() {
   };
 
   PLAYOFF_DATA.forEach(d => {
-    const red = calculatePlayoffRED(d.rw, d.seed);
+    const red = calculatePlayoffRED(d.rw, d.seed, d.s);
     if (!stats.highest || red > stats.highest.red) {
       stats.highest = { ...d, red };
     }
@@ -1206,6 +1485,13 @@ function render() {
   // Seed filter
   if (seedQ) data = data.filter(d => d.seed === parseInt(seedQ));
 
+  // Era filter
+  if (eraQ) {
+    const eraStart = {modern: 1983, merger: 1976, expansion: 1970, alltime: 1949};
+    const startYear = eraStart[eraQ] || 1949;
+    data = data.filter(d => parseInt(d.s.substring(0, 4)) >= startYear);
+  }
+
   // Search
   if (searchQ) {
     const q = searchQ.toLowerCase();
@@ -1219,7 +1505,7 @@ function render() {
   // Add calculated RED to each entry
   data = data.map(d => ({
     ...d,
-    red: calculatePlayoffRED(d.rw, d.seed)
+    red: calculatePlayoffRED(d.rw, d.seed, d.s)
   }));
 
   // Sort
@@ -1245,7 +1531,7 @@ function render() {
   noData.style.display = 'none';
 
   tbody.innerHTML = data.map((d, i) => {
-    const seedDisplay = d.seed + (d.conf === 'East' ? 'E' : 'W');
+    const seedDisplay = d.seed + (d.conf === 'East' ? 'E' : d.conf === 'West' ? 'W' : '');
     const redColor = getRedColor(d.red);
     return `<tr>
       <td class="rank-cell">${i + 1}</td>
@@ -1253,7 +1539,7 @@ function render() {
       <td class="team-cell">${d.t}</td>
       <td class="coach-cell">${d.c}</td>
       <td class="seed-cell">${seedDisplay}</td>
-      <td class="result-cell">${getResultText(d.rw)}</td>
+      <td class="result-cell">${getResultText(d.rw, d.s)}</td>
       <td class="red-cell ${redColor}">${d.red >= 0 ? '+' : ''}${d.red.toFixed(2)}</td>
     </tr>`;
   }).join('');
@@ -1292,6 +1578,12 @@ function bindEvents() {
     render();
   });
 
+  // Era filter
+  document.getElementById('eraFilter').addEventListener('change', function() {
+    eraQ = this.value;
+    render();
+  });
+
   // Search
   document.getElementById('searchBox').addEventListener('input', function() {
     searchQ = this.value.trim();
@@ -1308,11 +1600,13 @@ function bindEvents() {
     coachQ = '';
     confQ = '';
     seedQ = '';
+    eraQ = '';
     searchQ = '';
     document.getElementById('teamFilter').value = '';
     document.getElementById('coachFilter').value = '';
     document.getElementById('confFilter').value = '';
     document.getElementById('seedFilter').value = '';
+    document.getElementById('eraFilter').value = '';
     document.getElementById('searchBox').value = '';
     document.querySelectorAll('.d-pill').forEach(btn => btn.classList.remove('active'));
     render();
