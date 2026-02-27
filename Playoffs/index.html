@@ -1319,7 +1319,25 @@ function getExpectedRounds(seed, season) {
 }
 
 function calculatePlayoffRED(rw, seed, season) {
-  return rw - getExpectedRounds(seed, season || '1983-84');
+  const expectedRW = getExpectedRounds(seed, season || '1983-84');
+  const y = parseInt((season || '1983-84').substring(0, 4));
+  // Era-specific max rounds and seeds
+  let maxRounds, maxSeeds;
+  if (y >= 1983) { maxRounds = 4; maxSeeds = 8; }
+  else if (y >= 1976) { maxRounds = 3; maxSeeds = 6; }
+  else if (y >= 1970) { maxRounds = 3; maxSeeds = 6; }
+  else { maxRounds = Math.max(rw, 3); maxSeeds = 5; }
+  // Scale factor: normalize playoff to 82-game-season equivalent
+  const champGames = maxRounds * 5.5;
+  const scaleFactor = 82 / champGames;
+  // Component A (70%): Playoff Dominance
+  // Maps rounds won ratio to wins-above-.500 equivalent
+  const roundsRatio = Math.min(rw / maxRounds, 1.25);
+  const dominance = (roundsRatio * 35) - 5;
+  // Component B (30%): Seed Overperformance
+  // How much they exceeded seed expectations, scaled to season equivalent
+  const overperf = (rw - expectedRW) * scaleFactor;
+  return Math.round((0.70 * dominance + 0.30 * overperf) * 100) / 100;
 }
 
 function getDecade(season) {
@@ -1356,10 +1374,10 @@ function getResultText(rw, season) {
 }
 
 function getRedColor(score) {
-  if (score >= 2.0) return 'red-very-positive';
-  if (score >= 1.0) return 'red-positive';
+  if (score >= 15.0) return 'red-very-positive';
+  if (score >= 8.0) return 'red-positive';
   if (score >= 0) return 'red-neutral';
-  if (score >= -0.5) return 'red-negative';
+  if (score >= -3.0) return 'red-negative';
   return 'red-very-negative';
 }
 
