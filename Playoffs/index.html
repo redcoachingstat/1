@@ -319,7 +319,7 @@ tr:hover td { background: var(--s2); }
     <p>The formula normalizes for different playoff formats (3-round pre-1984, 4-round modern era). Pre-1984 teams without detailed opponent data use a simplified formula with a championship bonus to remain competitive.</p>
     <h3>Formula</h3>
     <p style="font-family:monospace; background:var(--s2); padding:0.8rem; border-radius:6px; font-size:0.82rem; line-height:1.6;">
-      RED = (Path Difficulty &times; 3.0) + (SRS Proxy &times; 2.5) + (Champ Bonus: 4.0) + (Advancement &times; 0.8) + (Injury Adj: own &times; 6 &minus; opp &times; 10)
+      RED = (Path Difficulty &times; 3.0) + (SRS Proxy &times; 2.5) + (Champ Bonus: 4.0) + (Advancement &times; 0.8) + (Injury Adj: own &times; 4 &minus; opp &times; 5)
     </p>
   </div>
 </div>
@@ -1457,7 +1457,7 @@ function calculatePlayoffRED(rw, seed, season, teamName) {
   const advScore = (rw - expRW) * 0.8;
 
   // C5: Injury Adjustment
-  const injAdj = inj * 6 - oppInj * 10;
+  const injAdj = inj * 4 - oppInj * 5;
 
   return Math.round((pathScore + domScore + champBonus + advScore + injAdj) * 100) / 100;
 }
