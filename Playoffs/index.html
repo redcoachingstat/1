@@ -1443,7 +1443,7 @@ function calculatePlayoffRED(rw, seed, season, teamName) {
   const creditable = isChamp ? seeds : seeds.slice(0, rw);
   let pathTotal = 0;
   creditable.forEach(function(s) { pathTotal += (maxS + 1 - s) / maxS; });
-  const pathScore = pathTotal * 5.5;
+  const pathScore = pathTotal * 4.5;
 
   // C2: Dominance / SRS Proxy - higher seeds rewarded more
   const seedStrength = (maxS + 1 - seed) / maxS;
@@ -1466,7 +1466,7 @@ function calculatePlayoffRED(rw, seed, season, teamName) {
     var winPct = e.w / totalGP;
     var movProxy = (winPct - 0.5) * 3;
     var avgOppQ = creditable.length > 0 ? pathTotal / creditable.length : 0;
-    playoffDom = movProxy * avgOppQ * 6.0;
+    playoffDom = movProxy * 6.0;
   }
 
   return Math.round((pathScore + domScore + champBonus + advScore + injAdj + playoffDom) * 100) / 100;
