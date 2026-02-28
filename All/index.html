@@ -182,12 +182,12 @@ tr:hover td { background: var(--s2); }
 
 /* ── MOBILE ── */
 @media (max-width: 768px) {
-  #teamFilter { max-width: 80px; font-size: 0.75rem; }
+  #teamFilter { max-width: 100%; font-size: 0.75rem; }
   header { padding: 0 1rem; }
   .logo { font-size: 1.6rem; }
   .header-search { width: 100%; }
   .header-right { width: 100%; gap: 0.6rem; }
-  .adv-filters { padding: 0.5rem 1rem; gap: 0.4rem 0.8rem; }
+  .adv-filters { padding: 0.6rem 0.8rem; gap: 0.5rem; }
   .adv-filters .filter-group { width: 100%; }
   .adv-filters .decade-row { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; width: 100%; }
   .decade-btn { flex-shrink: 0; }
@@ -199,51 +199,66 @@ tr:hover td { background: var(--s2); }
   .rb { min-width: 60px; font-size: 0.84rem; padding: 2px 7px; }
   table { min-width: 580px; }
 }
+}
 @media (max-width: 480px) {
   .logo { font-size: 1.4rem; }
   th, td { padding: 7px 8px; }
 }
 
-/* ── ENHANCED FILTERS ── */
+/* ── ENHANCED FILTERS (unified with Postseason) ── */
 .adv-filters {
-  max-width: 1400px; margin: 0 auto; padding: 0.5rem 2rem 0.25rem;
-  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 1.25rem;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 0.8rem 1.2rem; margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+  max-width: 1400px; margin: 0 auto 1rem;
 }
 .adv-filters .filter-group {
-  display: flex; align-items: center; gap: 0.4rem;
+  display: flex; align-items: center; gap: 0.4rem; flex-wrap: wrap;
 }
 .adv-filters .filter-group label {
-  font-size: 0.7rem; font-weight: 600; color: var(--silver);
-  text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap;
+  font-size: 0.65rem; color: var(--muted); letter-spacing: 1px;
+  text-transform: uppercase; font-weight: 600; margin-right: 4px; white-space: nowrap;
 }
 .decade-btn {
-  padding: 3px 10px; font-size: 0.72rem; font-weight: 600;
-  border: 1px solid var(--border); border-radius: 6px;
-  background: transparent; color: var(--muted); cursor: pointer;
-  transition: all 0.15s; font-family: 'Inter', sans-serif;
+  display: inline-flex; align-items: center;
+  padding: 4px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 500;
+  border: 1px solid var(--border2); background: transparent; color: var(--muted);
+  cursor: pointer; transition: all 0.15s; user-select: none; white-space: nowrap;
+  font-family: 'Inter', sans-serif;
 }
-.decade-btn:hover { border-color: var(--silver); color: var(--chrome); }
-.decade-btn.on { background: var(--s2); color: var(--text); border-color: var(--silver); }
-
-
-
+.decade-btn:hover { color: var(--chrome); border-color: var(--silver); }
+.decade-btn.on { background: var(--chrome); color: #fff; border-color: var(--chrome); }
 .clear-btn {
-  padding: 3px 8px; font-size: 0.68rem; font-weight: 600;
-  border: 1px solid var(--border); border-radius: 6px;
+  padding: 5px 14px; font-size: 0.72rem; font-weight: 500;
+  border: 1px solid var(--border2); border-radius: 20px;
   background: transparent; color: var(--muted); cursor: pointer;
   transition: all 0.15s; font-family: 'Inter', sans-serif;
 }
 .clear-btn:hover { border-color: var(--neg); color: var(--neg); }
-.filter-actions { margin-left: auto; }
+.filter-actions { display: flex; gap: 0.4rem; margin-left: auto; }
 
 
 
-.range-input { width: 70px; padding: 5px 8px; border: 1px solid var(--chrome); border-radius: 6px; background: var(--surface); color: var(--chrome); font-size: 0.8rem; font-family: 'Inter', sans-serif; text-align: center; }
+.range-input {
+  width: 70px; padding: 4px 8px; border: 1px solid var(--border2); border-radius: 20px;
+  background: transparent; color: var(--chrome); font-size: 0.78rem;
+  font-family: 'Inter', sans-serif; text-align: center;
+}
 .range-input:focus { outline: none; border-color: var(--gold); }
-.range-sep { color: var(--chrome); font-size: 0.8rem; margin: 0 4px; opacity: 0.6; }
-.go-btn { padding: 5px 18px; border: none; border-radius: 6px; background: var(--gold); color: #fff; font-weight: 700; font-size: 0.85rem; cursor: pointer; margin-left: 10px; font-family: 'Inter', sans-serif; letter-spacing: 1px; transition: background 0.2s; }
+.range-sep { color: var(--muted); font-size: 0.78rem; margin: 0 4px; opacity: 0.6; }
+.go-btn {
+  padding: 5px 18px; border: none; border-radius: 20px;
+  background: var(--gold); color: #fff; font-weight: 600; font-size: 0.78rem;
+  cursor: pointer; font-family: 'Inter', sans-serif; letter-spacing: 0.5px;
+  transition: background 0.2s;
+}
 .go-btn:hover { background: #a47d1a; }
-.adv-select { padding: 5px 8px; border: 1px solid var(--chrome); border-radius: 6px; background: var(--surface); color: var(--chrome); font-size: 0.8rem; font-family: 'Inter', sans-serif; min-width: 120px; }
+.adv-select {
+  padding: 4px 8px; border: 1px solid var(--border2); border-radius: 20px;
+  background: transparent; color: var(--chrome); font-size: 0.78rem;
+  font-family: 'Inter', sans-serif; min-width: 100px;
+}
 .adv-select:focus { outline: none; border-color: var(--gold); }
 
 
@@ -286,7 +301,7 @@ nav {
 </header>
 <nav>
   <div class="nav-inner">
-    <a href="/1/" class="nav-link">Current</a>
+    <a href="/1/" class="nav-link">Live</a>
     <a href="/1/All/" class="nav-link active">Historical</a>
     <a href="/1/Playoffs/" class="nav-link">Postseason</a>
   </div>
