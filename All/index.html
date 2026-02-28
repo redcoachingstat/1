@@ -241,22 +241,22 @@ tr:hover td { background: var(--s2); }
 
 
 .range-input {
-  width: 70px; padding: 4px 8px; border: 1px solid var(--border2); border-radius: 20px;
-  background: transparent; color: var(--chrome); font-size: 0.78rem;
+  width: 70px; padding: 4px 8px; border: 1px solid var(--border2); border-radius: 6px;
+  background: var(--bg); color: var(--chrome); font-size: 0.78rem;
   font-family: 'Inter', sans-serif; text-align: center;
 }
 .range-input:focus { outline: none; border-color: var(--gold); }
 .range-sep { color: var(--muted); font-size: 0.78rem; margin: 0 4px; opacity: 0.6; }
 .go-btn {
   padding: 5px 18px; border: none; border-radius: 20px;
-  background: var(--gold); color: #fff; font-weight: 600; font-size: 0.78rem;
+  background: var(--chrome); color: #fff; font-weight: 600; font-size: 0.78rem;
   cursor: pointer; font-family: 'Inter', sans-serif; letter-spacing: 0.5px;
   transition: background 0.2s;
 }
 .go-btn:hover { background: #a47d1a; }
 .adv-select {
-  padding: 4px 8px; border: 1px solid var(--border2); border-radius: 20px;
-  background: transparent; color: var(--chrome); font-size: 0.78rem;
+  padding: 4px 8px; border: 1px solid var(--border2); border-radius: 6px;
+  background: var(--bg); color: var(--text); font-size: 0.78rem;
   font-family: 'Inter', sans-serif; min-width: 100px;
 }
 .adv-select:focus { outline: none; border-color: var(--gold); }
@@ -23686,8 +23686,8 @@ function calcRED(w,l,pf,pa){
   const exp=13.91;
   const pfE=Math.pow(pf,exp), paE=Math.pow(pa,exp);
   const pythW=gp*(pfE/(pfE+paE));
-  const delta=w-pythW;
-  const redScore=0.70*wa5+0.30*delta;
+  const pythWA5=pythW-avgW;
+  const redScore=0.70*wa5+0.30*pythWA5;
   return{redScore:+redScore.toFixed(2),redPerGame:+(redScore/gp).toFixed(4),gp};
 }
 function processTeams(teams,season,seasonLabel,urlKey){
