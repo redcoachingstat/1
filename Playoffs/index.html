@@ -295,8 +295,7 @@ tr:hover td { background: var(--s2); }
     </div>
     <div class="header-right">
       <input type="text" class="header-search" id="searchBox" placeholder="Search team or coach&hellip;">
-    
-      <button class="info-btn" id="infoBtn" title="About Playoff RED">?</button></div>
+    </div>
   </div>
 </header>
 <div class="info-modal-overlay" id="infoOverlay">
@@ -328,7 +327,6 @@ tr:hover td { background: var(--s2); }
 <div class="container">
 
   <!-- Stats Cards -->
-  <div class="stats-row" id="statsRow"></div>
 
   <!-- Filters -->
   <div class="filters-bar">
@@ -421,6 +419,10 @@ tr:hover td { background: var(--s2); }
     <div id="noData" class="no-data" style="display:none;">No playoff teams match your filters.</div>
   </div>
 
+</div>
+
+<div style="text-align:center; padding: 1.5rem 0;">
+  <button class="info-btn" id="infoBtn" title="About Playoff RED" style="width:36px;height:36px;font-size:1rem;">?</button>
 </div>
 
 <script>
@@ -1502,7 +1504,6 @@ let sortState = { col: 'red', dir: 'desc' };
 
 function init() {
   populateSelects();
-  buildStats();
   render();
   bindEvents();
 }
@@ -1527,54 +1528,6 @@ function populateSelects() {
   });
 }
 
-function buildStats() {
-  let stats = {
-    highest: null,
-    lowest: null,
-    mostApp: null,
-    mostAppCount: 0,
-    seedAvgs: {}
-  };
-
-  PLAYOFF_DATA.forEach(d => {
-    const red = calculatePlayoffRED(d.rw, d.seed, d.s, d.t);
-    if (!stats.highest || red > stats.highest.red) {
-      stats.highest = { ...d, red };
-    }
-    if (!stats.lowest || red < stats.lowest.red) {
-      stats.lowest = { ...d, red };
-    }
-
-    if (!stats.seedAvgs[d.seed]) {
-      stats.seedAvgs[d.seed] = { sum: 0, count: 0 };
-    }
-    stats.seedAvgs[d.seed].sum += red;
-    stats.seedAvgs[d.seed].count++;
-  });
-
-  const teamCounts = {};
-  PLAYOFF_DATA.forEach(d => {
-    teamCounts[d.t] = (teamCounts[d.t] || 0) + 1;
-  });
-  const maxTeam = Object.entries(teamCounts).sort((a,b) => b[1]-a[1])[0];
-  stats.mostApp = { team: maxTeam[0], count: maxTeam[1] };
-
-  const statsRow = document.getElementById('statsRow');
-  statsRow.innerHTML = `
-    <div class="stat-card">
-      <div class="stat-val" style="color:#0A7D2A;">${stats.highest.red >= 0 ? '+' : ''}${stats.highest.red.toFixed(2)}</div>
-      <div class="stat-label">Highest RED</div>
-      <div class="stat-sub">${stats.highest.t} ${stats.highest.s}</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-val" style="color:#C03030;">${stats.lowest.red.toFixed(2)}</div>
-      <div class="stat-label">Lowest RED</div>
-      <div class="stat-sub">${stats.lowest.t} ${stats.lowest.s}</div>
-    </div>
-  `;
-
-  const scEl=document.getElementById('seasonCount');if(scEl)scEl.textContent = [...new Set(PLAYOFF_DATA.map(d => d.s))].length;
-}
 
 function filterRender() { displayCount = 25; render(); }
 
