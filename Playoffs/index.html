@@ -1443,30 +1443,30 @@ function calculatePlayoffRED(rw, seed, season, teamName) {
   const creditable = isChamp ? seeds : seeds.slice(0, rw);
   let pathTotal = 0;
   creditable.forEach(function(s) { pathTotal += (maxS + 1 - s) / maxS; });
-  const pathScore = pathTotal * 3.0;
+  const pathScore = pathTotal * 5.5;
 
   // C2: Dominance / SRS Proxy - higher seeds rewarded more
   const seedStrength = (maxS + 1 - seed) / maxS;
-  const domScore = seedStrength * rw * 2.5;
+  const domScore = seedStrength * rw * 3.0;
 
-  // C3: Championship Bonus
-  const champBonus = isChamp ? 4.0 : 0;
+  // C3: Championship Bonus (minimal - dominance should speak for itself)
+  const champBonus = isChamp ? 0.5 : 0;
 
-  // C4: Advancement vs Expectations (reduced)
+  // C4: Advancement vs Expectations
   const expRW = seed <= 2 ? (3 - seed * 0.5) : Math.max(0.5, 2 - seed * 0.3);
-  const advScore = (rw - expRW) * 0.8;
+  const advScore = (rw - expRW) * 1.5;
 
   // C5: Injury Adjustment
-  const injAdj = inj * 4 - oppInj * 5;
+  const injAdj = inj * 5 - oppInj * 6;
 
-  // C6: Playoff Dominance (MOV proxy) - win% weighted by opponent quality
+  // C6: Playoff Dominance - win% weighted by opponent quality (major factor)
   var playoffDom = 0;
   var totalGP = (e.w || 0) + (e.l || 0);
   if (totalGP > 0) {
     var winPct = e.w / totalGP;
-    var movProxy = (winPct - 0.5) * 2;
+    var movProxy = (winPct - 0.5) * 3;
     var avgOppQ = creditable.length > 0 ? pathTotal / creditable.length : 0;
-    playoffDom = movProxy * avgOppQ * 2.5;
+    playoffDom = movProxy * avgOppQ * 6.0;
   }
 
   return Math.round((pathScore + domScore + champBonus + advScore + injAdj + playoffDom) * 100) / 100;
