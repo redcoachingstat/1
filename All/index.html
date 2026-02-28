@@ -23959,6 +23959,8 @@ const FRANCHISE_MAP = {
 };
 async function build(){
   // Tag HIST entries with champ flag
+  // Recalculate RED scores with current formula
+  HIST.forEach(function(h){var r=calcRED(h.wins,h.losses,h.ptsFor,h.ptsAgainst);h.redScore=r.redScore;h.redPerGame=r.redPerGame;});
   allRows=HIST.map(h=>{const n=FRANCHISE_MAP[h.name]||h.name;return{...h,name:n,origName:h.name,champ:CHAMPS[h.season]===h.name||CHAMPS[h.season]===n};});
   // Load live
   const live=await loadLive();
