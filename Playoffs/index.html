@@ -1443,31 +1443,28 @@ function calculatePlayoffRED(rw, seed, season, teamName) {
   const creditable = isChamp ? seeds : seeds.slice(0, rw);
   let pathTotal = 0;
   creditable.forEach(function(s) { pathTotal += (maxS + 1 - s) / maxS; });
-  const pathScore = pathTotal * 4.5;
 
-  // C2: REMOVED - seed strength gave free points for regular season, not playoff performance
-  const domScore = 0; // C2 REMOVED - seed strength is irrelevant to playoff dominance
-  // C3: Championship Bonus (minimal - dominance should speak for itself)
+  // C3: Championship Bonus (minimal)
   const champBonus = isChamp ? 0.5 : 0;
-
-  // C4: REMOVED - overperformance is inverse of dominance
-  const expRW = seed <= 2 ? (3 - seed * 0.5) : Math.max(0.5, 2 - seed * 0.3);
-  const advScore = 0; // C4 REMOVED - overperformance rewards surviving, not dominating;
 
   // C5: Injury Adjustment
   const injAdj = inj * 5 - oppInj * 6;
 
-  // C6: Playoff Dominance - win% weighted by opponent quality (major factor)
-  var playoffDom = 0;
+  // CORE: Dominance Against Strong Teams (C1 x C6 multiplicative)
+  // pathTotal measures opponent quality, winPct measures how thoroughly you beat them
+  // Multiplying them together means you need BOTH to score high
+  var domAgainstStrong = 0;
   var totalGP = (e.w || 0) + (e.l || 0);
   if (totalGP > 0) {
     var winPct = e.w / totalGP;
-    var movProxy = (winPct - 0.5) * 3;
-    var avgOppQ = creditable.length > 0 ? pathTotal / creditable.length : 0;
-    playoffDom = movProxy * 8.5;
+    var domFactor = (winPct - 0.4) * 2.5; // how dominant (0.4 baseline so losing records get negative)
+    domAgainstStrong = pathTotal * domFactor * 5.0; // path quality x dominance
   }
 
-  return Math.round((pathScore + domScore + champBonus + advScore + injAdj + playoffDom) * 100) / 100;
+  // Base path credit - small amount just for advancing (rewards depth of run)
+  var basePath = pathTotal * 1.5;
+
+  return Math.round((basePath + champBonus + injAdj + domAgainstStrong) * 100) / 100;
 }
 
 function getDecade(season) {
