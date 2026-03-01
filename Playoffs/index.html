@@ -1445,10 +1445,8 @@ function calculatePlayoffRED(rw, seed, season, teamName) {
   creditable.forEach(function(s) { pathTotal += (maxS + 1 - s) / maxS; });
   const pathScore = pathTotal * 4.5;
 
-  // C2: Dominance / SRS Proxy - higher seeds rewarded more
-  const seedStrength = (maxS + 1 - seed) / maxS;
-  const domScore = seedStrength * rw * 3.0;
-
+  // C2: REMOVED - seed strength gave free points for regular season, not playoff performance
+  const domScore = 0; // C2 REMOVED - seed strength is irrelevant to playoff dominance
   // C3: Championship Bonus (minimal - dominance should speak for itself)
   const champBonus = isChamp ? 0.5 : 0;
 
@@ -1466,7 +1464,7 @@ function calculatePlayoffRED(rw, seed, season, teamName) {
     var winPct = e.w / totalGP;
     var movProxy = (winPct - 0.5) * 3;
     var avgOppQ = creditable.length > 0 ? pathTotal / creditable.length : 0;
-    playoffDom = movProxy * 6.0;
+    playoffDom = movProxy * 8.5;
   }
 
   return Math.round((pathScore + domScore + champBonus + advScore + injAdj + playoffDom) * 100) / 100;
