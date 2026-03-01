@@ -1450,9 +1450,9 @@ function calculatePlayoffRED(rw, seed, season, teamName) {
   // C3: Championship Bonus (minimal - dominance should speak for itself)
   const champBonus = isChamp ? 0.5 : 0;
 
-  // C4: Advancement vs Expectations
+  // C4: REMOVED - overperformance is inverse of dominance
   const expRW = seed <= 2 ? (3 - seed * 0.5) : Math.max(0.5, 2 - seed * 0.3);
-  const advScore = (rw - expRW) * 0.8;
+  const advScore = 0; // C4 REMOVED - overperformance rewards surviving, not dominating;
 
   // C5: Injury Adjustment
   const injAdj = inj * 5 - oppInj * 6;
